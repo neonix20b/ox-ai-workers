@@ -60,7 +60,7 @@ class OxAiWorkers::Iterator < OxAiWorkers::StateTools
 
   def packHistory text:
     puts Rainbow("summarize: #{text}").blue
-    @milestones << "#{Time.now} #{__method__}: #{text}"
+    @milestones << "#{__method__}: #{text}"
     @messages = []
     @worker.finish()
     rebuildWorker()
@@ -110,7 +110,7 @@ class OxAiWorkers::Iterator < OxAiWorkers::StateTools
   def processResult(transition)
     puts "call: #{__method__} state: #{state_name}"
     @result = @worker.result || @worker.errors
-    if @worker.external_call.present?
+    if @worker.tool_calls.present?
       @queue << {role: :system, content: @worker.tool_calls_raw.to_s}
       @worker.tool_calls.each do |external_call|
         tool = @tools.select{|t| t.class.tool_name == external_call[:class] && t.respond_to?(external_call[:name]) }.first
@@ -119,6 +119,7 @@ class OxAiWorkers::Iterator < OxAiWorkers::StateTools
           @queue << {role: :system, content: out.to_s} if out.present?
         end
       end
+      @worker.finish()
       iterate! if can_iterate?
 
       # tool = @tools.select{|t| t.class.tool_name == @worker.external_call[:class] && t.respond_to?(@worker.external_call[:name]) }.first
@@ -127,19 +128,19 @@ class OxAiWorkers::Iterator < OxAiWorkers::StateTools
       #   @queue << {role: :system, content: out.to_s} if out.present?
       #   iterate!
       # end
-    elsif @result.present?
-        actionRequest action: @result
+    elsif @worker.result.present?
+        actionRequest action: @worker.result
     end
   end
 
   def completeIteration
+    @queue = []
     @worker.finish()
   end
   
   def addTask task, auto_execute: true
     @tasks << task
     @messages << {role: :user, content: task}
-    task
     execute() if auto_execute
   end
 
@@ -162,3 +163,21 @@ class OxAiWorkers::Iterator < OxAiWorkers::StateTools
   end
 
 end
+
+# r = OxAiWorkers::Iterator.new(worker: OxAiWorkers::Request.new)
+# r.addTask("сколько будет 2+2?")
+# r.execute
+# r.result
+
+
+# @worker.append(role: "user", content: "сколько будет 2+2?")
+# @worker.request!
+# @worker.completed?
+# @worker.result
+# @worker.finish
+# 
+# r = OxAiWorkers::Iterator.new(worker: OxAiWorkers::Request.new)
+# r.role = "ты программный агент внутри моего компьютера"
+# r.tools = [OxAiWorkers::Tool::Eval.new]
+# r.addTask("покажи мне файлы на диске, используй код на ruby")
+# r.execute

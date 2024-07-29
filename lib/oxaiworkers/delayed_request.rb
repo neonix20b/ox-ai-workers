@@ -38,7 +38,7 @@ class OxAiWorkers::DelayedRequest < OxAiWorkers::StateBatch
 
   def finish
     @custom_id = SecureRandom.uuid
-    end_batch!
+    end_batch! unless batch_idle?
   end
 
   def uploadToStorage
@@ -86,7 +86,8 @@ class OxAiWorkers::DelayedRequest < OxAiWorkers::StateBatch
 			output = @client.files.content(id: batch["output_file_id"])
 			output.each do |line|
 				@custom_id = line["custom_id"]
-				@result = line.dig("response", "body", "choices", 0, "message", "content")
+				# @result = line.dig("response", "body", "choices", 0, "message", "content")
+        parseChoices(line.dig("response", "body"))
         complete_batch!
 			end
 		elsif !batch["error_file_id"].nil?

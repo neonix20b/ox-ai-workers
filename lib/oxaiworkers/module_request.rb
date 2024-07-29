@@ -31,6 +31,8 @@ class OxAiWorkers::ModuleRequest
     @result = nil
     @errors = nil
     @messages = []
+    @tool_calls = nil
+    @tool_calls_raw = nil
   end
 
   def append role: nil, content: nil, messages: nil

@@ -18,6 +18,6 @@ class OxAiWorkers::Request < OxAiWorkers::ModuleRequest
   end
 
   def completed?
-    @result.present? or @errors.present? or @external_call.present?
+    @result.present? or @errors.present? or @tool_calls.present?
   end
 end
