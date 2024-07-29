@@ -10,6 +10,11 @@ require "irb"
 
 puts "OxAiWorkers #{OxAiWorkers::VERSION}"
 
+OxAiWorkers.configure do |config|
+    config.access_token = ENV.fetch("OPENAI")
+    config.model = "gpt-4o-mini"
+end
+
 @assistant = OxAiWorkers::Assistant::Sysop.new()
 
 IRB.start(__FILE__)

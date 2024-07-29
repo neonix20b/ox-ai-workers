@@ -1,8 +1,12 @@
 ## [Unreleased]
 
 ## [0.2.2] - 2024-07-30
+- start script with configure section
+
+## [0.2.2] - 2024-07-30
 - fix cli
 - better start script (cli: .oxaiworkers-local/start)
+- better init script
 
 ## [0.2.0] - 2024-07-30
 - fix missing require 'open3'
