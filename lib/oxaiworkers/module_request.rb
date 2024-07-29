@@ -60,7 +60,7 @@ class OxAiWorkers::ModuleRequest
   end
 
   def parseChoices(response)
-    puts response.inspect
+    # puts response.inspect
     @tool_calls = []
     @result = response.dig("choices", 0, "message", "content")
     @tool_calls_raw = response.dig("choices", 0, "message", "tool_calls")
