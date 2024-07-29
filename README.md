@@ -27,27 +27,40 @@ gem install ox-ai-workers
 Here's a basic example of how to use OxAiWorkers:
 
 ```ruby
-I18n.load_path += Dir[File.expand_path("locales") + "/*.yml"] # for pure Ruby
-I18n.default_locale = :en # for pure Ruby
+# Load localization files and set default locale
+I18n.load_path += Dir[File.expand_path("locales") + "/*.yml"] # only for pure Ruby
+I18n.default_locale = :en # only for pure Ruby
+
+# Require the main gem
 require 'ox-ai-workers'
 
 # Initialize the assistant
 sysop = OxAiWorkers::Assistant::Sysop.new(delayed: false, model: "gpt-4o")
 
-# Add a task
+# Add a task to the assistant
 sysop.setTask("Add a cron job to synchronize files daily.")
 
-# Add a response to the assistant's question.
+# Provide a response to the assistant's question
 sysop.addResponse("blah-blah-blah")
 ```
 
+Alternatively, you can use a lower-level approach for more control:
+
 ```ruby
+# Initialize a worker for delayed requests
 worker = OxAiWorkers::DelayedRequest.new(model: "gpt-4o-mini", max_tokens: 4096, temperature: 0.7)
-# or
-# worker = OxAiWorkers::Request.new(model: "gpt-4o-mini", max_tokens: 4096, temperature: 0.7)
+
+# Alternatively, initialize a worker for immediate requests
+worker = OxAiWorkers::Request.new(model: "gpt-4o-mini", max_tokens: 4096, temperature: 0.7)
+
+# Initialize a tool
 my_tool = OxAiWorkers::Tool::Eval.new()
+
+# Create an iterator with the worker and tool
 iterator = OxAiWorkers::Iterator.new(worker: worker, tools: [my_tool])
 iterator.role = "You are a software agent inside my computer"
+
+# Add a task to the iterator
 iterator.addTask("Show files in current dir")
 ```
 
