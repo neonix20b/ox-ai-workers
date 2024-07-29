@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+if ARGV.first == "init"
+	dir = '.oxaiworkers-local'
+	dest = "#{Dir.pwd}/#{dir}"
+	source = File.expand_path('../../', __FILE__)
+
+	FileUtils.mkdir_p dir + "/locales"
+	FileUtils.copy_entry source + "/locales", dest + "/locales"
+	FileUtils.cp(source+"/bin/console", dest)
+end
