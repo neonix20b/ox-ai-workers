@@ -11,8 +11,10 @@ if ARGV.first == "init"
 		FileUtils.mkdir_p dir + "/locales"
 		FileUtils.copy_entry source + "/locales", dest + "/locales"
 		FileUtils.cp(source+"/exe/start", dest)
-		puts "#{dir} ...ok"
+		puts "A #{dir} directory was created with the necessary initial settings."
+		puts "Modify the settings as needed and run:"
+		puts "#{dir}/start"
 	else
-		puts "#{dir} ...error (exists)"
+		puts "Error: The #{dir} directory already exists."
 	end
 end
