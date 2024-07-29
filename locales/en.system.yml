@@ -15,11 +15,11 @@ en:
         text: "Listing important facts and nuances"
       monologue:
         - "Step 1: Develop your own solution to the problem. Take initiative and make assumptions."
-        - "Step 1.1: Wrap all your work for this step in the innerMonologue function."
+        - "Step 1.1: Wrap all your work for this step in the ox_ai_workers_iterator__innerMonologue function."
         - "Step 2: Relate your solution to the task, improve it, and call the necessary functions step by step."
-        - "Step 2.1: Interact with the user using the outerVoice and actionRequest functions during the process."
-        - "Step 3: When the solution is ready, report it using the outerVoice function."
-        - "Step 4: Save facts, nuances, and actions using the packHistory function."
+        - "Step 2.1: Interact with the user using the ox_ai_workers_iterator__outerVoice and ox_ai_workers_iterator__actionRequest functions during the process."
+        - "Step 3: When the solution is ready, report it using the ox_ai_workers_iterator__outerVoice function."
+        - "Step 4: Save facts, nuances, and actions using the ox_ai_workers_iterator__packHistory function."
     tool:
       eval:
         ruby:
