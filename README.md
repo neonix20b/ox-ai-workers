@@ -70,6 +70,9 @@ iterator.role = "You are a software agent inside my computer"
 
 # Add a task to the iterator
 iterator.addTask("Show files in current dir")
+
+# Provide a response to the gpt's question
+iterator.addTask("linux")
 ```
 
 ### With Config
@@ -90,6 +93,9 @@ Then you can create an assistant like this:
 ```ruby
 assistant = OxAiWorkers::Assistant::Sysop.new()
 assistant.setTask("your task")
+
+# Provide a response to the assistant's question
+assistant.addResponse("blah-blah-blah")
 ```
 
 Or you can create a lower-level iterator for more control:
@@ -101,6 +107,8 @@ iterator = OxAiWorkers::Iterator.new(
   role: "You are a software agent inside my computer" )
 
 iterator.addTask("Show files in current directory.")
+# ...
+iterator.addTask("linux")
 ```
 
 This way, you have the flexibility to choose between a higher-level assistant for simplicity or a lower-level iterator for finer control over the tasks and tools used.
