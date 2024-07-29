@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+rm -rf ox-ai-workers-*.gem
+gem build ox-ai-workers.gemspec
+gem push ox-ai-workers-*.gem
