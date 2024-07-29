@@ -20,6 +20,8 @@ require_relative "oxaiworkers/iterator.rb"
 require_relative "oxaiworkers/request.rb"
 require_relative "oxaiworkers/tool/eval.rb"
 require_relative "oxaiworkers/version.rb"
+
+require_relative "oxaiworkers/assistant/module_base.rb"
 require_relative "oxaiworkers/assistant/sysop.rb"
 
 module OxAiWorkers

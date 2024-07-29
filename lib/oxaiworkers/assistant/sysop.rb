@@ -1,25 +1,14 @@
 module OxAiWorkers
   module Assistant
     class Sysop
-      attr_accessor :iterator
+      include OxAiWorkers::Assistant::ModuleBase
+
       def initialize delayed: false, model: nil
-        worker = delayed ? OxAiWorkers::DelayedRequest.new : OxAiWorkers::Request.new
-        worker.model = model || OxAiWorkers.configuration.model
-
         @iterator = OxAiWorkers::Iterator.new(
-          worker: worker,
-          role: I18n.t("oxaiworkers.assistant.sysop.role"),
-          tools: [OxAiWorkers::Tool::Eval.new]
+            worker: initWorker(delayed: delayed, model: model),
+            role: I18n.t("oxaiworkers.assistant.sysop.role"),
+            tools: [OxAiWorkers::Tool::Eval.new]
           )
-      end
-
-      def setTask task
-        @iterator.cleanup()
-        @iterator.addTask task
-      end
-
-      def addResponse text
-        @iterator.addTask text
       end
     end
   end
