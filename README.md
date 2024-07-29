@@ -35,7 +35,10 @@ require 'ox-ai-workers'
 sysop = OxAiWorkers::Assistant::Sysop.new(delayed: false, model: "gpt-4o")
 
 # Add a task
-sysop.addTask("Add a cron job to synchronize files daily.")
+sysop.setTask("Add a cron job to synchronize files daily.")
+
+# Add a response to the assistant's question.
+sysop.addResponse("blah-blah-blah")
 ```
 
 ```ruby
@@ -74,7 +77,7 @@ iterator = OxAiWorkers::Iterator.new(
   role: "You are a software agent inside my computer"
   )
 
-iterator.addTask("Show files in current dir")
+iterator.addTask("Show files in current directory.")
 ```
 
 ## Features
