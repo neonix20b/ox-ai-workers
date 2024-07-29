@@ -68,7 +68,10 @@ Then you can create an assistant like this:
 
 ```ruby
 assistant = OxAiWorkers::Assistant::Sysop.new()
+assistant.setTask("your task")
 ```
+
+Or you can create a lower-level iterator for more control:
 
 ```ruby
 iterator = OxAiWorkers::Iterator.new(
@@ -79,6 +82,16 @@ iterator = OxAiWorkers::Iterator.new(
 
 iterator.addTask("Show files in current directory.")
 ```
+
+This way, you have the flexibility to choose between a higher-level assistant for simplicity or a lower-level iterator for finer control over the tasks and tools used.
+
+### Worker Options
+
+As a worker, you can use different classes depending on your needs:
+
+- `OxAiWorkers::Request`: This class is used for immediate request execution. It is suitable for operations that require instant responses.
+
+- `OxAiWorkers::DelayedRequest`: This class is used for batch API requests, ideal for operations that do not require immediate execution. Using `DelayedRequest` can save up to 50% on costs as requests are executed when the remote server is less busy, but no later than within 24 hours.
 
 ## Command Line Interface (CLI)
 
