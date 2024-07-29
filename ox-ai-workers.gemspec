@@ -42,7 +42,7 @@ Gem::Specification.new do |spec|
     end
   end
   spec.bindir = "exe"
-  spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) } + ["oxaiworkers"]
+  spec.executables = ["oxaiworkers"]
   spec.require_paths = ["lib"]
 
   spec.add_dependency "faraday", ">= 1"
