@@ -2,16 +2,6 @@
 require 'open3'
 
 module OxAiWorkers::Tool
-  #
-  # A calculator tool that falls back to the Google calculator widget
-  #
-  # Gem requirements:
-  #     gem "eqn", "~> 1.6.5"
-  #     gem "google_search_results", "~> 2.0.0"
-  #
-  # Usage:
-  #     calculator = OxAiWorkers::Tool::Calculator.new
-  #
   class Eval
     extend OxAiWorkers::ToolDefinition
     include OxAiWorkers::DependencyHelper

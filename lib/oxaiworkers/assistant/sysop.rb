@@ -11,11 +11,11 @@ module OxAiWorkers
 
       def setTask task
         @iterator.cleanup()
-        addTask task
+        @iterator.addTask task
       end
 
-      def addTask task
-        @iterator.addTask task
+      def addResponse text
+        @iterator.addTask text
       end
     end
   end
