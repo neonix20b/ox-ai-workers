@@ -31,7 +31,6 @@ class OxAiWorkers::Iterator < OxAiWorkers::StateTools
     @tasks = []
     @milestones = []
 
-    # @tools = OxAiWorkers::Tool.constants.map(&OxAiWorkers::Tool.method(:const_get)).select { |c| c.is_a? Class }.map{|c|c.new}
     super()
   end
 

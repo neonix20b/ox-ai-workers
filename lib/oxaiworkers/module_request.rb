@@ -1,16 +1,13 @@
 class OxAiWorkers::ModuleRequest
   attr_accessor :result, :client, :messages, :model, :max_tokens, :custom_id, :temperature, :tools, :errors
   attr_accessor :tool_calls_raw, :tool_calls
-  DEFAULT_MODEL = "gpt-4o-mini"
-  DEFAULT_MAX_TOKEN = 4096
-  DEFAULT_TEMPERATURE = 0.7
 
-  def initializeRequests(model: DEFAULT_MODEL, max_tokens: DEFAULT_MAX_TOKEN, temperature: DEFAULT_TEMPERATURE)
+  def initializeRequests(model: nil, max_tokens: nil, temperature: nil)
     puts "call: ModuleRequest::#{__method__}"
-    @max_tokens = max_tokens
+    @max_tokens = max_tokens || OxAiWorkers.configuration.max_tokens
     @custom_id = SecureRandom.uuid
-    @model = model
-    @temperature = temperature
+    @model = model || OxAiWorkers.configuration.model
+    @temperature = temperature || OxAiWorkers.configuration.temperature
     @client = nil
     
     OxAiWorkers.configuration.access_token ||= ENV["OPENAI"]

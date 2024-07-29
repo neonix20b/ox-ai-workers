@@ -23,14 +23,23 @@ require_relative "oxaiworkers/version.rb"
 require_relative "oxaiworkers/assistant/sysop.rb"
 
 module OxAiWorkers
+  DEFAULT_MODEL = "gpt-4o-mini"
+  DEFAULT_MAX_TOKEN = 4096
+  DEFAULT_TEMPERATURE = 0.7
+
   class Error < StandardError; end
   class ConfigurationError < Error; end
 
   class Configuration
     attr_writer :access_token
+    attr_accessor :model, :max_tokens, :temperature
 
     def initialize
       @access_token = nil
+      @model = DEFAULT_MODEL
+      @max_tokens = DEFAULT_MAX_TOKEN
+      @temperature = DEFAULT_TEMPERATURE
+
       [Array, NilClass, String, Symbol, Hash].each{|c| 
         c.send(:include, OxAiWorkers::PresentCompat) unless c.method_defined?(:present?)
       }
