@@ -7,7 +7,12 @@ if ARGV.first == "init"
 	dest = "#{Dir.pwd}/#{dir}"
 	source = File.expand_path('../../', __FILE__)
 
-	FileUtils.mkdir_p dir + "/locales"
-	FileUtils.copy_entry source + "/locales", dest + "/locales"
-	FileUtils.cp(source+"/bin/console", dest)
+	unless Dir.exist? dir
+		FileUtils.mkdir_p dir + "/locales"
+		FileUtils.copy_entry source + "/locales", dest + "/locales"
+		FileUtils.cp(source+"/exe/start", dest)
+		puts "#{dir} ...ok"
+	else
+		puts "#{dir} ...error (exists)"
+	end
 end
