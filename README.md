@@ -32,10 +32,49 @@ I18n.default_locale = :en # for pure Ruby
 require 'ox-ai-workers'
 
 # Initialize the assistant
-sysop = OxAiWorkers::Assistant::Sysop.new()
+sysop = OxAiWorkers::Assistant::Sysop.new(delayed: false, model: "gpt-4o")
 
 # Add a task
 sysop.addTask("Add a cron job to synchronize files daily.")
+```
+
+```ruby
+worker = OxAiWorkers::DelayedRequest.new(batch_id: "xxx-xxx-xxx", model: "gpt-4o-mini", max_tokens: 4096, temperature: 0.7)
+# or
+# worker = OxAiWorkers::Request.new(model: "gpt-4o-mini", max_tokens: 4096, temperature: 0.7)
+my_tool = OxAiWorkers::Tool::Eval.new()
+iterator = OxAiWorkers::Iterator.new(worker: worker, tools: [my_tool])
+iterator.role = "You are a software agent inside my computer"
+iterator.addTask("Show files in current dir")
+```
+
+### With Config
+
+For a more robust setup, you can configure the gem with your API keys, for example in an oxaiworkers.rb initializer file. Never hardcode secrets into your codebase - instead use something like [dotenv](https://github.com/motdotla/dotenv) to pass the keys safely into your environments.
+
+```ruby
+OxAiWorkers.configure do |config|
+    config.access_token = ENV.fetch("OPENAI")
+    config.model = "gpt-4o"
+    config.max_tokens = 4096
+    config.temperature = 0.7
+end
+```
+
+Then you can create an assistant like this:
+
+```ruby
+assistant = OxAiWorkers::Assistant::Sysop.new()
+```
+
+```ruby
+iterator = OxAiWorkers::Iterator.new(
+  worker: OxAiWorkers::Request.new, 
+  tools: [OxAiWorkers::Tool::Eval.new],
+  role: "You are a software agent inside my computer"
+  )
+
+iterator.addTask("Show files in current dir")
 ```
 
 ## Features
