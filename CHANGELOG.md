@@ -2,6 +2,7 @@
 
 ## [0.2.2] - 2024-07-30
 - fix cli
+- better start script (cli: .oxaiworkers-local/start)
 
 ## [0.2.0] - 2024-07-30
 - fix missing require 'open3'

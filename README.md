@@ -80,6 +80,24 @@ iterator = OxAiWorkers::Iterator.new(
 iterator.addTask("Show files in current directory.")
 ```
 
+## Command Line Interface (CLI)
+
+1. Navigate to the required directory.
+
+2. Initialize with the command:
+
+```sh
+oxaiworkers init
+```
+
+This will create a `.oxaiworkers-local` directory with the necessary initial settings.
+
+3. Modify the settings as needed and run:
+
+```sh
+.oxaiworkers-local/start
+```
+
 ## Features
 
 - **Generative Intelligence**: Leverages OpenAI's capabilities to enhance task execution.
