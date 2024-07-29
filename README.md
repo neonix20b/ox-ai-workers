@@ -48,16 +48,24 @@ Alternatively, you can use a lower-level approach for more control:
 
 ```ruby
 # Initialize a worker for delayed requests
-worker = OxAiWorkers::DelayedRequest.new(model: "gpt-4o-mini", max_tokens: 4096, temperature: 0.7)
+worker = OxAiWorkers::DelayedRequest.new(
+    model: "gpt-4o-mini", 
+    max_tokens: 4096, 
+    temperature: 0.7 )
 
 # Alternatively, initialize a worker for immediate requests
-worker = OxAiWorkers::Request.new(model: "gpt-4o-mini", max_tokens: 4096, temperature: 0.7)
+worker = OxAiWorkers::Request.new(
+    model: "gpt-4o-mini", 
+    max_tokens: 4096, 
+    temperature: 0.7 )
 
 # Initialize a tool
 my_tool = OxAiWorkers::Tool::Eval.new()
 
 # Create an iterator with the worker and tool
-iterator = OxAiWorkers::Iterator.new(worker: worker, tools: [my_tool])
+iterator = OxAiWorkers::Iterator.new(
+    worker: worker, 
+    tools: [my_tool] )
 iterator.role = "You are a software agent inside my computer"
 
 # Add a task to the iterator
@@ -90,8 +98,7 @@ Or you can create a lower-level iterator for more control:
 iterator = OxAiWorkers::Iterator.new(
   worker: OxAiWorkers::Request.new, 
   tools: [OxAiWorkers::Tool::Eval.new],
-  role: "You are a software agent inside my computer"
-  )
+  role: "You are a software agent inside my computer" )
 
 iterator.addTask("Show files in current directory.")
 ```
