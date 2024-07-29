@@ -21,17 +21,22 @@ class OxAiWorkers::Iterator < OxAiWorkers::StateTools
   def initialize(worker:, role: nil, tools: [])
     puts "call: #{__method__}"
     @worker = worker
-    @messages = []
     @tools = [self] + tools
     @role = role
     @context = nil
-    @result = nil
-    @queue = []
     @monologue = I18n.t("oxaiworkers.iterator.monologue")
-    @tasks = []
-    @milestones = []
+    cleanup()
 
     super()
+  end
+
+  def cleanup
+    @result = nil
+    @queue = []
+    @tasks = []
+    @milestones = []
+    @messages = []
+    completeIteration()
   end
 
   def innerMonologue speach:

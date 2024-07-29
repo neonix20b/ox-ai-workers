@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.2.0] - 2024-07-30
+- fix missing require 'open3'
+
 ## [0.1.1] - 2024-07-29
 
 - Fix Delayed Requests

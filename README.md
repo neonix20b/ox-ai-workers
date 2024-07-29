@@ -39,7 +39,7 @@ sysop.addTask("Add a cron job to synchronize files daily.")
 ```
 
 ```ruby
-worker = OxAiWorkers::DelayedRequest.new(batch_id: "xxx-xxx-xxx", model: "gpt-4o-mini", max_tokens: 4096, temperature: 0.7)
+worker = OxAiWorkers::DelayedRequest.new(model: "gpt-4o-mini", max_tokens: 4096, temperature: 0.7)
 # or
 # worker = OxAiWorkers::Request.new(model: "gpt-4o-mini", max_tokens: 4096, temperature: 0.7)
 my_tool = OxAiWorkers::Tool::Eval.new()
