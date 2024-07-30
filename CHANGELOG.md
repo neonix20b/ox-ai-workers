@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.4.0] - 2024-07-30
+
+- Added tools: `file_system`, `database`
+- Added assistant: `coder`
+
 ## [0.3.2] - 2024-07-30
 
 - Friendly I18n
