@@ -3,9 +3,9 @@
 
 require 'bundler/setup'
 
-# Uncomment this if you want to change the locale (only for pure Ruby code)
-# require 'oxaiworkers/load_i18n'
-# I18n.default_locale = :ru
+# Uncomment this if you want to change the locale
+require 'oxaiworkers/load_i18n'
+I18n.default_locale = :ru
 
 require 'ox-ai-workers'
 

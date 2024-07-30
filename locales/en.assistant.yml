@@ -3,3 +3,5 @@ en:
     assistant:
       sysop:
         role: "You are a software agent inside my computer"
+      coder:
+        role: "You are a professional %s programmer inside my computer"

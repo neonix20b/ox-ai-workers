@@ -19,10 +19,14 @@ require_relative 'oxaiworkers/delayed_request'
 require_relative 'oxaiworkers/dependency_helper'
 require_relative 'oxaiworkers/iterator'
 require_relative 'oxaiworkers/request'
+
 require_relative 'oxaiworkers/tool/eval'
+require_relative 'oxaiworkers/tool/database'
+require_relative 'oxaiworkers/tool/file_system'
 
 require_relative 'oxaiworkers/assistant/module_base'
 require_relative 'oxaiworkers/assistant/sysop'
+require_relative 'oxaiworkers/assistant/coder'
 
 module OxAiWorkers
   DEFAULT_MODEL = 'gpt-4o-mini'
