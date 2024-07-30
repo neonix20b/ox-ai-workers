@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ox-ai-workers (0.1.1)
+    ox-ai-workers (0.2.5)
       faraday (>= 1)
       faraday-multipart (>= 1)
       i18n (>= 1)

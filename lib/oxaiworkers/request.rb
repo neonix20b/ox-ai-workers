@@ -1,23 +1,25 @@
-class OxAiWorkers::Request < OxAiWorkers::ModuleRequest
-  alias_method :initialize, :initializeRequests 
+# frozen_string_literal: true
 
-  def finish
-    @custom_id = SecureRandom.uuid
-    cleanup()
-  end
+module OxAiWorkers
+  class Request < OxAiWorkers::ModuleRequest
+    alias initialize initializeRequests
 
-  def request!
-    begin
+    def finish
+      @custom_id = SecureRandom.uuid
+      cleanup
+    end
+
+    def request!
       response = @client.chat(parameters: params)
       parseChoices(response)
-      #@result = response.dig("choices", 0, "message", "content")
-      #puts response.inspect
+      # @result = response.dig("choices", 0, "message", "content")
+      # puts response.inspect
     rescue OpenAI::Error => e
       puts e.inspect
     end
-  end
 
-  def completed?
-    @result.present? or @errors.present? or @tool_calls.present?
+    def completed?
+      @result.present? or @errors.present? or @tool_calls.present?
+    end
   end
 end
