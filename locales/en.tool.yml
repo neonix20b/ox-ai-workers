@@ -8,3 +8,25 @@ en:
         sh:
           description: "Execute a sh command and get the result (stdout + stderr)"
           input: "Source command"
+      file_system:
+        list_directory:
+          description: 'File System Tool: Lists out the content of a specified directory'
+          directory_path: 'Directory path to list'
+        read_file:
+          description: 'File System Tool: Reads the contents of a file'
+          file_path: 'Path to the file to read from'
+        write_to_file:
+          description: 'File System Tool: Write content to a file'
+          file_path: 'Path to the file to write'
+          content: 'Content to write to the file'
+      database_tool:
+        list_tables:
+          description: 'Database Tool: Returns a list of tables in the database'
+        describe_tables:
+          description: 'Database Tool: Returns the schema for a list of tables'
+          tables: 'The tables to describe'
+        dump_schema:
+          description: 'Database Tool: Returns the database schema'
+        execute:
+          description: 'Database Tool: Executes a SQL query and returns the results'
+          input: 'SQL query to be executed'
