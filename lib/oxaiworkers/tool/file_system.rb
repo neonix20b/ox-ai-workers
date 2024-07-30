@@ -31,19 +31,23 @@ module OxAiWorkers
       end
 
       def list_directory(directory_path:)
+        puts "Listing directory: #{directory_path}"
         Dir.entries(directory_path)
       rescue Errno::ENOENT
         "No such directory: #{directory_path}"
       end
 
       def read_file(file_path:)
-        File.read(file_path)
+        puts "Reading file: #{file_path}"
+        File.read(file_path).to_s
       rescue Errno::ENOENT
         "No such file: #{file_path}"
       end
 
       def write_to_file(file_path:, content:)
+        puts "Writing to file: #{file_path}"
         File.write(file_path, content)
+        "Content was successfully written to the file: #{file_path}"
       rescue Errno::EACCES
         "Permission denied: #{file_path}"
       end
