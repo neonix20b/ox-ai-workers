@@ -131,9 +131,17 @@ As a worker, you can use different classes depending on your needs:
 oxaiworkers init
 ```
 
-This will create a `.oxaiworkers-local` directory with the necessary initial settings.
+This will create a `.oxaiworkers-local` directory with the necessary initial settings. 
 
-3. Modify the settings as needed and run:
+Additionally, you can initialize a more comprehensive example using the command:
+
+```sh
+oxaiworkers init full
+```
+
+After this, in the `my_assistant.rb` file, you can find an example of an assistant that uses a tool from the `tools/my_tool.rb` file. In the `start` file, you will find the algorithm for applying this assistant.
+
+3. Modify the code as needed and run:
 
 ```sh
 .oxaiworkers-local/start

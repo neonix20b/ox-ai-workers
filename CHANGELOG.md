@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.2.5] - 2024-07-30
+
+- Improved start template
+
 ## [0.2.4] - 2024-07-30
 
 - Complete template for initialization: `oxaiworkers init full`
