@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'ptools'
+
 module OxAiWorkers
   module Tool
     #
@@ -30,22 +32,30 @@ module OxAiWorkers
                            required: true
       end
 
+      def initialize
+        depends_on 'ptools'
+      end
+
       def list_directory(directory_path:)
-        puts "Listing directory: #{directory_path}"
+        puts Rainbow("Listing directory: #{directory_path}").magenta
         Dir.entries(directory_path)
       rescue Errno::ENOENT
         "No such directory: #{directory_path}"
       end
 
       def read_file(file_path:)
-        puts "Reading file: #{file_path}"
-        File.read(file_path).to_s
+        puts Rainbow("Reading file: #{file_path}").magenta
+        if File.binary?(file)
+          "File is binary: #{file_path}"
+        else
+          File.read(file_path).to_s
+        end
       rescue Errno::ENOENT
         "No such file: #{file_path}"
       end
 
       def write_to_file(file_path:, content:)
-        puts "Writing to file: #{file_path}"
+        puts Rainbow("Writing to file: #{file_path}").magenta
         File.write(file_path, content)
         "Content was successfully written to the file: #{file_path}"
       rescue Errno::EACCES

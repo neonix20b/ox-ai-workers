@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.4.1] - 2024-07-30
+
+- Binary reading is suppressed
+
 ## [0.4.0] - 2024-07-30
 
 - Added tools: `file_system`, `database`

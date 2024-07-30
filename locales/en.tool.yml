@@ -13,7 +13,7 @@ en:
           description: 'File System Tool: Lists out the content of a specified directory'
           directory_path: 'Directory path to list'
         read_file:
-          description: 'File System Tool: Reads the contents of a file'
+          description: 'File System Tool: Reads the contents of a text file'
           file_path: 'Path to the file to read from'
         write_to_file:
           description: 'File System Tool: Write content to a file'
