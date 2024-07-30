@@ -1,4 +1,4 @@
-[![Gem Version](https://badge.fury.io/rb/ox-ai-workers.svg)](https://badge.fury.io/rb/ox-ai-workers)
+[![Gem Version](https://badge.fury.io/rb/ox-ai-workers.svg)](https://rubygems.org/gems/ox-ai-workers)
 
 # OxAiWorkers (ox-ai-workers)
 
