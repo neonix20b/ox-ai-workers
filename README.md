@@ -28,8 +28,9 @@ Here's a basic example of how to use OxAiWorkers:
 
 ```ruby
 # Load localization files and set default locale
-I18n.load_path += Dir[File.expand_path("locales") + "/*.yml"] # only for pure Ruby
-I18n.default_locale = :en # only for pure Ruby
+# Uncomment this if you want to change the locale
+# require 'oxaiworkers/load_i18n' # only for pure Ruby
+# I18n.default_locale = :ru       # only for pure Ruby
 
 # Require the main gem
 require 'ox-ai-workers'

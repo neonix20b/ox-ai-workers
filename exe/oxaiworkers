@@ -14,7 +14,7 @@ if ARGV.first == 'init'
     puts "Error: The #{dir} directory already exists."
   else
     FileUtils.mkdir_p "#{dir}/locales"
-    FileUtils.copy_entry "#{source}/locales", "#{dest}/locales"
+    # FileUtils.copy_entry "#{source}/locales", "#{dest}/locales"
     if ARGV.last == 'full'
       FileUtils.copy_entry "#{source}/template", dest.to_s
     else

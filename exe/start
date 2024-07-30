@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'i18n'
-I18n.load_path += Dir["#{File.expand_path('.oxaiworkers-local/locales')}/*.yml"]
-I18n.default_locale = :en
+# Uncomment this if you want to change the locale
+# require 'oxaiworkers/load_i18n'
+# I18n.default_locale = :ru
 
 # Start your code here
 require 'ox-ai-workers'

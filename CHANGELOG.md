@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.3.1] - 2024-07-30
+
+- Friendly I18n
+
 ## [0.3.0] - 2024-07-30
 
 - on_inner_monologue: ->(text:) { puts Rainbow("monologue: #{text}").yellow }
