@@ -5,7 +5,7 @@ module OxAiWorkers
     attr_accessor :result, :client, :messages, :model, :max_tokens, :custom_id, :temperature, :tools, :errors,
                   :tool_calls_raw, :tool_calls
 
-    def initializeRequests(model: nil, max_tokens: nil, temperature: nil)
+    def initialize_requests(model: nil, max_tokens: nil, temperature: nil)
       # puts "call: ModuleRequest::#{__method__}"
       @max_tokens = max_tokens || OxAiWorkers.configuration.max_tokens
       @custom_id = SecureRandom.uuid
@@ -60,7 +60,7 @@ module OxAiWorkers
       nil
     end
 
-    def parseChoices(response)
+    def parse_choices(response)
       # puts response.inspect
       @tool_calls = []
       @result = response.dig('choices', 0, 'message', 'content')

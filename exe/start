@@ -5,7 +5,6 @@
 # require 'oxaiworkers/load_i18n'
 # I18n.default_locale = :ru
 
-# Start your code here
 require 'ox-ai-workers'
 require 'irb'
 

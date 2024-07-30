@@ -6,21 +6,21 @@ module OxAiWorkers
     attr_accessor :worker, :role, :messages, :context, :result, :tools, :queue, :monologue, :tasks, :milestones
     attr_accessor :on_inner_monologue, :on_outer_voice, :on_action_request, :on_pack_history
 
-    define_function :innerMonologue, description: I18n.t('oxaiworkers.iterator.inner_monologue.description') do
+    define_function :inner_monologue, description: I18n.t('oxaiworkers.iterator.inner_monologue.description') do
       property :speach, type: 'string', description: I18n.t('oxaiworkers.iterator.inner_monologue.speach'),
                         required: true
     end
 
-    define_function :outerVoice, description: I18n.t('oxaiworkers.iterator.outer_voice.description') do
+    define_function :outer_voice, description: I18n.t('oxaiworkers.iterator.outer_voice.description') do
       property :text, type: 'string', description: I18n.t('oxaiworkers.iterator.outer_voice.text'), required: true
     end
 
-    define_function :actionRequest, description: I18n.t('oxaiworkers.iterator.action_request.description') do
+    define_function :action_request, description: I18n.t('oxaiworkers.iterator.action_request.description') do
       property :action, type: 'string', description: I18n.t('oxaiworkers.iterator.action_request.action'),
                         required: true
     end
 
-    define_function :packHistory, description: I18n.t('oxaiworkers.iterator.pack_history.description') do
+    define_function :summarize, description: I18n.t('oxaiworkers.iterator.pack_history.description') do
       property :text, type: 'string', description: I18n.t('oxaiworkers.iterator.pack_history.text'), required: true
     end
 
@@ -49,24 +49,24 @@ module OxAiWorkers
       @tasks = []
       @milestones = []
       @messages = []
-      completeIteration
+      complete_iteration
     end
 
-    def innerMonologue(speach:)
+    def inner_monologue(speach:)
       # @queue.pop
       @queue << { role: :system, content: speach.to_s }
       @on_inner_monologue&.call(text: speach)
       nil
     end
 
-    def outerVoice(text:)
+    def outer_voice(text:)
       # @queue.pop
       @queue << { role: :system, content: text.to_s }
       @on_outer_voice&.call(text: text)
       nil
     end
 
-    def actionRequest(action:)
+    def action_request(action:)
       @result = action
       # @queue.pop
       @messages << { role: :system, content: action.to_s }
@@ -75,11 +75,11 @@ module OxAiWorkers
       nil
     end
 
-    def packHistory(text:)
+    def summarize(text:)
       @milestones << text.to_s
       @messages = []
       @worker.finish
-      rebuildWorker
+      rebuild_worker
       complete! if can_complete?
       @on_pack_history&.call(text: text)
       nil
@@ -87,11 +87,11 @@ module OxAiWorkers
 
     def init
       puts "call: #{__method__} state: #{state_name}"
-      rebuildWorker
+      rebuild_worker
       request!
     end
 
-    def rebuildWorker
+    def rebuild_worker
       @worker.messages = []
       @worker.append(role: :system, content: @role) if !@role.nil? && @role.present?
       @worker.append(role: :system, content: @monologue.join("\n"))
@@ -102,7 +102,7 @@ module OxAiWorkers
       @worker.tools = @tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten if @tools.any?
     end
 
-    def nextIteration
+    def next_iteration
       puts "call: #{__method__} state: #{state_name}"
       @worker.append(messages: @queue)
       @messages += @queue
@@ -110,7 +110,7 @@ module OxAiWorkers
       request!
     end
 
-    def externalRequest
+    def external_request
       puts "call: #{__method__} state: #{state_name}"
       @worker.request!
       ticker
@@ -122,7 +122,7 @@ module OxAiWorkers
       analyze!
     end
 
-    def processResult(_transition)
+    def process_result(_transition)
       puts "call: #{__method__} state: #{state_name}"
       @result = @worker.result || @worker.errors
       if @worker.tool_calls.present?
@@ -146,22 +146,22 @@ module OxAiWorkers
         #   iterate!
         # end
       elsif @worker.result.present?
-        actionRequest action: @worker.result
+        action_request action: @worker.result
       end
     end
 
-    def completeIteration
+    def complete_iteration
       @queue = []
       @worker.finish
     end
 
-    def addTask(task, auto_execute: true)
+    def add_task(task, auto_execute: true)
       @tasks << task
       @messages << { role: :user, content: task }
       execute if auto_execute
     end
 
-    def appendContext(text, role: :system)
+    def append_context(text, role: :system)
       @context << { role: role, content: text }
     end
 

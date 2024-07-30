@@ -2,7 +2,7 @@
 
 module OxAiWorkers
   class Request < OxAiWorkers::ModuleRequest
-    alias initialize initializeRequests
+    alias initialize initialize_requests
 
     def finish
       @custom_id = SecureRandom.uuid
@@ -11,7 +11,7 @@ module OxAiWorkers
 
     def request!
       response = @client.chat(parameters: params)
-      parseChoices(response)
+      parse_choices(response)
       # @result = response.dig("choices", 0, "message", "content")
       # puts response.inspect
     rescue OpenAI::Error => e

@@ -10,11 +10,11 @@ module OxAiWorkers
     state_machine :state, initial: :idle do
       before_transition from: any, do: :log_me
 
-      after_transition on: :iterate, do: :nextIteration
-      after_transition on: :request, do: :externalRequest
+      after_transition on: :iterate, do: :next_iteration
+      after_transition on: :request, do: :external_request
       after_transition on: :prepare, do: :init
-      after_transition on: :analyze, do: :processResult
-      after_transition on: :complete, do: :completeIteration
+      after_transition on: :analyze, do: :process_result
+      after_transition on: :complete, do: :complete_iteration
 
       event :prepare do
         transition %i[idle finished] => :prepared

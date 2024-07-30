@@ -41,10 +41,10 @@ require 'ox-ai-workers'
 sysop = OxAiWorkers::Assistant::Sysop.new(delayed: false, model: "gpt-4o")
 
 # Add a task to the assistant
-sysop.setTask("Add a cron job to synchronize files daily.")
+sysop.task = "Add a cron job to synchronize files daily."
 
 # Provide a response to the assistant's question
-sysop.addResponse("blah-blah-blah")
+sysop.add_response("blah-blah-blah")
 ```
 
 Alternatively, you can use a lower-level approach for more control:
@@ -72,10 +72,10 @@ iterator = OxAiWorkers::Iterator.new(
 iterator.role = "You are a software agent inside my computer"
 
 # Add a task to the iterator
-iterator.addTask("Show files in current dir")
+iterator.add_task("Show files in current dir")
 
 # Provide a response to the gpt's question
-iterator.addTask("linux")
+iterator.add_task("linux")
 ```
 
 ### With Config
@@ -95,10 +95,10 @@ Then you can create an assistant like this:
 
 ```ruby
 assistant = OxAiWorkers::Assistant::Sysop.new()
-assistant.setTask("your task")
+assistant.task = "your task"
 
 # Provide a response to the assistant's question
-assistant.addResponse("blah-blah-blah")
+assistant.add_response("blah-blah-blah")
 ```
 
 Or you can create a lower-level iterator for more control:
@@ -117,9 +117,9 @@ iterator = OxAiWorkers::Iterator.new(
     on_pack_history: ->(text:) { puts Rainbow("summary: #{text}").blue } 
   )
 
-iterator.addTask("Show files in current directory.")
+iterator.add_task("Show files in current directory.")
 # ...
-iterator.addTask("linux")
+iterator.add_task("linux")
 ```
 
 This way, you have the flexibility to choose between a higher-level assistant for simplicity or a lower-level iterator for finer control over the tasks and tools used.
@@ -187,11 +187,11 @@ en:
         text: "Listing important facts and nuances"
       monologue:
         - "Step 1: Develop your own solution to the problem. Take initiative and make assumptions."
-        - "Step 1.1: Wrap all your work for this step in the innerMonologue function."
+        - "Step 1.1: Wrap all your work for this step in the inner_monologue function."
         - "Step 2: Relate your solution to the task, improve it, and call the necessary functions step by step."
-        - "Step 2.1: Interact with the user using the outerVoice and actionRequest functions during the process."
-        - "Step 3: When the solution is ready, report it using the outerVoice function."
-        - "Step 4: Save facts, nuances, and actions using the packHistory function."
+        - "Step 2.1: Interact with the user using the outer_voice and action_request functions during the process."
+        - "Step 3: When the solution is ready, report it using the outer_voice function."
+        - "Step 4: Save facts, nuances, and actions using the summarize function."
     tool:
       eval:
         ruby:

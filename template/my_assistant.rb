@@ -8,7 +8,7 @@ class MyAssistant
 
   def initialize(delayed: false, model: nil)
     @iterator = OxAiWorkers::Iterator.new(
-      worker: initWorker(delayed: delayed, model: model),
+      worker: init_worker(delayed: delayed, model: model),
       role: 'You are a software agent inside my computer',
       tools: [MyTool.new],
       on_inner_monologue: ->(text:) { puts Rainbow("monologue: #{text}").yellow },

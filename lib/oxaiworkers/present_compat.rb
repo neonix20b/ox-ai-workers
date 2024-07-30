@@ -11,9 +11,9 @@ module OxAiWorkers
     def camelize(first_letter = :upper)
       string = dup
       string = if first_letter == :upper
-                 string.sub(/^[a-z\d]*/) { |match| match.capitalize }
+                 string.sub(/^[a-z\d]*/, &:capitalize)
                else
-                 string.sub(/^(?:(?=\b|[A-Z_])|\w)/) { |match| match.downcase }
+                 string.sub(/^(?:(?=\b|[A-Z_])|\w)/, &:downcase)
                end
       string.gsub(%r{(?:_|(/))([a-z\d]*)}) do
         "#{::Regexp.last_match(1)}#{::Regexp.last_match(2).capitalize}"

@@ -24,5 +24,6 @@ end
 
 # Main algorithm
 @assistant = MyAssistant.new
+@assistant.task = '2 + 2 is ?'
 
 IRB.start(__FILE__)

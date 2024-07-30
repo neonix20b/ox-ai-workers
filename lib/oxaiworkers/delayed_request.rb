@@ -3,14 +3,14 @@
 module OxAiWorkers
   class DelayedRequest < OxAiWorkers::StateBatch
     def initialize(batch_id: nil, model: nil, max_tokens: nil, temperature: nil)
-      initializeRequests(model: model, max_tokens: max_tokens, temperature: temperature)
+      initialize_requests(model: model, max_tokens: max_tokens, temperature: temperature)
       @custom_id = nil if batch_id.present?
       @batch_id = batch_id
       @file_id = nil
       super()
     end
 
-    def postBatch
+    def post_batch
       response = @client.batches.create(
         parameters: {
           input_file_id: @file_id,
@@ -21,11 +21,11 @@ module OxAiWorkers
       @batch_id = response['id']
     end
 
-    def cancelBatch
+    def cancel_batch
       not_found_is_ok { @client.batches.cancel(id: @batch_id) }
     end
 
-    def cleanStorage
+    def clean_storage
       if @batch_id.present?
         batch = @client.batches.retrieve(id: @batch_id)
         if !batch['output_file_id'].nil?
@@ -49,7 +49,7 @@ module OxAiWorkers
       end_batch! unless batch_idle?
     end
 
-    def uploadToStorage
+    def upload_to_storage
       item = {
         "custom_id": @custom_id,
         "method": 'POST',
@@ -96,7 +96,7 @@ module OxAiWorkers
         output.each do |line|
           @custom_id = line['custom_id']
           # @result = line.dig("response", "body", "choices", 0, "message", "content")
-          parseChoices(line.dig('response', 'body'))
+          parse_choices(line.dig('response', 'body'))
           complete_batch!
         end
       elsif !batch['error_file_id'].nil?

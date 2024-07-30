@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.5.0] - 2024-07-30
+
+- snake_cased function names
+
 ## [0.4.2] - 2024-07-30
 
 - Binary reading is suppressed

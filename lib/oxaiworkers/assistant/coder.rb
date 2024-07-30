@@ -7,7 +7,7 @@ module OxAiWorkers
 
       def initialize(delayed: false, model: nil, language: 'ruby')
         @iterator = Iterator.new(
-          worker: initWorker(delayed: delayed, model: model),
+          worker: init_worker(delayed: delayed, model: model),
           role: format(I18n.t('oxaiworkers.assistant.coder.role'), language),
           tools: [Tool::Eval.new, Tool::FileSystem.new],
           on_inner_monologue: ->(text:) { puts Rainbow("monologue: #{text}").yellow },

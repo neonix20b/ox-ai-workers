@@ -14,10 +14,10 @@ module OxAiWorkers
       before_transition from: any, do: :log_me
 
       after_transition on: :end, do: :cleanup
-      before_transition on: :process, do: :postBatch
-      after_transition on: :cancel, do: %i[cancelBatch complete_batch!]
-      after_transition on: :complete, do: [:cleanStorage]
-      after_transition on: :prepare, do: :uploadToStorage
+      before_transition on: :process, do: :post_batch
+      after_transition on: :cancel, do: %i[cancel_batch complete_batch!]
+      after_transition on: :complete, do: [:clean_storage]
+      after_transition on: :prepare, do: :upload_to_storage
 
       event :end do
         transition %i[finished canceled] => :idle
