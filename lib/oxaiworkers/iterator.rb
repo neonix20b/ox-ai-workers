@@ -30,7 +30,7 @@ module OxAiWorkers
       @worker = worker
       @tools = [self] + tools
       @role = role
-      @context = nil
+      @context = []
       @monologue = I18n.t('oxaiworkers.iterator.monologue')
 
       @on_inner_monologue = on_inner_monologue
@@ -80,7 +80,7 @@ module OxAiWorkers
       @messages = []
       @worker.finish
       rebuild_worker
-      complete! if can_complete?
+      # complete! if can_complete?
       @on_pack_history&.call(text: text)
       nil
     end
@@ -176,7 +176,7 @@ module OxAiWorkers
     end
 
     def valid?
-      @messages.any?
+      @messages.present? || @milestones.present?
     end
   end
 end

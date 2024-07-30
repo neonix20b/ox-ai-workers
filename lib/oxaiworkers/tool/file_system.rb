@@ -39,14 +39,20 @@ module OxAiWorkers
 
       def list_directory(directory_path:)
         puts Rainbow("Listing directory: #{directory_path}").magenta
-        Dir.entries(directory_path)
+        list = Dir.entries(directory_path)
+        list.delete_if { |f| f.start_with?('.') }
+        if list.present?
+          "Contents of directory \"#{directory_path}\":\n #{list.join("\n")}"
+        else
+          "Directory is empty: #{directory_path}"
+        end
       rescue Errno::ENOENT
         "No such directory: #{directory_path}"
       end
 
       def read_file(file_path:)
         puts Rainbow("Reading file: #{file_path}").magenta
-        if File.binary?(file)
+        if File.binary?(file_path)
           "File is binary: #{file_path}"
         else
           File.read(file_path).to_s

@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.5.1] - 2024-07-30
+
+- Improved FileSystem functionality
+- Catch errors when eval sh command
+- Fixed `execute` in Iterator
+
 ## [0.5.0] - 2024-07-30
 
 - snake_cased function names
