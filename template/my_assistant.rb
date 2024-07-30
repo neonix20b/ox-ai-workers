@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'tools/my_tool'
+
 class MyAssistant
   include OxAiWorkers::Assistant::ModuleBase
 

@@ -3,6 +3,8 @@
 
 require 'fileutils'
 
+puts 'Welcome to OxAiWorkers!'
+
 if ARGV.first == 'init'
   dir = '.oxaiworkers-local'
   dest = "#{Dir.pwd}/#{dir}"
@@ -13,9 +15,12 @@ if ARGV.first == 'init'
   else
     FileUtils.mkdir_p "#{dir}/locales"
     FileUtils.copy_entry "#{source}/locales", "#{dest}/locales"
-    FileUtils.cp("#{source}/exe/start", dest)
+    if ARGV.last == 'full'
+      FileUtils.copy_entry "#{source}/template", dest.to_s
+    else
+      FileUtils.cp("#{source}/exe/start", dest)
+    end
     puts "A #{dir} directory was created with the necessary initial settings."
-    puts 'Modify the settings as needed and run:'
-    puts "#{dir}/start"
+    puts "Modify the settings as needed and run: #{dir}/start"
   end
 end

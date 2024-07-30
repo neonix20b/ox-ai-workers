@@ -8,6 +8,7 @@ I18n.default_locale = :en
 # Start your code here
 require 'ox-ai-workers'
 require 'irb'
+require_relative 'my_assistant'
 
 puts "OxAiWorkers #{OxAiWorkers::VERSION}"
 
