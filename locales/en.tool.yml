@@ -1,0 +1,10 @@
+en:
+  oxaiworkers:
+    tool:
+      eval:
+        ruby:
+          description: "Execute Ruby code and return the result of the last expression"
+          input: "Ruby source code"
+        sh:
+          description: "Execute a sh command and get the result (stdout + stderr)"
+          input: "Source command"

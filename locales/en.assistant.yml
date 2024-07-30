@@ -1,0 +1,5 @@
+en:
+  oxaiworkers:
+    assistant:
+      sysop:
+        role: "You are a software agent inside my computer"
