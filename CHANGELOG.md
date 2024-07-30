@@ -1,8 +1,9 @@
 ## [Unreleased]
 
-## [0.4.1] - 2024-07-30
+## [0.4.2] - 2024-07-30
 
 - Binary reading is suppressed
+- Command output code is returned if the command output is empty
 
 ## [0.4.0] - 2024-07-30
 

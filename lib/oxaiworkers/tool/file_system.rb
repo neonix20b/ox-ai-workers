@@ -12,6 +12,7 @@ module OxAiWorkers
     #
     class FileSystem
       extend OxAiWorkers::ToolDefinition
+      include OxAiWorkers::DependencyHelper
 
       define_function :list_directory,
                       description: I18n.t('oxaiworkers.tool.file_system.list_directory.description') do

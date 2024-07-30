@@ -23,8 +23,10 @@ module OxAiWorkers
 
       def sh(input:)
         puts Rainbow("Executing sh: \"#{input}\"").red
-        stdout_and_stderr_s, = Open3.capture2e(input)
-        stdout_and_stderr_s
+        stdout_and_stderr_s, status = Open3.capture2e(input)
+        return stdout_and_stderr_s if stdout_and_stderr_s.present?
+
+        status.to_s
       end
     end
   end
