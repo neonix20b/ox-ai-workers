@@ -131,7 +131,7 @@ As a worker, you can use different classes depending on your needs:
 oxaiworkers init
 ```
 
-This will create a `.oxaiworkers-local` directory with the necessary initial settings. 
+This will create a `.oxaiworkers-local` directory with the necessary initial source code. 
 
 Additionally, you can initialize a more comprehensive example using the command:
 
