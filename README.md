@@ -101,10 +101,18 @@ assistant.addResponse("blah-blah-blah")
 Or you can create a lower-level iterator for more control:
 
 ```ruby
+my_worker = OxAiWorkers::Request.new
+my_tool = OxAiWorkers::Tool::Eval.new
+
 iterator = OxAiWorkers::Iterator.new(
-  worker: OxAiWorkers::Request.new, 
-  tools: [OxAiWorkers::Tool::Eval.new],
-  role: "You are a software agent inside my computer" )
+    worker: my_worker, 
+    tools: [my_tool],
+    role: "You are a software agent inside my computer",
+    on_inner_monologue: ->(text:) { puts Rainbow("monologue: #{text}").yellow },
+    on_outer_voice: ->(text:) { puts Rainbow("voice: #{text}").green },
+    on_action_request: ->(text:) { puts Rainbow("action: #{text}").red },
+    on_pack_history: ->(text:) { puts Rainbow("summary: #{text}").blue } 
+  )
 
 iterator.addTask("Show files in current directory.")
 # ...

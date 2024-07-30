@@ -4,6 +4,7 @@ module OxAiWorkers
   class Iterator < OxAiWorkers::StateTools
     extend OxAiWorkers::ToolDefinition
     attr_accessor :worker, :role, :messages, :context, :result, :tools, :queue, :monologue, :tasks, :milestones
+    attr_accessor :on_inner_monologue, :on_outer_voice, :on_action_request, :on_pack_history
 
     define_function :innerMonologue, description: I18n.t('oxaiworkers.iterator.inner_monologue.description') do
       property :speach, type: 'string', description: I18n.t('oxaiworkers.iterator.inner_monologue.speach'),
@@ -23,13 +24,20 @@ module OxAiWorkers
       property :text, type: 'string', description: I18n.t('oxaiworkers.iterator.pack_history.text'), required: true
     end
 
-    def initialize(worker:, role: nil, tools: [])
+    def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil, on_action_request: nil,
+                   on_pack_history: nil)
       puts "call: #{__method__}"
       @worker = worker
       @tools = [self] + tools
       @role = role
       @context = nil
       @monologue = I18n.t('oxaiworkers.iterator.monologue')
+
+      @on_inner_monologue = on_inner_monologue
+      @on_outer_voice = on_outer_voice
+      @on_action_request = on_action_request
+      @on_pack_history = on_pack_history
+
       cleanup
 
       super()
@@ -45,35 +53,35 @@ module OxAiWorkers
     end
 
     def innerMonologue(speach:)
-      puts Rainbow("monologue: #{speach}").yellow
       @queue.pop
       @queue << { role: :system, content: "#{__method__}: #{speach}" }
+      @on_inner_monologue&.call(text: speach)
       nil
     end
 
     def outerVoice(text:)
-      puts Rainbow("voice: #{text}").green
       @queue.pop
       @queue << { role: :system, content: "#{__method__}: #{text}" }
+      @on_outer_voice&.call(text: text)
       nil
     end
 
     def actionRequest(action:)
-      puts Rainbow("action: #{action}").red
       @result = action
       @queue.pop
       @messages << { role: :system, content: "#{__method__}: #{action}" }
       complete! if can_complete?
+      @on_action_request&.call(text: action)
       nil
     end
 
     def packHistory(text:)
-      puts Rainbow("summarize: #{text}").blue
       @milestones << "#{__method__}: #{text}"
       @messages = []
       @worker.finish
       rebuildWorker
       complete! if can_complete?
+      @on_pack_history&.call(text: text)
       nil
     end
 

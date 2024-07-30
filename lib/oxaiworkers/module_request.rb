@@ -54,7 +54,7 @@ module OxAiWorkers
       parameters
     end
 
-    def not_found_is_ok(&block)
+    def not_found_is_ok
       yield
     rescue Faraday::ResourceNotFound => e
       nil
