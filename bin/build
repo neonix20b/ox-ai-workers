@@ -2,4 +2,4 @@
 
 rm -rf ox-ai-workers-*.gem
 gem build ox-ai-workers.gemspec
-gem push ox-ai-workers-*.gem
+# gem push ox-ai-workers-*.gem

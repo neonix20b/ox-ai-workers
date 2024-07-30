@@ -16,6 +16,6 @@ OxAiWorkers.configure do |config|
   config.model = 'gpt-4o-mini'
 end
 
-@assistant = OxAiWorkers::Assistant::Sysop.new
+@assistant = MyAssistant.new
 
 IRB.start(__FILE__)

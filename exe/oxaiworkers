@@ -1,20 +1,21 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'fileutils'
 
-if ARGV.first == "init"
-	dir = '.oxaiworkers-local'
-	dest = "#{Dir.pwd}/#{dir}"
-	source = File.expand_path('../../', __FILE__)
+if ARGV.first == 'init'
+  dir = '.oxaiworkers-local'
+  dest = "#{Dir.pwd}/#{dir}"
+  source = File.expand_path('..', __dir__)
 
-	unless Dir.exist? dir
-		FileUtils.mkdir_p dir + "/locales"
-		FileUtils.copy_entry source + "/locales", dest + "/locales"
-		FileUtils.cp(source+"/exe/start", dest)
-		puts "A #{dir} directory was created with the necessary initial settings."
-		puts "Modify the settings as needed and run:"
-		puts "#{dir}/start"
-	else
-		puts "Error: The #{dir} directory already exists."
-	end
+  if Dir.exist? dir
+    puts "Error: The #{dir} directory already exists."
+  else
+    FileUtils.mkdir_p "#{dir}/locales"
+    FileUtils.copy_entry "#{source}/locales", "#{dest}/locales"
+    FileUtils.cp("#{source}/exe/start", dest)
+    puts "A #{dir} directory was created with the necessary initial settings."
+    puts 'Modify the settings as needed and run:'
+    puts "#{dir}/start"
+  end
 end
