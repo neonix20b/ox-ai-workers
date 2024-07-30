@@ -53,30 +53,30 @@ module OxAiWorkers
     end
 
     def innerMonologue(speach:)
-      @queue.pop
-      @queue << { role: :system, content: "#{__method__}: #{speach}" }
+      # @queue.pop
+      @queue << { role: :system, content: speach.to_s }
       @on_inner_monologue&.call(text: speach)
       nil
     end
 
     def outerVoice(text:)
-      @queue.pop
-      @queue << { role: :system, content: "#{__method__}: #{text}" }
+      # @queue.pop
+      @queue << { role: :system, content: text.to_s }
       @on_outer_voice&.call(text: text)
       nil
     end
 
     def actionRequest(action:)
       @result = action
-      @queue.pop
-      @messages << { role: :system, content: "#{__method__}: #{action}" }
+      # @queue.pop
+      @messages << { role: :system, content: action.to_s }
       complete! if can_complete?
       @on_action_request&.call(text: action)
       nil
     end
 
     def packHistory(text:)
-      @milestones << "#{__method__}: #{text}"
+      @milestones << text.to_s
       @messages = []
       @worker.finish
       rebuildWorker
@@ -126,7 +126,7 @@ module OxAiWorkers
       puts "call: #{__method__} state: #{state_name}"
       @result = @worker.result || @worker.errors
       if @worker.tool_calls.present?
-        @queue << { role: :system, content: @worker.tool_calls_raw.to_s }
+        @queue << { role: :assistant, content: @worker.tool_calls_raw.to_s }
         @worker.tool_calls.each do |external_call|
           tool = @tools.select do |t|
             t.class.tool_name == external_call[:class] && t.respond_to?(external_call[:name])

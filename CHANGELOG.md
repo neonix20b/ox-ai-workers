@@ -4,6 +4,7 @@
 
 - Binary reading is suppressed
 - Command output code is returned if the command output is empty
+- Fixed roles when calling functions.
 
 ## [0.4.0] - 2024-07-30
 

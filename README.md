@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/ox-ai-workers.svg)](https://badge.fury.io/rb/ox-ai-workers)
+
 # OxAiWorkers (ox-ai-workers)
 
 OxAiWorkers is a Ruby gem that implements a finite state machine (using the `state_machine` gem) to solve tasks using generative intelligence (with the `ruby-openai` gem). This approach enhances the final result by utilizing internal monologue and external tools.
