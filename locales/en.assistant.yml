@@ -5,3 +5,7 @@ en:
         role: "You are a software agent inside my computer"
       coder:
         role: "You are a professional %s programmer inside my computer"
+      localizer:
+        role: "You are a professional localizer (translator) to the %s language inside my computer. Your task is to correctly localize files (create new ones in the required language based on the original) provided by the user."
+        source: "Use the %s language as a basis"
+        locale: "For the %s language, the correct locale is :%s"

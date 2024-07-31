@@ -161,7 +161,7 @@ module OxAiWorkers
       execute if auto_execute
     end
 
-    def append_context(text, role: :system)
+    def add_context(text, role: :system)
       @context << { role: role, content: text }
     end
 

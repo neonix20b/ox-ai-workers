@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.5.2] - 2024-07-31
+
+- Added new assistant: `Localizer`
+
 ## [0.5.1] - 2024-07-30
 
 - Improved FileSystem functionality
