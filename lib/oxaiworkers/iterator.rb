@@ -25,12 +25,12 @@ module OxAiWorkers
     end
 
     def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil, on_action_request: nil,
-                   on_pack_history: nil)
+                   on_pack_history: nil, steps: nil)
       @worker = worker
       @tools = [self] + tools
       @role = role
       @context = []
-      @monologue = I18n.t('oxaiworkers.iterator.monologue')
+      @monologue = steps || I18n.t('oxaiworkers.iterator.monologue')
 
       @on_inner_monologue = on_inner_monologue
       @on_outer_voice = on_outer_voice
@@ -143,10 +143,10 @@ module OxAiWorkers
       @worker.finish
     end
 
-    def add_task(task, auto_execute: true)
+    def add_task(task)
       @tasks << task
       @messages << { role: :user, content: task }
-      execute if auto_execute
+      execute if OxAiWorkers.configuration.auto_execute
     end
 
     def add_context(text, role: :system)

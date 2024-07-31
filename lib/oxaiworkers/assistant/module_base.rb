@@ -14,6 +14,10 @@ module OxAiWorkers
         @iterator.add_task text
       end
 
+      def execute
+        @iterator.execute
+      end
+
       def init_worker(delayed:, model:)
         worker = delayed ? DelayedRequest.new : Request.new
         worker.model = model || OxAiWorkers.configuration.model

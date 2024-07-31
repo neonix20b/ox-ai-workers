@@ -3,6 +3,8 @@
 ## [0.5.3] - 2024-07-31
 
 - Fixed summarize state
+- Added `auto_execute` for `Iterator`
+- Added `steps` for `Iterator`
 
 ## [0.5.2] - 2024-07-31
 
