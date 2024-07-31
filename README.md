@@ -1,6 +1,6 @@
-[![Gem Version](https://badge.fury.io/rb/ox-ai-workers.svg)](https://rubygems.org/gems/ox-ai-workers)
-
 # OxAiWorkers (ox-ai-workers)
+
+[![Gem Version](https://badge.fury.io/rb/ox-ai-workers.svg)](https://rubygems.org/gems/ox-ai-workers)
 
 OxAiWorkers is a Ruby gem that implements a finite state machine (using the `state_machine` gem) to solve tasks using generative intelligence (with the `ruby-openai` gem). This approach enhances the final result by utilizing internal monologue and external tools.
 
@@ -165,7 +165,7 @@ As a worker, you can use different classes depending on your needs:
 oxaiworkers init
 ```
 
-This will create a `.oxaiworkers-local` directory with the necessary initial source code. 
+This will create a `.oxaiworkers-local` directory with the necessary initial source code.
 
 Additionally, you can initialize a more comprehensive example using the command:
 
@@ -199,7 +199,7 @@ OxAiWorkers.logger.level = :debug
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/neonix20b/ox-ai-workers. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/neonix20b/ox-ai-workers/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at <https://github.com/neonix20b/ox-ai-workers>. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/neonix20b/ox-ai-workers/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
