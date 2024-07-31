@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.5.3] - 2024-07-31
+
+- Fixed summarize state
+
 ## [0.5.2] - 2024-07-31
 
 - Added new assistant: `Localizer`

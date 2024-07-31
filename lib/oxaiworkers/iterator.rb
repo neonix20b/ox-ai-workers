@@ -53,14 +53,14 @@ module OxAiWorkers
 
     def inner_monologue(speach:)
       # @queue.pop
-      @queue << { role: :system, content: speach.to_s }
+      @queue << { role: :assistant, content: speach.to_s }
       @on_inner_monologue&.call(text: speach)
       nil
     end
 
     def outer_voice(text:)
       # @queue.pop
-      @queue << { role: :system, content: text.to_s }
+      @queue << { role: :assistant, content: text.to_s }
       @on_outer_voice&.call(text: text)
       nil
     end
@@ -68,7 +68,7 @@ module OxAiWorkers
     def action_request(action:)
       @result = action
       # @queue.pop
-      @messages << { role: :system, content: action.to_s }
+      @messages << { role: :assistant, content: action.to_s }
       complete! if can_complete?
       @on_action_request&.call(text: action)
       nil
@@ -77,6 +77,7 @@ module OxAiWorkers
     def summarize(text:)
       @milestones << text.to_s
       @messages = []
+      @queue << { role: :assistant, content: I18n.t('oxaiworkers.iterator.pack_history.result') }
       @worker.finish
       rebuild_worker
       # complete! if can_complete?
@@ -91,13 +92,13 @@ module OxAiWorkers
 
     def rebuild_worker
       @worker.messages = []
-      @worker.append(role: :system, content: @role) if !@role.nil? && @role.present?
+      @worker.append(role: :system, content: @role) if @role.present?
       @worker.append(role: :system, content: @monologue.join("\n"))
-      @worker.append(messages: @context) if !@context.nil? and @context.any?
+      @worker.append(messages: @context) if @context.present?
       @tasks.each { |task| @worker.append(role: :user, content: task) }
-      @milestones.each { |milestone| @worker.append(role: :system, content: milestone) }
+      @milestones.each { |milestone| @worker.append(role: :assistant, content: milestone) }
       @worker.append(messages: @messages)
-      @worker.tools = @tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten if @tools.any?
+      @worker.tools = @tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten if @tools.present?
     end
 
     def next_iteration
@@ -127,18 +128,11 @@ module OxAiWorkers
           end.first
           unless tool.nil?
             out = tool.send(external_call[:name], **external_call[:args])
-            @queue << { role: :system, content: out.to_s } if out.present?
+            @queue << { role: :user, content: out.to_s } if out.present?
           end
         end
         @worker.finish
         iterate! if can_iterate?
-
-        # tool = @tools.select{|t| t.class.tool_name == @worker.external_call[:class] && t.respond_to?(@worker.external_call[:name]) }.first
-        # out = tool.send(@worker.external_call[:name], **@worker.external_call[:args])
-        # if can_iterate?
-        #   @queue << {role: :system, content: out.to_s} if out.present?
-        #   iterate!
-        # end
       elsif @worker.result.present?
         action_request action: @worker.result
       end

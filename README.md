@@ -174,46 +174,6 @@ OxAiWorkers.logger.level = :debug
 - **External Tools**: Integrates with external tools and services to complete tasks.
 - **Finite State Machine**: Implements a robust state machine to manage task states and transitions.
 
-## Configuration
-
-OxAiWorkers uses YAML files for configuration. Below is an example configuration:
-
-```yaml
-en:
-  oxaiworkers:
-    iterator:
-      inner_monologue:
-        description: "Use inner monologue to plan the response and articulate main points"
-        speech: "Text"
-      outer_voice:
-        description: "Provide the user with necessary information without expecting a response"
-        text: "Text"
-      action_request:
-        description: "Ask a clarifying question or request an action with a response from the user"
-        action: "Text"
-      pack_history:
-        description: "Save facts, nuances, and actions before clearing messages"
-        text: "Listing important facts and nuances"
-      monologue:
-        - "Step 1: Develop your own solution to the problem. Take initiative and make assumptions."
-        - "Step 1.1: Wrap all your work for this step in the inner_monologue function."
-        - "Step 2: Relate your solution to the task, improve it, and call the necessary functions step by step."
-        - "Step 2.1: Interact with the user using the outer_voice and action_request functions during the process."
-        - "Step 3: When the solution is ready, report it using the outer_voice function."
-        - "Step 4: Save facts, nuances, and actions using the summarize function."
-    tool:
-      eval:
-        ruby:
-          description: "Execute Ruby code and return the result of the last expression"
-          input: "Ruby source code"
-        sh:
-          description: "Execute a sh command and get the result (stdout + stderr)"
-          input: "Source command"
-    assistant:
-      sysop:
-        role: "You are a software agent inside my computer"
-```
-
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/neonix20b/ox-ai-workers. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/neonix20b/ox-ai-workers/blob/main/CODE_OF_CONDUCT.md).

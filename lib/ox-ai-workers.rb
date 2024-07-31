@@ -28,6 +28,7 @@ require_relative 'oxaiworkers/tool/file_system'
 require_relative 'oxaiworkers/assistant/module_base'
 require_relative 'oxaiworkers/assistant/sysop'
 require_relative 'oxaiworkers/assistant/coder'
+require_relative 'oxaiworkers/assistant/localizer'
 
 module OxAiWorkers
   DEFAULT_MODEL = 'gpt-4o-mini'
