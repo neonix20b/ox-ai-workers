@@ -56,10 +56,5 @@ module OxAiWorkers
       @batch_id = nil
       super()
     end
-
-    def initialize
-      puts "call: StateBatch::#{__method__}"
-      super()
-    end
   end
 end

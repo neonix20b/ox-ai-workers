@@ -22,6 +22,8 @@ OxAiWorkers.configure do |config|
   config.model = 'gpt-4o-mini'
 end
 
+# OxAiWorkers.logger.level = :debug
+
 # Main algorithm
 @assistant = MyAssistant.new
 @assistant.task = '2 + 2 is ?'

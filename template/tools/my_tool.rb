@@ -9,7 +9,7 @@ class MyTool
   end
 
   def sh(input:)
-    puts "Executing sh: \"#{input}\""
+    OxAiWorkers.logger.info("Executing sh: \"#{input}\"", for: self.class)
     stdout_and_stderr_s, = Open3.capture2e(input)
     stdout_and_stderr_s
   end

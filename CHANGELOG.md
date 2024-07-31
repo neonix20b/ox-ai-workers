@@ -3,6 +3,7 @@
 ## [0.5.2] - 2024-07-31
 
 - Added new assistant: `Localizer`
+- Added logger
 
 ## [0.5.1] - 2024-07-30
 
@@ -31,10 +32,10 @@
 
 ## [0.3.0] - 2024-07-30
 
-- on_inner_monologue: ->(text:) { puts Rainbow("monologue: #{text}").yellow }
-- on_outer_voice: ->(text:) { puts Rainbow("voice: #{text}").green }
-- on_action_request: ->(text:) { puts Rainbow("action: #{text}").red }
-- on_pack_history: ->(text:) { puts Rainbow("summary: #{text}").blue }
+- on_inner_monologue: ->(text:) { puts "monologue: #{text}" }
+- on_outer_voice: ->(text:) { puts "voice: #{text}" }
+- on_action_request: ->(text:) { puts "action: #{text}" }
+- on_pack_history: ->(text:) { puts "summary: #{text}" }
 
 ## [0.2.5] - 2024-07-30
 

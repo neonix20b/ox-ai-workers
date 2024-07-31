@@ -26,7 +26,6 @@ module OxAiWorkers
 
     def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil, on_action_request: nil,
                    on_pack_history: nil)
-      puts "call: #{__method__}"
       @worker = worker
       @tools = [self] + tools
       @role = role
@@ -86,7 +85,6 @@ module OxAiWorkers
     end
 
     def init
-      puts "call: #{__method__} state: #{state_name}"
       rebuild_worker
       request!
     end
@@ -103,7 +101,6 @@ module OxAiWorkers
     end
 
     def next_iteration
-      puts "call: #{__method__} state: #{state_name}"
       @worker.append(messages: @queue)
       @messages += @queue
       @queue = []
@@ -111,19 +108,16 @@ module OxAiWorkers
     end
 
     def external_request
-      puts "call: #{__method__} state: #{state_name}"
       @worker.request!
       ticker
     end
 
     def ticker
-      puts "call: #{__method__} state: #{state_name}"
       sleep(60) until @worker.completed?
       analyze!
     end
 
     def process_result(_transition)
-      puts "call: #{__method__} state: #{state_name}"
       @result = @worker.result || @worker.errors
       if @worker.tool_calls.present?
         @queue << { role: :assistant, content: @worker.tool_calls_raw.to_s }
@@ -166,12 +160,10 @@ module OxAiWorkers
     end
 
     def execute
-      puts "call: #{__method__} state: #{state_name}"
       prepare! if valid?
     end
 
     def cancel
-      puts "call: #{__method__} state: #{state_name}"
       @worker.cancel if @worker.respond_to?(:cancel)
     end
 

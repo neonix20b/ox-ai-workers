@@ -72,7 +72,7 @@ module OxAiWorkers
       #
       # @return [String] Database schema
       def dump_schema
-        puts('Dumping schema tables and keys', for: self.class)
+        OxAiWorkers.logger.debug('Dumping schema tables and keys', for: self.class)
         schema = ''
         db.tables.each do |table|
           describe_table(table, schema)
@@ -108,10 +108,11 @@ module OxAiWorkers
       # @param input [String] SQL query to be executed
       # @return [Array] Results from the SQL query
       def execute(input:)
-        puts("Executing \"#{input}\"", for: self.class)
+        OxAiWorkers.logger.info("Executing \"#{input}\"", for: self.class)
 
         db[input].to_a
       rescue Sequel::DatabaseError => e
+        OxAiWorkers.logger.info(e.message, for: self.class)
         e.message
       end
     end

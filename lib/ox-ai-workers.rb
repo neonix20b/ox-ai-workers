@@ -2,12 +2,13 @@
 
 require 'faraday'
 require 'faraday/multipart'
-require 'rainbow'
+require 'colorize'
 require 'openai'
 require 'yaml'
 require 'json'
 
 require_relative 'oxaiworkers/version'
+require_relative 'oxaiworkers/contextual_logger'
 require_relative 'oxaiworkers/load_i18n'
 require_relative 'oxaiworkers/present_compat'
 require_relative 'oxaiworkers/module_request'
@@ -54,7 +55,16 @@ module OxAiWorkers
 
   class << self
     attr_writer :configuration
+    attr_reader :logger
+
+    # @param logger [Logger]
+    # @return [ContextualLogger]
+    def logger=(logger)
+      @logger = ContextualLogger.new(logger)
+    end
   end
+
+  self.logger ||= ::Logger.new($stdout, level: :info)
 
   def self.configuration
     @configuration ||= OxAiWorkers::Configuration.new

@@ -38,7 +38,7 @@ module OxAiWorkers
       end
 
       def list_directory(directory_path:)
-        puts Rainbow("Listing directory: #{directory_path}").magenta
+        OxAiWorkers.logger.info("Listing directory: #{directory_path}", for: self.class)
         list = Dir.entries(directory_path)
         list.delete_if { |f| f.start_with?('.') }
         if list.present?
@@ -51,7 +51,7 @@ module OxAiWorkers
       end
 
       def read_file(file_path:)
-        puts Rainbow("Reading file: #{file_path}").magenta
+        OxAiWorkers.logger.info("Reading file: #{file_path}", for: self.class)
         if File.binary?(file_path)
           "File is binary: #{file_path}"
         else
@@ -62,7 +62,7 @@ module OxAiWorkers
       end
 
       def write_to_file(file_path:, content:)
-        puts Rainbow("Writing to file: #{file_path}").magenta
+        OxAiWorkers.logger.info("Writing to file: #{file_path}", for: self.class)
         File.write(file_path, content)
         "Content was successfully written to the file: #{file_path}"
       rescue Errno::EACCES

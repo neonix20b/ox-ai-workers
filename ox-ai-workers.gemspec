@@ -45,11 +45,11 @@ Gem::Specification.new do |spec|
   spec.executables = ['oxaiworkers']
   spec.require_paths = ['lib']
 
+  spec.add_dependency 'colorize', '~> 1'
   spec.add_dependency 'faraday', '>= 1'
   spec.add_dependency 'faraday-multipart', '>= 1'
   spec.add_dependency 'i18n', '>= 1'
   spec.add_dependency 'ptools', '>= 1'
-  spec.add_dependency 'rainbow', '>= 3'
   spec.add_dependency 'ruby-openai', '>= 7'
   spec.add_dependency 'state_machine', '>= 1'
 end

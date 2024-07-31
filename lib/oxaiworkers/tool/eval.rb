@@ -17,18 +17,19 @@ module OxAiWorkers
       end
 
       # def ruby(input:)
-      #   puts Rainbow("Executing ruby: \"#{input}\"").red
+      #   puts "Executing ruby: \"#{input}\"".colorize(:red)
       #   eval(input)
       # end
 
       def sh(input:)
-        puts Rainbow("Executing sh: \"#{input}\"").red
+        OxAiWorkers.logger.info("Executing sh: \"#{input}\"", for: self.class)
         begin
           stdout_and_stderr_s, status = Open3.capture2e(input)
           return stdout_and_stderr_s if stdout_and_stderr_s.present?
 
           status.to_s
         rescue StandardError => e
+          OxAiWorkers.logger.debug(e.message, for: self.class)
           e.message
         end
       end

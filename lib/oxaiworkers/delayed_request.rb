@@ -65,7 +65,7 @@ module OxAiWorkers
         @file_id = response['id']
         process_batch!
       rescue OpenAI::Error => e
-        puts e.inspect
+        OxAiWorkers.logger.debug(e.inspect, for: self.class)
         fail_batch!
       end
       file.unlink

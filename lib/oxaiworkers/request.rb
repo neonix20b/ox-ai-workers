@@ -12,10 +12,8 @@ module OxAiWorkers
     def request!
       response = @client.chat(parameters: params)
       parse_choices(response)
-      # @result = response.dig("choices", 0, "message", "content")
-      # puts response.inspect
     rescue OpenAI::Error => e
-      puts e.inspect
+      OxAiWorkers.logger.debug(e.inspect, for: self.class)
     end
 
     def completed?

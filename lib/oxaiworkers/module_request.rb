@@ -6,7 +6,6 @@ module OxAiWorkers
                   :tool_calls_raw, :tool_calls
 
     def initialize_requests(model: nil, max_tokens: nil, temperature: nil)
-      # puts "call: ModuleRequest::#{__method__}"
       @max_tokens = max_tokens || OxAiWorkers.configuration.max_tokens
       @custom_id = SecureRandom.uuid
       @model = model || OxAiWorkers.configuration.model
@@ -23,7 +22,6 @@ module OxAiWorkers
     end
 
     def cleanup
-      # puts "call: ModuleRequest::#{__method__}"
       @client ||= OpenAI::Client.new(
         access_token: OxAiWorkers.configuration.access_token,
         log_errors: true # Highly recommended in development, so you can see what errors OpenAI is returning. Not recommended in production because it could leak private data to your logs.
@@ -61,7 +59,6 @@ module OxAiWorkers
     end
 
     def parse_choices(response)
-      # puts response.inspect
       @tool_calls = []
       @result = response.dig('choices', 0, 'message', 'content')
       @tool_calls_raw = response.dig('choices', 0, 'message', 'tool_calls')

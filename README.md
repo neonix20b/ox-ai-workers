@@ -111,10 +111,10 @@ iterator = OxAiWorkers::Iterator.new(
     worker: my_worker, 
     tools: [my_tool],
     role: "You are a software agent inside my computer",
-    on_inner_monologue: ->(text:) { puts Rainbow("monologue: #{text}").yellow },
-    on_outer_voice: ->(text:) { puts Rainbow("voice: #{text}").green },
-    on_action_request: ->(text:) { puts Rainbow("action: #{text}").red },
-    on_pack_history: ->(text:) { puts Rainbow("summary: #{text}").blue } 
+    on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
+    on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) },
+    on_action_request: ->(text:) { puts "action: #{text}".colorize(:red) },
+    on_pack_history: ->(text:) { puts "summary: #{text}".colorize(:blue) }
   )
 
 iterator.add_task("Show files in current directory.")
@@ -156,6 +156,15 @@ After this, in the `my_assistant.rb` file, you can find an example of an assista
 
 ```sh
 .oxaiworkers-local/start
+```
+
+## Logging
+
+OxAiWorkers uses standard logging mechanisms and defaults to `:warn` level. Most messages are at info level, but we will add debug or warn statements as needed.
+To show all log messages:
+
+```ruby
+OxAiWorkers.logger.level = :debug
 ```
 
 ## Features

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rainbow'
+require 'colorize'
 require_relative 'tools/my_tool'
 
 class MyAssistant
@@ -11,10 +11,10 @@ class MyAssistant
       worker: init_worker(delayed: delayed, model: model),
       role: 'You are a software agent inside my computer',
       tools: [MyTool.new],
-      on_inner_monologue: ->(text:) { puts Rainbow("monologue: #{text}").yellow },
-      on_outer_voice: ->(text:) { puts Rainbow("voice: #{text}").green },
-      on_action_request: ->(text:) { puts Rainbow("action: #{text}").red },
-      on_pack_history: ->(text:) { puts Rainbow("summary: #{text}").blue }
+      on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
+      on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) },
+      on_action_request: ->(text:) { puts "action: #{text}".colorize(:red) },
+      on_pack_history: ->(text:) { puts "summary: #{text}".colorize(:blue) }
     )
   end
 end

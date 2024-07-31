@@ -10,10 +10,10 @@ module OxAiWorkers
           worker: init_worker(delayed: delayed, model: model),
           role: format(I18n.t('oxaiworkers.assistant.localizer.role'), language),
           tools: [Tool::Eval.new, Tool::FileSystem.new],
-          on_inner_monologue: ->(text:) { puts Rainbow("monologue: #{text}").yellow },
-          on_outer_voice: ->(text:) { puts Rainbow("voice: #{text}").green },
-          on_action_request: ->(text:) { puts Rainbow("action: #{text}").red },
-          on_pack_history: ->(text:) { puts Rainbow("summary: #{text}").blue }
+          on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
+          on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) },
+          on_action_request: ->(text:) { puts "action: #{text}".colorize(:red) },
+          on_pack_history: ->(text:) { puts "summary: #{text}".colorize(:blue) }
         )
         @iterator.add_context(format(I18n.t('oxaiworkers.assistant.localizer.source'), source))
 
