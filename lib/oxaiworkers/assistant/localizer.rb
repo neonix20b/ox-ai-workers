@@ -13,7 +13,7 @@ module OxAiWorkers
           on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
           on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) },
           on_action_request: ->(text:) { puts "action: #{text}".colorize(:red) },
-          on_pack_history: ->(text:) { puts "summary: #{text}".colorize(:blue) }
+          on_summarize: ->(text:) { puts "summary: #{text}".colorize(:blue) }
         )
         @iterator.add_context(format(I18n.t('oxaiworkers.assistant.localizer.source'), source))
 

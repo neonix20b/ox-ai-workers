@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+- def_except and def_only for `Iterator`
+- Renamed on_pack_history to on_summarize
+- Renamed all "pack_history" to "summarize"
+
 ## [0.5.3] - 2024-07-31
 
 - Fixed summarize state

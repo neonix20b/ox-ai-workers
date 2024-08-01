@@ -96,7 +96,7 @@ Then you can create an assistant like this:
 
 ```ruby
 assistant = OxAiWorkers::Assistant::Sysop.new()
-assistant.task = "your task"
+assistant.task = "Remove all cron jobs."
 
 # Provide a response to the assistant's question
 assistant.add_response("blah-blah-blah")
@@ -115,7 +115,7 @@ iterator = OxAiWorkers::Iterator.new(
     on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
     on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) },
     on_action_request: ->(text:) { puts "action: #{text}".colorize(:red) },
-    on_pack_history: ->(text:) { puts "summary: #{text}".colorize(:blue) }
+    on_summarize: ->(text:) { puts "summary: #{text}".colorize(:blue) }
   )
 
 iterator.add_task("Show files in current directory.")
@@ -130,9 +130,9 @@ This way, you have the flexibility to choose between a higher-level assistant fo
 ```ruby
 steps = []
 steps << 'Step 1. Develop your own solution to the problem, taking initiative and making assumptions.'
-steps << 'Step 2. Enclose all your developments from the previous step in the ox_ai_workers_iterator__inner_monologue function.'
+steps << "Step 2. Enclose all your developments from the previous step in the #{OxAiWorkers::Iterator.full_function_name(:inner_monologue)} function."
 steps << 'Step 3. Call the necessary functions one after another until the desired result is achieved.'
-steps << 'Step 4. When all intermediate steps are completed and the exact content of previous messages is no longer relevant, use the ox_ai_workers_iterator__pack_history function.'
+steps << "Step 4. When all intermediate steps are completed and the exact content of previous messages is no longer relevant, use the #{OxAiWorkers::Iterator.full_function_name(:summarize)} function."
 steps << "Step 5. When the solution is ready, notify about it and wait for the user's response."
 
 @iterator = OxAiWorkers::Iterator.new(
@@ -140,10 +140,12 @@ steps << "Step 5. When the solution is ready, notify about it and wait for the u
   role: 'You are a software agent inside my computer',
   tools: [MyTool.new],
   steps: steps,
+  # def_except: [:summarize], # It's except steps with that functions
+  # def_only: [:inner_monologue, :outer_voice], # Use it only with your steps
   on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
   on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) },
   on_action_request: ->(text:) { puts "action: #{text}".colorize(:red) },
-  on_pack_history: ->(text:) { puts "summary: #{text}".colorize(:blue) }
+  on_summarize: ->(text:) { puts "summary: #{text}".colorize(:blue) }
 )
 ```
 

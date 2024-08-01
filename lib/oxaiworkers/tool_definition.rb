@@ -63,11 +63,19 @@ module OxAiWorkers::ToolDefinition
       .downcase
   end
 
+  def full_function_name(fun)
+    function_schemas.function_name(fun)
+  end
+
   # Manages schemas for functions
   class FunctionSchemas
     def initialize(tool_name)
       @schemas = {}
       @tool_name = tool_name
+    end
+
+    def function_name method_name
+      "#{@tool_name}__#{method_name}"
     end
 
     # Adds a function to the schemas
@@ -77,7 +85,7 @@ module OxAiWorkers::ToolDefinition
     # @yield Block that defines the parameters for the function
     # @raise [ArgumentError] If a block is defined and no parameters are specified for the function
     def add_function(method_name:, description:, &)
-      name = "#{@tool_name}__#{method_name}"
+      name = function_name(method_name)
 
       if block_given?
         parameters = ParameterBuilder.new(parent_type: "object").build(&)
@@ -96,15 +104,23 @@ module OxAiWorkers::ToolDefinition
     # Converts schemas to OpenAI-compatible format
     #
     # @return [String] JSON string of schemas in OpenAI format
-    def to_openai_format
-      @schemas.values#.map { |schema| schema[:function] }
+    def to_openai_format(only: nil)
+      valid_schemas(only: only).values
+    end
+
+    def valid_schemas(only: nil)
+      if only.nil?
+        @schemas
+      else
+        @schemas.select { |name, schema| only.include?(name) }
+      end
     end
 
     # Converts schemas to Anthropic-compatible format
     #
     # @return [String] JSON string of schemas in Anthropic format
-    def to_anthropic_format
-      @schemas.values.map do |schema|
+    def to_anthropic_format(only: nil)
+      valid_schemas(only: only).values.map do |schema|
         schema[:function].transform_keys("parameters" => "input_schema")
       end
     end
@@ -112,8 +128,8 @@ module OxAiWorkers::ToolDefinition
     # Converts schemas to Google Gemini-compatible format
     #
     # @return [String] JSON string of schemas in Google Gemini format
-    def to_google_gemini_format
-      @schemas.values.map { |schema| schema[:function] }
+    def to_google_gemini_format(only: nil)
+      valid_schemas(only: only).values.map { |schema| schema[:function] }
     end
   end
 
