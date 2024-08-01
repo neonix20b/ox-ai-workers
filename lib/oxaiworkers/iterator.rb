@@ -137,12 +137,12 @@ module OxAiWorkers
       if @worker.tool_calls.present?
         @queue << { role: :assistant, content: @worker.tool_calls_raw.to_s }
         @worker.tool_calls.each do |external_call|
-          tool = @tools.select do |t|
+          tool = ([self] + @tools).select do |t|
             t.class.tool_name == external_call[:class] && t.respond_to?(external_call[:name])
           end.first
           unless tool.nil?
             out = tool.send(external_call[:name], **external_call[:args])
-            @queue << { role: :user, content: out.to_s } if out.present?
+            @queue << { role: :system, content: out.to_s } if out.present?
           end
         end
         @worker.finish
