@@ -18,6 +18,12 @@ module OxAiWorkers
           on_summarize: ->(text:) { puts "summary: #{text}".colorize(:blue) }
         )
       end
+
+      def language=(language)
+        with_locale do
+          @iterator.role = format(I18n.t('oxaiworkers.assistant.coder.role'), language)
+        end
+      end
     end
   end
 end

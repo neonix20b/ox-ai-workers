@@ -21,4 +21,13 @@ if ARGV.first == 'init'
     puts "A #{dir} directory was created with the necessary initial settings."
     puts "Modify the settings as needed and run: #{dir}/start"
   end
+elsif ARGV.first == 'run'
+  require 'irb'
+  require 'ox-ai-workers'
+  puts "#{ARGV.last.capitalize}: #{OxAiWorkers::VERSION}"
+  instance_variable_set("@#{ARGV.last}", Object.const_get("OxAiWorkers::Assistant::#{ARGV.last.capitalize}").new)
+  ARGV.clear
+  IRB.start
+else
+  puts "Error: Unknown command: #{ARGV.first}"
 end

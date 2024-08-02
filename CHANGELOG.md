@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.5.6] - 2024-08-02
+
+- Added `oxaiworkers run` command
+
 ## [0.5.5] - 2024-08-02
 
 - Added `only` for Tools

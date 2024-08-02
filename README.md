@@ -252,6 +252,43 @@ OxAiWorkers.logger.level = :debug
     @assistant.task = "Write a snake game"
     ```
 
+### Running System Operator in Any Directory
+
+To run OxAiWorkers in any directory, execute the following command:
+
+```sh
+oxaiworkers run sysop
+```
+
+Alternatively, you can use IRB (Interactive Ruby):
+
+1. Start IRB:
+
+    ```sh
+    irb
+    ```
+
+2. In the console, enter the following commands:
+
+    ```ruby
+    require 'ox-ai-workers'
+    @sysop = OxAiWorkers::Assistant::Sysop.new
+    ```
+
+Then set a task:
+
+```ruby
+@sysop.task = "Show all cron jobs."
+```
+
+After these steps you can interact with it using the following method:
+
+```ruby
+@sysop.add_response("Yes, I want it.")
+```
+
+or set a new task.
+
 ## Features
 
 - **Generative Intelligence**: Leverages OpenAI's capabilities to enhance task execution.
