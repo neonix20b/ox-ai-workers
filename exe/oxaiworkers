@@ -2,8 +2,9 @@
 # frozen_string_literal: true
 
 require 'fileutils'
+require 'oxaiworkers/version'
 
-puts 'Welcome to OxAiWorkers!'
+puts "Welcome to OxAiWorkers v#{OxAiWorkers::VERSION}"
 
 if ARGV.first == 'init'
   dir = '.oxaiworkers-local'
@@ -24,7 +25,7 @@ if ARGV.first == 'init'
 elsif ARGV.first == 'run'
   require 'irb'
   require 'ox-ai-workers'
-  puts "#{ARGV.last.capitalize}: #{OxAiWorkers::VERSION}"
+  puts "Assistant: #{ARGV.last.capitalize}"
   instance_variable_set("@#{ARGV.last}", Object.const_get("OxAiWorkers::Assistant::#{ARGV.last.capitalize}").new)
   ARGV.clear
   IRB.start
