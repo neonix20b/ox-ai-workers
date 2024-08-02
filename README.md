@@ -97,9 +97,11 @@ Then you can create an assistant like this:
 ```ruby
 assistant = OxAiWorkers::Assistant::Sysop.new()
 assistant.task = "Remove all cron jobs."
+# assistant.execute # if auto_execute is false
 
 # Provide a response to the assistant's question
 assistant.add_response("blah-blah-blah")
+# assistant.execute # if auto_execute is false
 ```
 
 Besides, you can create assistants with different locales
@@ -130,6 +132,12 @@ iterator = OxAiWorkers::Iterator.new(
 iterator.add_task("Show files in current directory.")
 # ...
 iterator.add_task("linux")
+```
+
+If `auto_execute` is set to false in the configuration, don't forget to manually execute the iterator or assistant.
+
+```ruby
+iterator.execute # if auto_execute is false
 ```
 
 This way, you have the flexibility to choose between a higher-level assistant for simplicity or a lower-level iterator for finer control over the tasks and tools used.
