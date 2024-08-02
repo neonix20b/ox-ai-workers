@@ -102,6 +102,15 @@ assistant.task = "Remove all cron jobs."
 assistant.add_response("blah-blah-blah")
 ```
 
+Besides, you can create assistants with different locales
+
+```ruby
+I18n.with_locale(:en) { @sysop_en = OxAiWorkers::Assistant::Sysop.new() }
+
+# Assign tasks and responses in different languages
+@sysop_en.task = "Remove all cron jobs."
+```
+
 Or you can create a lower-level iterator for more control:
 
 ```ruby
