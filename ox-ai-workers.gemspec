@@ -10,16 +10,14 @@ Gem::Specification.new do |spec|
 
   spec.summary = 'A powerful state machine with OpenAI generative intelligence integration'
   spec.description = <<-DESC
-    OxAiWorkers (ox-ai-workers) is a Ruby gem that provides a powerful and flexible state machine with
-    integration of generative intelligence using the ruby-openai gem. This gem allows you to create state
-    machines for solving complex tasks, enhancing the final result by leveraging internal logic (state machine)
-    and external tools (OpenAI generative intelligence).
-
-    Features:
-    - State Machine: Easily create and manage state machines to model various states and transitions in your application.
-    - OpenAI Integration: Utilize the capabilities of generative intelligence to make decisions and perform tasks, improving the quality and accuracy of results.
-    - Flexibility and Extensibility: Customize the behavior of the state machine and OpenAI integration according to your needs.
-    - Ease of Use: Intuitive syntax and documentation make it easy to get started with the gem.
+    OxAiWorkers (ox-ai-workers) is a cutting-edge Ruby gem designed to seamlessly integrate
+    a sophisticated state machine with the powerful capabilities of generative intelligence
+    via the ruby-openai gem. This innovative tool empowers developers to construct state machines
+    that efficiently handle complex tasks, enhancing outcomes by combining robust internal
+    logic with advanced AI-driven decision-making. Key features include straightforward creation
+    and management of state machines, harnessing AI for improved decision-making and task
+    execution, customizable behavior to suit specific requirements, and user-friendly syntax
+    and documentation for a smooth development experience.
   DESC
 
   spec.homepage = 'https://ai.oxteam.me'
