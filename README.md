@@ -268,7 +268,7 @@ Alternatively, you can use IRB (Interactive Ruby):
     irb
     ```
 
-2. In the console, enter the following commands:
+2. In the console, enter the following commands (see Usage section):
 
     ```ruby
     require 'ox-ai-workers'
