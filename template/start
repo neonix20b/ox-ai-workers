@@ -20,6 +20,7 @@ puts "OxAiWorkers #{OxAiWorkers::VERSION}"
 OxAiWorkers.configure do |config|
   config.access_token = ENV.fetch('OPENAI')
   config.model = 'gpt-4o-mini'
+  # config.auto_execute = false
 end
 
 # OxAiWorkers.logger.level = :debug
@@ -27,5 +28,8 @@ end
 # Main algorithm
 @assistant = MyAssistant.new
 @assistant.task = '2 + 2 is ?'
+
+# Uncomment this if auto_execute is false
+# @assistant.execute
 
 IRB.start(__FILE__)
