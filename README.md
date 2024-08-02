@@ -213,6 +213,45 @@ To show all log messages:
 OxAiWorkers.logger.level = :debug
 ```
 
+## Real World Examples
+
+### Project: Python Snake Game
+
+1. Create the project folder:
+
+    ```sh
+    mkdir snake
+    cd snake
+    ```
+
+2. Initialize OxAiWorkers:
+
+    ```sh
+    oxaiworkers init
+    ```
+
+3. Modify the file `.oxaiworkers-local/start`:
+
+    ```ruby
+    # Replace
+    @assistant = OxAiWorkers::Assistant::Sysop.new
+
+    # With
+    @assistant = OxAiWorkers::Assistant::Coder.new(language: 'python')
+    ```
+
+4. Run the project:
+
+    ```sh
+    .oxaiworkers-local/start
+    ```
+
+5. In the command prompt, type:
+
+    ```sh
+    @assistant.task = "Write a snake game"
+    ```
+
 ## Features
 
 - **Generative Intelligence**: Leverages OpenAI's capabilities to enhance task execution.

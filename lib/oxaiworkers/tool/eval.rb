@@ -24,7 +24,7 @@ module OxAiWorkers
       end
 
       def ruby(input:)
-        puts "Executing ruby: \"#{input}\"".colorize(:red)
+        OxAiWorkers.logger.info("Executing ruby: \"#{input}\"", for: self.class)
         eval(input)
       end
 
