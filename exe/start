@@ -17,4 +17,8 @@ end
 
 @assistant = OxAiWorkers::Assistant::Sysop.new
 
+# Anything you want
+
+puts 'Type and Run: @assistant.task = "show files in current directory"'
+
 IRB.start(__FILE__)

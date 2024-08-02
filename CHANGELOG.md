@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.5.5] - 2024-08-02
+
+- Added `only` for Tools
+- Addded `locale` for `Iterator` and `Assistant`
+
+## [0.5.4] - 2024-08-01
+
 - def_except and def_only for `Iterator`
 - Renamed on_pack_history to on_summarize
 - Renamed all "pack_history" to "summarize"

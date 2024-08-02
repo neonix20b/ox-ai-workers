@@ -10,28 +10,9 @@ module OxAiWorkers
     #     database = OxAiWorkers::Tool::Database.new(connection_string: "postgres://user:password@localhost:5432/db_name")
     #
     class Database
-      extend OxAiWorkers::ToolDefinition
+      include OxAiWorkers::ToolDefinition
       include OxAiWorkers::DependencyHelper
-
-      define_function :list_tables,
-                      description: I18n.t('oxaiworkers.tool.database_tool.list_tables.description')
-
-      define_function :describe_tables,
-                      description: I18n.t('oxaiworkers.tool.database_tool.describe_tables.description') do
-        property :tables, type: 'string',
-                          description: I18n.t('oxaiworkers.tool.database_tool.describe_tables.tables'),
-                          required: true
-      end
-
-      define_function :dump_schema,
-                      description: I18n.t('oxaiworkers.tool.database_tool.dump_schema.description')
-
-      define_function :execute,
-                      description: I18n.t('oxaiworkers.tool.database_tool.execute.description') do
-        property :input, type: 'string',
-                         description: I18n.t('oxaiworkers.tool.database_tool.execute.input'),
-                         required: true
-      end
+      include OxAiWorkers::LoadI18n
 
       attr_reader :db, :requested_tables, :excluded_tables
 
@@ -41,10 +22,34 @@ module OxAiWorkers
       # @param tables [Array<Symbol>] The tables to use. Will use all if empty.
       # @param except_tables [Array<Symbol>] The tables to exclude. Will exclude none if empty.
       # @return [Database] Database object
-      def initialize(connection_string:, tables: [], exclude_tables: [])
+      def initialize(connection_string:, tables: [], exclude_tables: [], only: nil)
         depends_on 'sequel'
 
         raise StandardError, 'connection_string parameter cannot be blank' if connection_string.empty?
+
+        store_locale
+
+        init_white_list_with only
+
+        define_function :list_tables,
+                        description: I18n.t('oxaiworkers.tool.database_tool.list_tables.description')
+
+        define_function :describe_tables,
+                        description: I18n.t('oxaiworkers.tool.database_tool.describe_tables.description') do
+          property :tables, type: 'string',
+                            description: I18n.t('oxaiworkers.tool.database_tool.describe_tables.tables'),
+                            required: true
+        end
+
+        define_function :dump_schema,
+                        description: I18n.t('oxaiworkers.tool.database_tool.dump_schema.description')
+
+        define_function :execute,
+                        description: I18n.t('oxaiworkers.tool.database_tool.execute.description') do
+          property :input, type: 'string',
+                           description: I18n.t('oxaiworkers.tool.database_tool.execute.input'),
+                           required: true
+        end
 
         @db = Sequel.connect(connection_string)
         @requested_tables = tables

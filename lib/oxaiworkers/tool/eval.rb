@@ -5,21 +5,28 @@ require 'open3'
 module OxAiWorkers
   module Tool
     class Eval
-      extend OxAiWorkers::ToolDefinition
+      include OxAiWorkers::ToolDefinition
       include OxAiWorkers::DependencyHelper
+      include OxAiWorkers::LoadI18n
 
-      # define_function :ruby, description: I18n.t('oxaiworkers.tool.eval.ruby.description') do
-      #   property :input, type: 'string', description: I18n.t('oxaiworkers.tool.eval.ruby.input'), required: true
-      # end
+      def initialize(only: nil)
+        store_locale
 
-      define_function :sh, description: I18n.t('oxaiworkers.tool.eval.sh.description') do
-        property :input, type: 'string', description: I18n.t('oxaiworkers.tool.eval.sh.input'), required: true
+        init_white_list_with only
+
+        define_function :ruby, description: I18n.t('oxaiworkers.tool.eval.ruby.description') do
+          property :input, type: 'string', description: I18n.t('oxaiworkers.tool.eval.ruby.input'), required: true
+        end
+
+        define_function :sh, description: I18n.t('oxaiworkers.tool.eval.sh.description') do
+          property :input, type: 'string', description: I18n.t('oxaiworkers.tool.eval.sh.input'), required: true
+        end
       end
 
-      # def ruby(input:)
-      #   puts "Executing ruby: \"#{input}\"".colorize(:red)
-      #   eval(input)
-      # end
+      def ruby(input:)
+        puts "Executing ruby: \"#{input}\"".colorize(:red)
+        eval(input)
+      end
 
       def sh(input:)
         OxAiWorkers.logger.info("Executing sh: \"#{input}\"", for: self.class)

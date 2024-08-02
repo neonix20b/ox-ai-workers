@@ -37,13 +37,21 @@ require "json"
 #   end
 #
 module OxAiWorkers::ToolDefinition
+  attr_accessor :white_list
+
+  def init_white_list_with only
+    @white_list = only.is_a?(Array) ? only : [only]
+  end
+
   # Defines a function for the tool
   #
   # @param method_name [Symbol] Name of the method to define
   # @param description [String] Description of the function
   # @yield Block that defines the parameters for the function
   def define_function(method_name, description:, &)
-    function_schemas.add_function(method_name:, description:, &)
+    if @white_list.nil? || @white_list == method_name || @white_list.include?(method_name)
+      function_schemas.add_function(method_name:, description:, &)
+    end
   end
 
   # Returns the FunctionSchemas instance for this tool
@@ -57,7 +65,7 @@ module OxAiWorkers::ToolDefinition
   #
   # @return [String] The snake_case version of the class name
   def tool_name
-    @tool_name ||= name
+    @tool_name ||= (self.respond_to?(:name) ? name : self.class.name)
       .gsub("::", "_")
       .gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
       .downcase

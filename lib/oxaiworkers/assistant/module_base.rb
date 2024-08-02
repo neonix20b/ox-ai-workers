@@ -3,6 +3,8 @@
 module OxAiWorkers
   module Assistant
     module ModuleBase
+      include OxAiWorkers::LoadI18n
+
       attr_accessor :iterator
 
       def task=(task)
