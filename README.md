@@ -278,13 +278,13 @@ Alternatively, you can use IRB (Interactive Ruby):
 Then set a task:
 
 ```ruby
-@sysop.task = "Show all cron jobs."
+@sysop.task = "Show all cron jobs"
 ```
 
 After these steps you can interact with it using the following method:
 
 ```ruby
-@sysop.add_response("Yes, I want it.")
+@sysop.add_response("Yes, I want it")
 ```
 
 or set a new task.
