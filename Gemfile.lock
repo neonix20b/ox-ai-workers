@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ox-ai-workers (0.5.5)
+    ox-ai-workers (0.5.7)
       colorize (~> 1)
       faraday (>= 1)
       faraday-multipart (>= 1)

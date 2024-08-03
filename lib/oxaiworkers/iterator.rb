@@ -130,7 +130,23 @@ module OxAiWorkers
     end
 
     def valid_monologue
-      @monologue.reject { |item| @def_except.any? { |fun| item.include?(self.class.full_function_name(fun)) } }
+      @monologue.reject { |item| @def_except.any? { |fun| item.include?(full_function_name(fun)) } }
+    end
+
+    def tool_name
+      @tool_name ||= (respond_to?(:name) ? name : self.class.name)
+                     .gsub('::', '_')
+                     .gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, '_')
+                     .downcase
+    end
+
+    def self.full_function_name(fun)
+      tool_name ||= name
+                    .gsub('::', '_')
+                    .gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, '_')
+                    .downcase
+
+      "#{tool_name}__#{fun}"
     end
 
     def next_iteration

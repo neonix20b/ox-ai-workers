@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.5.7] - 2024-08-02
+
+- Added monkey patch for `full_function_name`
+
 ## [0.5.6] - 2024-08-02
 
 - Added `oxaiworkers run` command
