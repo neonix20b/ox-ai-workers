@@ -15,6 +15,6 @@ gem 'mini_magick'
 
 # gem "faraday"
 
-# gem "state_machine"
+# gem "state_machines"
 
 # gem "ruby-openai"

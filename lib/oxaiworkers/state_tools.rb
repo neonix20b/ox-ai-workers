@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'state_machine/core'
+require 'state_machines/core'
 
 module OxAiWorkers
   class StateTools
     include OxAiWorkers::StateHelper
-    extend StateMachine::MacroMethods
+    extend StateMachines::MacroMethods
 
     state_machine :state, initial: :idle do
       before_transition from: any, do: :log_me

@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.5.8] - 2024-08-02
+
+- Fixed gem `state_machines`
+
 ## [0.5.7] - 2024-08-02
 
 - Added monkey patch for `full_function_name`

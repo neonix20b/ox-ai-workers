@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'state_machine/core'
+require 'state_machines/core'
 
 module OxAiWorkers
   class StateBatch < OxAiWorkers::ModuleRequest
     include OxAiWorkers::StateHelper
-    extend StateMachine::MacroMethods
+    extend StateMachines::MacroMethods
 
     alias state_initialize initialize
     attr_accessor :file_id, :batch_id

@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
 
   spec.homepage = 'https://ai.oxteam.me'
   spec.license = 'MIT'
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
+  spec.required_ruby_version = Gem::Requirement.new('>= 3.2.0')
 
   # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
@@ -49,5 +49,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'i18n', '>= 1'
   spec.add_dependency 'ptools', '>= 1'
   spec.add_dependency 'ruby-openai', '>= 7'
-  spec.add_dependency 'state_machine', '>= 1'
+  spec.add_dependency 'state_machines', '>= 0.6'
 end
