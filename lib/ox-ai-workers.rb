@@ -31,6 +31,8 @@ require_relative 'oxaiworkers/assistant/sysop'
 require_relative 'oxaiworkers/assistant/coder'
 require_relative 'oxaiworkers/assistant/localizer'
 
+require_relative 'oxaiworkers/engine' if defined?(Rails)
+
 module OxAiWorkers
   DEFAULT_MODEL = 'gpt-4o-mini'
   DEFAULT_MAX_TOKEN = 4096

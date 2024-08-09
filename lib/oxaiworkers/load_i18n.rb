@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-require 'i18n'
-I18n.load_path += Dir["#{File.expand_path('../../config/locales', __dir__)}/*.yml"] if I18n.load_path.empty?
+unless defined?(Rails)
+  require 'i18n'
+  I18n.load_path += Dir["#{File.expand_path('../../config/locales', __dir__)}/*.yml"]
+end
 
 module OxAiWorkers
   module LoadI18n
