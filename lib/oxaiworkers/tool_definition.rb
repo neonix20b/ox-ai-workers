@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "json"
+require 'json'
 
 #
 # Extends a class to be used as a tool in the assistant.
@@ -36,199 +36,218 @@ require "json"
 #     end
 #   end
 #
-module OxAiWorkers::ToolDefinition
-  attr_accessor :white_list
+module OxAiWorkers
+  module ToolDefinition
+    attr_accessor :white_list
 
-  def init_white_list_with only
-    @white_list = only.is_a?(Array) ? only : [only]
-  end
-
-  # Defines a function for the tool
-  #
-  # @param method_name [Symbol] Name of the method to define
-  # @param description [String] Description of the function
-  # @yield Block that defines the parameters for the function
-  def define_function(method_name, description:, &)
-    if @white_list.nil? || @white_list == method_name || @white_list.include?(method_name)
-      function_schemas.add_function(method_name:, description:, &)
-    end
-  end
-
-  # Returns the FunctionSchemas instance for this tool
-  #
-  # @return [FunctionSchemas] The FunctionSchemas instance
-  def function_schemas
-    @function_schemas ||= FunctionSchemas.new(tool_name)
-  end
-
-  # Returns the snake_case version of the class name as the tool's name
-  #
-  # @return [String] The snake_case version of the class name
-  def tool_name
-    @tool_name ||= (self.respond_to?(:name) ? name : self.class.name)
-      .gsub("::", "_")
-      .gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
-      .downcase
-  end
-
-  def full_function_name(fun)
-    function_schemas.function_name(fun)
-  end
-
-  # Manages schemas for functions
-  class FunctionSchemas
-    def initialize(tool_name)
-      @schemas = {}
-      @tool_name = tool_name
-    end
-
-    def function_name method_name
-      "#{@tool_name}__#{method_name}"
-    end
-
-    # Adds a function to the schemas
+    # Initializes the white list with the given `only` parameter.
     #
-    # @param method_name [Symbol] Name of the method to add
+    # @param only [Object, Array] The object or array to initialize the white list with.
+    # @return [Array] The initialized white list.
+    def init_white_list_with(only)
+      @white_list = only.is_a?(Array) ? only : [only]
+    end
+
+    # Defines a function for the tool
+    #
+    # @param method_name [Symbol] Name of the method to define
     # @param description [String] Description of the function
     # @yield Block that defines the parameters for the function
-    # @raise [ArgumentError] If a block is defined and no parameters are specified for the function
-    def add_function(method_name:, description:, &)
-      name = function_name(method_name)
+    def define_function(method_name, description:, &)
+      return unless @white_list.nil? || @white_list == method_name || @white_list.include?(method_name)
 
-      if block_given?
-        parameters = ParameterBuilder.new(parent_type: "object").build(&)
+      function_schemas.add_function(method_name:, description:, &)
+    end
 
-        if parameters[:properties].empty?
-          raise ArgumentError, "Function parameters must have at least one property defined within it, if a block is provided"
-        end
+    # Returns the FunctionSchemas instance for this tool
+    #
+    # @return [FunctionSchemas] The FunctionSchemas instance
+    def function_schemas
+      @function_schemas ||= FunctionSchemas.new(tool_name)
+    end
+
+    # Returns the snake_case version of the class name as the tool's name
+    #
+    # @return [String] The snake_case version of the class name
+    def tool_name
+      @tool_name ||= (respond_to?(:name) ? name : self.class.name)
+                     .gsub('::', '_')
+                     .gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, '_')
+                     .downcase
+    end
+
+    # Returns the full function name for the given function.
+    #
+    # @param fun [Symbol] The function name.
+    # @return [String] The full function name, which is the tool name concatenated with the function name.
+    def full_function_name(fun)
+      function_schemas.function_name(fun)
+    end
+
+    # Manages schemas for functions
+    class FunctionSchemas
+      def initialize(tool_name)
+        @schemas = {}
+        @tool_name = tool_name
       end
 
-      @schemas[method_name] = {
-        type: "function",
-        function: {name:, description:, parameters:}.compact
-      }
-    end
-
-    # Converts schemas to OpenAI-compatible format
-    #
-    # @return [String] JSON string of schemas in OpenAI format
-    def to_openai_format(only: nil)
-      valid_schemas(only: only).values
-    end
-
-    def valid_schemas(only: nil)
-      if only.nil?
-        @schemas
-      else
-        @schemas.select { |name, schema| only.include?(name) }
+      # Returns the full function name for the given method name.
+      #
+      # @param method_name [Symbol] The name of the method.
+      # @return [String] The full function name, which is the tool name concatenated with the method name.
+      def function_name(method_name)
+        "#{@tool_name}__#{method_name}"
       end
-    end
 
-    # Converts schemas to Anthropic-compatible format
-    #
-    # @return [String] JSON string of schemas in Anthropic format
-    def to_anthropic_format(only: nil)
-      valid_schemas(only: only).values.map do |schema|
-        schema[:function].transform_keys("parameters" => "input_schema")
-      end
-    end
+      # Adds a function to the schemas
+      #
+      # @param method_name [Symbol] Name of the method to add
+      # @param description [String] Description of the function
+      # @yield Block that defines the parameters for the function
+      # @raise [ArgumentError] If a block is defined and no parameters are specified for the function
+      def add_function(method_name:, description:, &)
+        name = function_name(method_name)
 
-    # Converts schemas to Google Gemini-compatible format
-    #
-    # @return [String] JSON string of schemas in Google Gemini format
-    def to_google_gemini_format(only: nil)
-      valid_schemas(only: only).values.map { |schema| schema[:function] }
-    end
-  end
+        if block_given?
+          parameters = ParameterBuilder.new(parent_type: 'object').build(&)
 
-  # Builds parameter schemas for functions
-  class ParameterBuilder
-    VALID_TYPES = %w[object array string number integer boolean].freeze
-
-    def initialize(parent_type:)
-      @schema = (parent_type == "object") ? {type: "object", properties: {}, required: []} : {}
-      @parent_type = parent_type
-    end
-
-    # Builds the parameter schema
-    #
-    # @yield Block that defines the properties of the schema
-    # @return [Hash] The built schema
-    def build(&)
-      instance_eval(&)
-      @schema
-    end
-
-    # Defines a property in the schema
-    #
-    # @param name [Symbol] Name of the property (required only for a parent of type object)
-    # @param type [String] Type of the property
-    # @param description [String] Description of the property
-    # @param enum [Array] Array of allowed values
-    # @param required [Boolean] Whether the property is required
-    # @yield [Block] Block for nested properties (only for object and array types)
-    # @raise [ArgumentError] If any parameter is invalid
-    def property(name = nil, type:, description: nil, enum: nil, required: false, &)
-      validate_parameters(name:, type:, enum:, required:)
-
-      prop = {type:, description:, enum:}.compact
-
-      if block_given?
-        nested_schema = ParameterBuilder.new(parent_type: type).build(&)
-
-        case type
-        when "object"
-          if nested_schema[:properties].empty?
-            raise ArgumentError, "Object properties must have at least one property defined within it"
+          if parameters[:properties].empty?
+            raise ArgumentError,
+                  'Function parameters must have at least one property defined within it, if a block is provided'
           end
-          prop = nested_schema
-        when "array"
-          if nested_schema.empty?
-            raise ArgumentError, "Array properties must have at least one item defined within it"
-          end
-          prop[:items] = nested_schema
+        end
+
+        @schemas[method_name] = {
+          type: 'function',
+          function: { name:, description:, parameters: }.compact
+        }
+      end
+
+      # Converts schemas to OpenAI-compatible format
+      #
+      # @return [String] JSON string of schemas in OpenAI format
+      def to_openai_format(only: nil)
+        valid_schemas(only:).values
+      end
+
+      # Returns a subset of schemas based on the provided filter.
+      #
+      # @param only [Array<Symbol>] An optional array of schema names to filter by.
+      # @return [Hash<Symbol, Hash>] A hash of schemas with their corresponding names as keys.
+      def valid_schemas(only: nil)
+        if only.nil?
+          @schemas
+        else
+          @schemas.select { |name, _schema| only.include?(name) }
         end
       end
 
-      if @parent_type == "object"
-        @schema[:properties][name] = prop
-        @schema[:required] << name.to_s if required
-      else
-        @schema = prop
+      # Converts schemas to Anthropic-compatible format
+      #
+      # @return [String] JSON string of schemas in Anthropic format
+      def to_anthropic_format(only: nil)
+        valid_schemas(only:).values.map do |schema|
+          schema[:function].transform_keys('parameters' => 'input_schema')
+        end
+      end
+
+      # Converts schemas to Google Gemini-compatible format
+      #
+      # @return [String] JSON string of schemas in Google Gemini format
+      def to_google_gemini_format(only: nil)
+        valid_schemas(only:).values.map { |schema| schema[:function] }
       end
     end
 
-    # Alias for property method, used for defining array items
-    alias_method :item, :property
+    # Builds parameter schemas for functions
+    class ParameterBuilder
+      VALID_TYPES = %w[object array string number integer boolean].freeze
 
-    private
+      def initialize(parent_type:)
+        @schema = parent_type == 'object' ? { type: 'object', properties: {}, required: [] } : {}
+        @parent_type = parent_type
+      end
 
-    # Validates the parameters for a property
-    #
-    # @param name [Symbol] Name of the property
-    # @param type [String] Type of the property
-    # @param enum [Array] Array of allowed values
-    # @param required [Boolean] Whether the property is required
-    # @raise [ArgumentError] If any parameter is invalid
-    def validate_parameters(name:, type:, enum:, required:)
-      if @parent_type == "object"
-        if name.nil?
-          raise ArgumentError, "Name must be provided for properties of an object"
+      # Builds the parameter schema
+      #
+      # @yield Block that defines the properties of the schema
+      # @return [Hash] The built schema
+      def build(&)
+        instance_eval(&)
+        @schema
+      end
+
+      # Defines a property in the schema
+      #
+      # @param name [Symbol] Name of the property (required only for a parent of type object)
+      # @param type [String] Type of the property
+      # @param description [String] Description of the property
+      # @param enum [Array] Array of allowed values
+      # @param required [Boolean] Whether the property is required
+      # @yield [Block] Block for nested properties (only for object and array types)
+      # @raise [ArgumentError] If any parameter is invalid
+      def property(name = nil, type:, description: nil, enum: nil, required: false, &)
+        validate_parameters(name:, type:, enum:, required:)
+
+        prop = { type:, description:, enum: }.compact
+
+        if block_given?
+          nested_schema = ParameterBuilder.new(parent_type: type).build(&)
+
+          case type
+          when 'object'
+            if nested_schema[:properties].empty?
+              raise ArgumentError, 'Object properties must have at least one property defined within it'
+            end
+
+            prop = nested_schema
+          when 'array'
+            if nested_schema.empty?
+              raise ArgumentError,
+                    'Array properties must have at least one item defined within it'
+            end
+
+            prop[:items] = nested_schema
+          end
         end
-        unless name.is_a?(Symbol)
-          raise ArgumentError, "Invalid name '#{name}'. Name must be a symbol"
+
+        if @parent_type == 'object'
+          @schema[:properties][name] = prop
+          @schema[:required] << name.to_s if required
+        else
+          @schema = prop
         end
       end
 
-      unless VALID_TYPES.include?(type)
-        raise ArgumentError, "Invalid type '#{type}'. Valid types are: #{VALID_TYPES.join(", ")}"
-      end
+      # Alias for property method, used for defining array items
+      alias item property
 
-      unless enum.nil? || enum.is_a?(Array)
-        raise ArgumentError, "Invalid enum '#{enum}'. Enum must be nil or an array"
-      end
+      private
 
-      unless [true, false].include?(required)
+      # Validates the parameters for a property
+      #
+      # @param name [Symbol] Name of the property
+      # @param type [String] Type of the property
+      # @param enum [Array] Array of allowed values
+      # @param required [Boolean] Whether the property is required
+      # @raise [ArgumentError] If any parameter is invalid
+      def validate_parameters(name:, type:, enum:, required:)
+        if @parent_type == 'object'
+          raise ArgumentError, 'Name must be provided for properties of an object' if name.nil?
+          raise ArgumentError, "Invalid name '#{name}'. Name must be a symbol" unless name.is_a?(Symbol)
+        end
+
+        unless VALID_TYPES.include?(type)
+          raise ArgumentError, "Invalid type '#{type}'. Valid types are: #{VALID_TYPES.join(', ')}"
+        end
+
+        unless enum.nil? || enum.is_a?(Array)
+          raise ArgumentError,
+                "Invalid enum '#{enum}'. Enum must be nil or an array"
+        end
+
+        return if [true, false].include?(required)
+
         raise ArgumentError, "Invalid required '#{required}'. Required must be a boolean"
       end
     end

@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.6.0] - 2024-08-02
+
+- Added rails compatibility
+
 ## [0.5.8] - 2024-08-02
 
 - Fixed gem `state_machines`

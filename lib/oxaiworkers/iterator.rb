@@ -54,6 +54,11 @@ module OxAiWorkers
       super()
     end
 
+    #
+    # Resets the state of the object by setting all instance variables to their initial values.
+    #
+    # Returns nothing.
+    #
     def cleanup
       @result = nil
       @queue = []
@@ -63,6 +68,11 @@ module OxAiWorkers
       complete_iteration
     end
 
+    # Updates the internal state of the iterator by adding the given `speach` to the `@queue` and calling the `@on_inner_monologue` callback with the `speach` text.
+    #
+    # @param speach [String] The text to be added to the `@queue` and passed to the `@on_inner_monologue` callback.
+    #
+    # @return [nil] This method does not return a value.
     def inner_monologue(speach:)
       # @queue.pop
       @queue << { role: :assistant, content: speach.to_s }
@@ -74,7 +84,7 @@ module OxAiWorkers
       # @queue.pop
       @queue << { role: :assistant, content: text.to_s }
       complete! unless available_defs.include?(:action_request)
-      @on_outer_voice&.call(text: text)
+      @on_outer_voice&.call(text:)
       nil
     end
 
@@ -96,7 +106,7 @@ module OxAiWorkers
       @worker.finish
       rebuild_worker
       complete! if can_complete?
-      @on_summarize&.call(text: text)
+      @on_summarize&.call(text:)
       nil
     end
 
@@ -199,7 +209,7 @@ module OxAiWorkers
     end
 
     def add_context(text, role: :system)
-      @context << { role: role, content: text }
+      @context << { role:, content: text }
     end
 
     def execute
