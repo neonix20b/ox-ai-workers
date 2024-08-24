@@ -86,9 +86,10 @@ For a more robust setup, you can configure the gem with your API keys, for examp
 OxAiWorkers.configure do |config|
     config.access_token = ENV.fetch("OPENAI")
     config.model = "gpt-4o"
-    config.max_tokens = 4096 # Default
-    config.temperature = 0.7 # Default
+    config.max_tokens = 4096   # Default
+    config.temperature = 0.7   # Default
     config.auto_execute = true # Default
+    config.wait_for_complete = true # Default
 end
 ```
 
@@ -177,6 +178,53 @@ As a worker, you can use different classes depending on your needs:
 - `OxAiWorkers::Request`: This class is used for immediate request execution. It is suitable for operations that require instant responses.
 
 - `OxAiWorkers::DelayedRequest`: This class is used for batch API requests, ideal for operations that do not require immediate execution. Using `DelayedRequest` can save up to 50% on costs as requests are executed when the remote server is less busy, but no later than within 24 hours.
+
+### Rails Projects with DelayedRequest
+
+Generate your model to store the `batch_id` in the database:
+
+```bash
+rails generate model MyRequestWithStore batch_id:string
+```
+
+In your `app/models/my_request_with_store.rb` file, add the following code:
+
+```ruby
+class MyRequestWithStore < ApplicationRecord
+  def delayed_request
+    @worker ||= OxAiWorkers::DelayedRequest.new(batch_id: self.batch_id)
+  end
+end
+```
+
+Then you can use the iterator like this:
+
+```ruby
+# Fetch the first stored batch
+my_store = MyRequestWithStore.first
+
+# Get the worker
+my_worker = my_store.delayed_request
+
+# Create the iterator
+iterator = OxAiWorkers::Iterator.new(worker: my_worker)
+# ... use the iterator
+
+# Destroy the store after completion
+my_store.destroy if my_worker.completed?
+```
+
+To store your batches in the database, use the following code:
+
+```ruby
+# Get the worker from the iterator
+my_worker = iterator.worker
+
+# Store the batch_id if it's not completed
+unless my_worker.completed?
+  my_store = MyRequestWithStore.create!(batch_id: my_worker.batch_id)
+end
+```
 
 ## Command Line Interface (CLI)
 

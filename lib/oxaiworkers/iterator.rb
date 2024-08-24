@@ -52,6 +52,8 @@ module OxAiWorkers
       cleanup
 
       super()
+
+      tick_or_wait if requested?
     end
 
     #
@@ -168,11 +170,28 @@ module OxAiWorkers
 
     def external_request
       @worker.request!
-      ticker
+      tick_or_wait
+    end
+
+    def tick_or_wait
+      if OxAiWorkers.configuration.wait_for_complete
+        wait_for_complete
+      else
+        ticker
+      end
     end
 
     def ticker
-      sleep(60) until @worker.completed?
+      return false unless @worker.completed?
+
+      analyze!
+      true
+    end
+
+    def wait_for_complete
+      return unless requested?
+
+      sleep(60) unless ticker
       analyze!
     end
 

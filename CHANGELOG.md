@@ -1,8 +1,11 @@
 ## [Unreleased]
 
+- Rails ActiveRecord support
+
 ## [0.6.0] - 2024-08-02
 
 - Added rails compatibility
+- Added `wait_for_complete` option
 
 ## [0.5.8] - 2024-08-02
 

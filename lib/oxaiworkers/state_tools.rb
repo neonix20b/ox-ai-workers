@@ -7,7 +7,7 @@ module OxAiWorkers
     include OxAiWorkers::StateHelper
     extend StateMachines::MacroMethods
 
-    state_machine :state, initial: :idle do
+    state_machine :state, initial: ->(t) { t.worker.requested? ? :requested : :idle } do
       before_transition from: any, do: :log_me
 
       after_transition on: :iterate, do: :next_iteration
