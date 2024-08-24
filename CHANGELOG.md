@@ -1,3 +1,7 @@
+## [0.7.1] - 2024-08-024
+
+- Added retry for `Iterator`
+
 ## [0.7.0] - 2024-08-024
 
 - Added `finish` for `Iterator`

@@ -179,7 +179,17 @@ module OxAiWorkers
     end
 
     def external_request
-      @worker.request!
+      begin
+        @worker.request!
+      rescue Faraday::ServerError => e
+        logger.error "Iterator::ServerError #{e.message}"
+        sleep(10)
+        external_request
+      rescue Faraday::ForbiddenError => e
+        logger.error "Iterator::ForbiddenError #{e.message}"
+      rescue StandardError => e
+        logger.error "Iterator::StandardError #{e.message}"
+      end
       tick_or_wait
     end
 
