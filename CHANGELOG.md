@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.6.2] - 2024-08-024
 
 - Rails ActiveRecord support
 
