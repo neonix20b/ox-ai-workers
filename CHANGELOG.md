@@ -1,3 +1,8 @@
+## [0.7.0] - 2024-08-024
+
+- Added `finish` for `Iterator`
+- Added `after_finish` for `Iterator`
+
 ## [0.6.3] - 2024-08-024
 
 - Added `add_raw_context` for `Iterator`

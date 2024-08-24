@@ -11,7 +11,7 @@ module OxAiWorkers
                   :on_inner_monologue, :on_outer_voice, :on_action_request, :on_summarize, :def_except, :def_only
 
     def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil, on_action_request: nil,
-                   on_summarize: nil, steps: nil, def_except: [], def_only: nil, locale: nil)
+                   on_summarize: nil, after_finish: nil, steps: nil, def_except: [], def_only: nil, locale: nil)
 
       @locale = locale || I18n.locale
 
@@ -34,6 +34,8 @@ module OxAiWorkers
           property :text, type: 'string', description: I18n.t('oxaiworkers.iterator.summarize.text'), required: true
         end
 
+        define_function :finish, description: I18n.t('oxaiworkers.iterator.finish.description')
+
         @monologue = steps || I18n.t('oxaiworkers.iterator.monologue')
       end
 
@@ -48,6 +50,7 @@ module OxAiWorkers
       @on_outer_voice = on_outer_voice
       @on_action_request = on_action_request
       @on_summarize = on_summarize
+      @after_finish = after_finish
 
       cleanup
 
@@ -99,6 +102,12 @@ module OxAiWorkers
       nil
     end
 
+    def finish
+      complete! if can_complete?
+      @after_finish&.call
+      nil
+    end
+
     def summarize(text:)
       @milestones << text.to_s
       @messages = []
@@ -142,7 +151,8 @@ module OxAiWorkers
     end
 
     def valid_monologue
-      @monologue.reject { |item| @def_except.any? { |fun| item.include?(full_function_name(fun)) } }
+      arr = @monologue.reject { |item| @def_except.any? { |fun| item.include?(full_function_name(fun)) } }
+      arr.each_with_index.map { |item, index| format(item, index + 1) }
     end
 
     def tool_name
@@ -228,7 +238,7 @@ module OxAiWorkers
     end
 
     def add_context(text, role: :system)
-      add_raw_context({ role: role, content: text })
+      add_raw_context({ role:, content: text })
     end
 
     def add_raw_context(c)
