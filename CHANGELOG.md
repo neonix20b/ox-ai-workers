@@ -1,3 +1,8 @@
+## [0.6.3] - 2024-08-024
+
+- Added `add_raw_context` for `Iterator`
+- Fixed `requested?`
+
 ## [0.6.2] - 2024-08-024
 
 - Rails ActiveRecord support

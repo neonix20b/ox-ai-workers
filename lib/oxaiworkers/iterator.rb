@@ -228,7 +228,11 @@ module OxAiWorkers
     end
 
     def add_context(text, role: :system)
-      @context << { role:, content: text }
+      add_raw_context({ role: role, content: text })
+    end
+
+    def add_raw_context(c)
+      @context << c
     end
 
     def execute

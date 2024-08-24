@@ -16,6 +16,10 @@ module OxAiWorkers
       OxAiWorkers.logger.debug(e.inspect, for: self.class)
     end
 
+    def requested?
+      false
+    end
+
     def completed?
       @result.present? or @errors.present? or @tool_calls.present?
     end
