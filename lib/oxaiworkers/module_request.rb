@@ -34,7 +34,7 @@ module OxAiWorkers
     end
 
     def append(role: nil, content: nil, messages: nil)
-      @messages << { role: role, content: content } if role.present? and content.present?
+      @messages << { role:, content: } if role.present? and content.present?
       @messages += messages if messages.present?
     end
 
@@ -69,7 +69,7 @@ module OxAiWorkers
         @tool_calls << {
           class: function['name'].split('__').first,
           name: function['name'].split('__').last,
-          args: args
+          args:
         }
       end
 

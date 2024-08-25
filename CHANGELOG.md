@@ -1,18 +1,22 @@
-## [0.7.1] - 2024-08-024
+## [0.7.2] - 2024-08-25
+
+- Fixed tool calls in `Iterator`
+
+## [0.7.1] - 2024-08-24
 
 - Added retry for `Iterator`
 
-## [0.7.0] - 2024-08-024
+## [0.7.0] - 2024-08-24
 
 - Added `finish` for `Iterator`
 - Added `after_finish` for `Iterator`
 
-## [0.6.3] - 2024-08-024
+## [0.6.3] - 2024-08-24
 
 - Added `add_raw_context` for `Iterator`
 - Fixed `requested?`
 
-## [0.6.2] - 2024-08-024
+## [0.6.2] - 2024-08-24
 
 - Rails ActiveRecord support
 

@@ -45,7 +45,7 @@ module OxAiWorkers
     # @param only [Object, Array] The object or array to initialize the white list with.
     # @return [Array] The initialized white list.
     def init_white_list_with(only)
-      @white_list = only.is_a?(Array) ? only : [only]
+      @white_list = only.is_a?(Array) || only.nil? ? only : [only]
     end
 
     # Defines a function for the tool

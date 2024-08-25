@@ -179,18 +179,18 @@ module OxAiWorkers
     end
 
     def external_request
-      begin
-        @worker.request!
-      rescue Faraday::ServerError => e
-        logger.error "Iterator::ServerError #{e.message}"
-        sleep(10)
-        external_request
-      rescue Faraday::ForbiddenError => e
-        logger.error "Iterator::ForbiddenError #{e.message}"
-      rescue StandardError => e
-        logger.error "Iterator::StandardError #{e.message}"
-      end
+      @worker.request!
       tick_or_wait
+    rescue Faraday::ServerError => e
+      OxAiWorkers.logger.warn "Iterator::ServerError #{e.message}. Waiting 10 seconds..."
+      sleep(10)
+      external_request
+      # rescue Faraday::ForbiddenError => e
+      #   OxAiWorkers.logger.error "Iterator::ForbiddenError #{e.inspect}", for: self.class
+      # rescue StandardError => e
+      #   OxAiWorkers.logger.error "Iterator::StandardError #{e.inspect}", for: self.class
+      # rescue OpenAI::Error => e
+      #   OxAiWorkers.logger.error "Iterator::OpenAI::Error #{e.inspect}", for: self.class
     end
 
     def tick_or_wait
