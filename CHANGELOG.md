@@ -1,3 +1,12 @@
+## [0.7.5] - 2024-08-26
+
+- Improved handling of truncated responses in Iterator
+- Updated dependencies
+
+## [0.7.4] - 2024-08-25
+
+- Fixed `finish_it` for `Iterator`
+
 ## [0.7.2] - 2024-08-25
 
 - Fixed tool calls in `Iterator`

@@ -1,0 +1,69 @@
+OxAiWorkers is a Ruby gem that implements a finite state machine (using the `state_machine` gem) to solve tasks using generative intelligence (with the `ruby-openai` gem). This approach enhances the final result by utilizing internal monologue and external tools.
+
+## Architecture Principles
+- The library is built on the finite state machine (FSM) pattern using the 'state_machine' gem
+- Integration with generative models is implemented using the 'ruby-openai' gem
+- DRY (Don't Repeat Yourself) principle is applied throughout all components
+- Modular structure with clear separation of responsibilities between classes
+- Encapsulation of states and transitions in separate classes
+- Implementation of the "Composition" pattern for flexible tool integration
+
+## Core Components
+- `Request` and `DelayedRequest` - classes for executing API requests (immediate and delayed)
+- `Iterator` - main class for iterative task execution with tools
+- `Assistant` - high-level wrappers over Iterator (Sysop, Coder, Localizer, etc.)
+- `Tool` - tools that can be used during task execution (Eval, FileSystem, Database)
+- `ToolDefinition` - module for declaring functions and methods for tools
+- `StateTools` - base class for managing states and transitions
+- `ContextualLogger` - logging system with contextual information support
+
+## Code Conventions
+- Use `snake_case` for method and variable names
+- Functions for generative models should also be in `snake_case` (inner_monologue, outer_voice, etc.)
+- All public methods must have documentation with usage examples
+- Tests are mandatory for all new functions
+- All code comments, CHANGELOG, README, and other documentation must be written in English
+- Use YARD-style documentation for all public methods
+- Maintain a unified code formatting style (Rubocop is recommended)
+- Follow the "Fail fast" principle for early error detection
+
+## Interaction Patterns
+- The system uses internal monologue (inner_monologue) for planning actions
+- External voice (outer_voice) is used for communication with the user
+- Actions (action_request) are executed through tools
+- Summary (summarize) is used to compress dialog history
+- Execution flow management through finite state machine
+- Implementation of callback mechanisms for flexible event handling
+- Isolation of error handling functions at the tool level
+
+## Integration
+- CLI interface through `oxaiworkers init` and `oxaiworkers run` commands
+- Rails support via ActiveRecord for storing delayed requests
+- Configuration through the `OxAiWorkers.configure` block
+- Multilingual support via standard I18n
+- Integration with external APIs through request client templates
+- Delayed execution mechanism via DelayedRequest
+- Support for various language models (OpenAI, Anthropic, Gemini)
+
+## Best Practices
+- Use callbacks to handle various states (on_inner_monologue, on_outer_voice)
+- Handle errors at the tool level, preventing them from interrupting the main execution flow
+- When creating new assistants, inherit from the base Assistant class
+- Use the white_list mechanism to restrict available functions
+- Separate language model requests from result processing logic
+- Practice dependency injection to improve code testability
+- Use localization mechanisms for multilingual support
+
+## Tools Architecture
+- Each tool should be a self-contained module
+- Tools are registered through the `define_function` interface
+- All tools should handle their own errors and return readable messages
+- Use parameter validation at the function definition level
+- Maintain a unified format for return values
+
+## Performance and Scaling
+- Cache API request results when possible
+- Use asynchronous processing for long operations
+- Apply backoff strategies for repeated requests
+- Break large tasks into atomic operations
+- Provide monitoring and profiling mechanisms

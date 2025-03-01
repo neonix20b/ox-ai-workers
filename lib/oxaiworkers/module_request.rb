@@ -3,7 +3,7 @@
 module OxAiWorkers
   class ModuleRequest
     attr_accessor :result, :client, :messages, :model, :max_tokens, :custom_id, :temperature, :tools, :errors,
-                  :tool_calls_raw, :tool_calls
+                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason
 
     def initialize_requests(model: nil, max_tokens: nil, temperature: nil)
       @max_tokens = max_tokens || OxAiWorkers.configuration.max_tokens
@@ -11,6 +11,8 @@ module OxAiWorkers
       @model = model || OxAiWorkers.configuration.model
       @temperature = temperature || OxAiWorkers.configuration.temperature
       @client = nil
+      @is_truncated = false
+      @finish_reason = nil
 
       OxAiWorkers.configuration.access_token ||= ENV['OPENAI']
       if OxAiWorkers.configuration.access_token.nil?
@@ -31,6 +33,8 @@ module OxAiWorkers
       @messages = []
       @tool_calls = nil
       @tool_calls_raw = nil
+      @is_truncated = false
+      @finish_reason = nil
     end
 
     def append(role: nil, content: nil, messages: nil)
@@ -62,6 +66,10 @@ module OxAiWorkers
       @tool_calls = []
       @result = response.dig('choices', 0, 'message', 'content')
       @tool_calls_raw = response.dig('choices', 0, 'message', 'tool_calls')
+      @finish_reason = response.dig('choices', 0, 'finish_reason')
+      @is_truncated = @finish_reason == 'length'
+
+      return @tool_calls if @tool_calls_raw.nil?
 
       @tool_calls_raw.each do |tool|
         function = tool['function']

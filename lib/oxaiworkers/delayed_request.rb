@@ -97,12 +97,17 @@ module OxAiWorkers
           @custom_id = line['custom_id']
           # @result = line.dig("response", "body", "choices", 0, "message", "content")
           parse_choices(line.dig('response', 'body'))
-          complete_batch!
+          # Don't complete the batch if the response is truncated due to max_tokens
+          complete_batch! unless @is_truncated
         end
       elsif !batch['error_file_id'].nil?
         @errors = @client.files.content(id: batch['error_file_id'])
         fail_batch!
       end
+
+      # Truncated response is not considered complete
+      return false if @is_truncated
+
       true
     end
   end

@@ -19,6 +19,10 @@ module OxAiWorkers
     end
 
     def completed?
+      # Truncated response is not considered complete,
+      # so the iterator continues processing
+      return false if @is_truncated
+
       @result.present? or @errors.present? or @tool_calls.present?
     end
   end

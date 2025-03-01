@@ -2,7 +2,7 @@
 
 module OxAiWorkers
   class Iterator < OxAiWorkers::StateTools
-    ITERATOR_FUNCTIONS = %i[inner_monologue outer_voice action_request summarize].freeze
+    ITERATOR_FUNCTIONS = %i[inner_monologue outer_voice action_request summarize finish_it].freeze
 
     include OxAiWorkers::ToolDefinition
     include OxAiWorkers::LoadI18n
@@ -34,7 +34,7 @@ module OxAiWorkers
           property :text, type: 'string', description: I18n.t('oxaiworkers.iterator.summarize.text'), required: true
         end
 
-        define_function :finish, description: I18n.t('oxaiworkers.iterator.finish.description')
+        define_function :finish_it, description: I18n.t('oxaiworkers.iterator.finish_it.description')
 
         @monologue = steps || I18n.t('oxaiworkers.iterator.monologue')
       end
@@ -102,7 +102,7 @@ module OxAiWorkers
       nil
     end
 
-    def finish
+    def finish_it
       complete! if can_complete?
       @after_finish&.call
       nil
@@ -185,12 +185,6 @@ module OxAiWorkers
       OxAiWorkers.logger.warn "Iterator::ServerError #{e.message}. Waiting 10 seconds..."
       sleep(10)
       external_request
-      # rescue Faraday::ForbiddenError => e
-      #   OxAiWorkers.logger.error "Iterator::ForbiddenError #{e.inspect}", for: self.class
-      # rescue StandardError => e
-      #   OxAiWorkers.logger.error "Iterator::StandardError #{e.inspect}", for: self.class
-      # rescue OpenAI::Error => e
-      #   OxAiWorkers.logger.error "Iterator::OpenAI::Error #{e.inspect}", for: self.class
     end
 
     def tick_or_wait
@@ -212,10 +206,21 @@ module OxAiWorkers
       return unless requested?
 
       sleep(60) unless ticker
-      analyze!
     end
 
     def process_result(_transition)
+      # If the response is truncated due to max_tokens, repeat the request
+      if @worker.is_truncated && @worker.result.present?
+        # Save the partial response and continue the dialogue with AI
+        OxAiWorkers.logger.info(
+          "Truncated response detected (finish_reason: #{@worker.finish_reason}). Repeating request to get complete response.", for: self.class
+        )
+        @queue << { role: :assistant, content: @worker.result }
+        # Request continuation
+        next_iteration
+        return
+      end
+
       @result = @worker.result || @worker.errors
       if @worker.tool_calls.present?
         @queue << { role: :assistant, content: @worker.tool_calls_raw.to_s }
