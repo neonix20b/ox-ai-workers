@@ -1,4 +1,8 @@
-## [0.7.5] - 2024-08-26
+## [0.7.6] - 2025-03-12
+
+- Update Task model enum syntax to Rails 7 style
+
+## [0.7.5] - 2025-03-01
 
 - Improved handling of truncated responses in Iterator
 - Updated dependencies
