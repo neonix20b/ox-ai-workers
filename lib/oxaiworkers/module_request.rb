@@ -3,13 +3,14 @@
 module OxAiWorkers
   class ModuleRequest
     attr_accessor :result, :client, :messages, :model, :max_tokens, :custom_id, :temperature, :tools, :errors,
-                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason
+                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason, :uri_base
 
-    def initialize_requests(model: nil, max_tokens: nil, temperature: nil)
+    def initialize_requests(model: nil, max_tokens: nil, temperature: nil, uri_base: nil)
       @max_tokens = max_tokens || OxAiWorkers.configuration.max_tokens
       @custom_id = SecureRandom.uuid
       @model = model || OxAiWorkers.configuration.model
       @temperature = temperature || OxAiWorkers.configuration.temperature
+      @uri_base = uri_base
       @client = nil
       @is_truncated = false
       @finish_reason = nil
@@ -26,7 +27,7 @@ module OxAiWorkers
     def cleanup
       @client ||= OpenAI::Client.new(
         access_token: OxAiWorkers.configuration.access_token,
-        uri_base: OxAiWorkers.configuration.uri_base,
+        uri_base: @uri_base || OxAiWorkers.configuration.uri_base,
         log_errors: true # Highly recommended in development, so you can see what errors OpenAI is returning. Not recommended in production because it could leak private data to your logs.
       )
       @result = nil

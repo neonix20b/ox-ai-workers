@@ -2,8 +2,8 @@
 
 module OxAiWorkers
   class DelayedRequest < OxAiWorkers::StateBatch
-    def initialize(batch_id: nil, model: nil, max_tokens: nil, temperature: nil)
-      initialize_requests(model:, max_tokens:, temperature:)
+    def initialize(batch_id: nil, model: nil, max_tokens: nil, temperature: nil, uri_base: nil)
+      initialize_requests(model:, max_tokens:, temperature:, uri_base:)
       @custom_id = nil if batch_id.present?
       @batch_id = batch_id
       @file_id = nil

@@ -1,4 +1,4 @@
-## [0.7.7] - 2025-03-22
+## [0.7.8] - 2025-03-22
 
 - Added support for alternative model providers
 
