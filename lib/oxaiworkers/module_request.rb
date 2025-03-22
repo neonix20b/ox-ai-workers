@@ -26,6 +26,7 @@ module OxAiWorkers
     def cleanup
       @client ||= OpenAI::Client.new(
         access_token: OxAiWorkers.configuration.access_token,
+        uri_base: OxAiWorkers.configuration.uri_base,
         log_errors: true # Highly recommended in development, so you can see what errors OpenAI is returning. Not recommended in production because it could leak private data to your logs.
       )
       @result = nil

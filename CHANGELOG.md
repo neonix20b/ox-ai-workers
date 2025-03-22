@@ -1,3 +1,7 @@
+## [0.7.7] - 2025-03-22
+
+- Added support for alternative model providers
+
 ## [0.7.6] - 2025-03-12
 
 - Update Task model enum syntax to Rails 7 style

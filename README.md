@@ -179,6 +179,26 @@ As a worker, you can use different classes depending on your needs:
 
 - `OxAiWorkers::DelayedRequest`: This class is used for batch API requests, ideal for operations that do not require immediate execution. Using `DelayedRequest` can save up to 50% on costs as requests are executed when the remote server is less busy, but no later than within 24 hours.
 
+### Alternative Models
+
+OxAiWorkers supports alternative compatible models like DeepSeek. To use these models, specify the appropriate base URI in the initializer:
+
+```ruby
+worker = OxAiWorkers::Request.new(
+    model: "deepseek-chat",
+    uri_base: "https://api.deepseek.com/"
+)
+
+# Or with configuration
+OxAiWorkers.configure do |config|
+    config.uri_base = "https://api.deepseek.com/"
+    config.model = "deepseek-chat"
+    # Other configuration options...
+end
+```
+
+This allows you to use any API-compatible LLM provider by simply changing the base URI.
+
 ### Rails Projects with DelayedRequest
 
 Generate your model to store the `batch_id` in the database:
