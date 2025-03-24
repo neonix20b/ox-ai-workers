@@ -42,7 +42,7 @@ module OxAiWorkers
   class ConfigurationError < Error; end
 
   class Configuration
-    attr_accessor :model, :max_tokens, :temperature, :access_token, :auto_execute, :wait_for_complete
+    attr_accessor :model, :max_tokens, :temperature, :access_token, :auto_execute, :wait_for_complete, :uri_base
 
     def initialize
       @access_token = nil
@@ -51,6 +51,7 @@ module OxAiWorkers
       @temperature = DEFAULT_TEMPERATURE
       @auto_execute = true
       @wait_for_complete = true
+      @uri_base = nil
 
       [Array, NilClass, String, Symbol, Hash].each do |c|
         c.send(:include, OxAiWorkers::PresentCompat) unless c.method_defined?(:present?)

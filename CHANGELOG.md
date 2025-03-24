@@ -1,3 +1,7 @@
+## [0.7.9] - 2025-03-24
+
+- Added `uri_base` for configuration
+
 ## [0.7.8] - 2025-03-22
 
 - Added support for alternative model providers
