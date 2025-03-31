@@ -1,3 +1,7 @@
+## [0.8.0] - 2025-03-31
+
+- Added `on_stream` for `Iterator`
+
 ## [0.7.10] - 2025-03-31
 
 - Added `tool_call_completed` for `Iterator`
