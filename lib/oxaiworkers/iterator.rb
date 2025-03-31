@@ -229,10 +229,11 @@ module OxAiWorkers
             tool_name = t.respond_to?(:tool_name) ? t.tool_name : t.class.tool_name
             tool_name == external_call[:class] && t.respond_to?(external_call[:name])
           end.first
-          unless tool.nil?
-            out = tool.send(external_call[:name], **external_call[:args])
-            @queue << { role: :system, content: out.to_s } if out.present?
-          end
+          next if tool.nil?
+
+          out = tool.send(external_call[:name], **external_call[:args])
+          @queue << { role: :assistant, content: "Tool call #{external_call[:name]} completed" }
+          @queue << { role: :system, content: out.to_s } if out.present?
         end
         @worker.finish
         iterate! if can_iterate?
