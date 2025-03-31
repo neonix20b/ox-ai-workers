@@ -3,9 +3,9 @@
 module OxAiWorkers
   class ModuleRequest
     attr_accessor :result, :client, :messages, :model, :max_tokens, :custom_id, :temperature, :tools, :errors,
-                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason, :uri_base
+                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason, :uri_base, :on_stream_proc
 
-    def initialize_requests(model: nil, max_tokens: nil, temperature: nil, uri_base: nil)
+    def initialize_requests(model: nil, max_tokens: nil, temperature: nil, uri_base: nil, on_stream: nil)
       @max_tokens = max_tokens || OxAiWorkers.configuration.max_tokens
       @custom_id = SecureRandom.uuid
       @model = model || OxAiWorkers.configuration.model
@@ -14,6 +14,7 @@ module OxAiWorkers
       @client = nil
       @is_truncated = false
       @finish_reason = nil
+      @on_stream_proc = on_stream
 
       OxAiWorkers.configuration.access_token ||= ENV['OPENAI']
       if OxAiWorkers.configuration.access_token.nil?
@@ -40,7 +41,7 @@ module OxAiWorkers
     end
 
     def append(role: nil, content: nil, messages: nil)
-      @messages << { role:, content: } if role.present? and content.present?
+      @messages << { role:, content: } if role.present? && content.present?
       @messages += messages if messages.present?
     end
 
@@ -54,6 +55,10 @@ module OxAiWorkers
       if @tools.present?
         parameters[:tools] = @tools
         parameters[:tool_choice] = 'required'
+      end
+      if @on_stream_proc.present?
+        parameters[:stream] = @on_stream_proc
+        parameters[:stream_options] = { include_usage: true }
       end
       parameters
     end

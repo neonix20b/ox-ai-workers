@@ -20,8 +20,8 @@ module OxAiWorkers
         @iterator.execute
       end
 
-      def init_worker(delayed: false, model: nil)
-        worker = delayed ? DelayedRequest.new : Request.new
+      def init_worker(delayed: false, model: nil, on_stream: nil)
+        worker = delayed ? DelayedRequest.new : Request.new(on_stream:)
         worker.model = model || OxAiWorkers.configuration.model
         worker
       end
