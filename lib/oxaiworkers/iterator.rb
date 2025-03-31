@@ -232,7 +232,8 @@ module OxAiWorkers
           next if tool.nil?
 
           out = tool.send(external_call[:name], **external_call[:args])
-          @queue << { role: :assistant, content: "Tool call #{external_call[:name]} completed" }
+          @queue << { role: :assistant,
+                      content: "Tool call #{external_call[:name]} completed. Args: #{external_call[:args]}" }
           @queue << { role: :system, content: out.to_s } if out.present?
         end
         @worker.finish
