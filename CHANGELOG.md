@@ -1,3 +1,7 @@
+## [0.7.10] - 2025-03-31
+
+- Added `tool_call_completed` for `Iterator`
+
 ## [0.7.9] - 2025-03-24
 
 - Added `uri_base` for configuration
