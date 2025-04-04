@@ -1,3 +1,7 @@
+## [0.8.2] - 2025-04-04
+
+- Update locale for Iterator
+
 ## [0.8.0] - 2025-03-31
 
 - Added `on_stream` for `Iterator`

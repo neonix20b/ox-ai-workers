@@ -5,7 +5,7 @@ en:
         description: A function for internal monologue, allowing the AI to ponder and formulate its thoughts without user involvement. Used for intermediate reflections and recording data that do not require immediate response or action from the user.
         speach: Text of reflections or conclusions
       outer_voice:
-        description: Inform the user of the necessary information without expecting a response.
+        description: Inform the user of the information without expecting a response.
         text: Content of the message
       action_request:
         description: A function for interactive interaction with the user. Allows you to ask a clarifying question, request actions, or complete the current step. The function waits for the user's response and returns it.

@@ -80,7 +80,7 @@ module OxAiWorkers
     # @return [nil] This method does not return a value.
     def inner_monologue(speach:)
       # @queue.pop
-      # @queue << { role: :assistant, content: speach.to_s }
+      @queue << { role: :assistant, content: speach.to_s }
       @on_inner_monologue&.call(text: speach)
       nil
     end
@@ -233,9 +233,7 @@ module OxAiWorkers
 
           out = tool.send(external_call[:name], **external_call[:args])
           @queue << { role: :assistant,
-                      content: "Call #{external_call[:name]} with args #{external_call[:args]}" }
-          @queue << { role: :system,
-                      content: "Tool call #{external_call[:name]} complited" }
+                      content: "Tool call #{external_call[:name]} completed." }
           @queue << { role: :system, content: "Result: #{out}" } if out.present?
         end
         @worker.finish
