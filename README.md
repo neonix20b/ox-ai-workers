@@ -127,7 +127,8 @@ iterator = OxAiWorkers::Iterator.new(
     on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
     on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) },
     on_action_request: ->(text:) { puts "action: #{text}".colorize(:red) },
-    on_summarize: ->(text:) { puts "summary: #{text}".colorize(:blue) }
+    on_summarize: ->(text:) { puts "summary: #{text}".colorize(:blue) },
+    on_finish: -> { puts "finish".colorize(:magenta) }
   )
 
 iterator.add_task("Show files in current directory.")

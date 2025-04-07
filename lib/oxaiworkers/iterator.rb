@@ -8,10 +8,10 @@ module OxAiWorkers
     include OxAiWorkers::LoadI18n
 
     attr_accessor :worker, :role, :messages, :context, :result, :tools, :queue, :monologue, :tasks, :milestones,
-                  :on_inner_monologue, :on_outer_voice, :on_action_request, :on_summarize, :def_except, :def_only
+                  :on_inner_monologue, :on_outer_voice, :on_action_request, :on_summarize, :on_finish, :def_except, :def_only
 
     def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil, on_action_request: nil,
-                   on_summarize: nil, after_finish: nil, steps: nil, def_except: [], def_only: nil, locale: nil)
+                   on_summarize: nil, on_finish: nil, steps: nil, def_except: [], def_only: nil, locale: nil)
 
       @locale = locale || I18n.locale
 
@@ -50,7 +50,7 @@ module OxAiWorkers
       @on_outer_voice = on_outer_voice
       @on_action_request = on_action_request
       @on_summarize = on_summarize
-      @after_finish = after_finish
+      @on_finish = on_finish
 
       cleanup
 
@@ -104,7 +104,7 @@ module OxAiWorkers
 
     def finish_it
       complete! if can_complete?
-      @after_finish&.call
+      @on_finish&.call
       nil
     end
 
