@@ -1,3 +1,7 @@
+## [0.8.4] - 2025-04-18
+
+- Refine Russian locale for Iterator with enhanced step descriptions and planning guidance
+
 ## [0.8.2] - 2025-04-04
 
 - Update locale for Iterator
