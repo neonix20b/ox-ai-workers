@@ -129,10 +129,11 @@ module OxAiWorkers
     def rebuild_worker
       @worker.messages = []
       @worker.append(role: :system, content: @role) if @role.present?
+      @tasks.each { |task| @worker.append(role: :user, content: task) }
       @worker.append(role: :system, content: valid_monologue.join("\n"))
       @worker.append(messages: @context) if @context.present?
-      @tasks.each { |task| @worker.append(role: :user, content: task) }
       @milestones.each { |milestone| @worker.append(role: :assistant, content: milestone) }
+      @tasks.each { |task| @worker.append(role: :user, content: task) }
       @worker.append(messages: @messages)
       @worker.tools = function_schemas.to_openai_format(only: available_defs)
       return unless @tools.present?
