@@ -1,3 +1,7 @@
+## [0.8.5] - 2025-04-18
+
+- Fixed tool calls parsing
+
 ## [0.8.4] - 2025-04-18
 
 - Refine Russian locale for Iterator with enhanced step descriptions and planning guidance
