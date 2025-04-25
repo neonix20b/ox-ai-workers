@@ -1,3 +1,8 @@
+
+## [0.8.7] - 2025-04-25
+
+- Fixed tool calls parsing
+
 ## [0.8.5] - 2025-04-18
 
 - Fixed tool calls parsing

@@ -81,53 +81,62 @@ module OxAiWorkers
       return if choices.nil? || choices.empty?
 
       choices.each do |choice|
+        # Parse basic info and accumulate raw tool calls
         parse_one_choice(choice)
       end
 
-      # @tool_calls is already populated by parse_one_choice
-      # @result, @finish_reason, @is_truncated are updated with the last relevant values
+      # Only parse tool calls if the response wasn't truncated
+      _parse_tool_calls unless @is_truncated || @tool_calls_raw.empty?
     end
 
     def parse_one_choice(choice)
       message = choice['message']
       return unless message # Skip if there's no message in this choice
 
-      # Accumulate raw tool calls
-      if message['tool_calls']
-        @tool_calls_raw.concat(message['tool_calls'])
-        message['tool_calls'].each do |tool_call|
-          next unless tool_call['type'] == 'function' # Ensure it's a function call
-
-          function = tool_call['function']
-          next unless function && function['name'] && function['arguments']
-
-          begin
-            # Attempt to parse arguments, handle potential JSON errors
-            args = JSON.parse(function['arguments'], symbolize_names: true)
-          rescue JSON::ParserError => e
-            OxAiWorkers.logger.error("Failed to parse tool call arguments: #{e.message}", for: self.class)
-            OxAiWorkers.logger.debug("Raw arguments: #{function['arguments']}", for: self.class)
-            args = {} # Assign empty args or handle error as appropriate
-          end
-
-          # Accumulate parsed tool calls
-          @tool_calls << {
-            class: function['name'].split('__').first,
-            name: function['name'].split('__').last,
-            args: args
-          }
-        end
-      end
+      # Accumulate raw tool calls if present
+      @tool_calls_raw.concat(message['tool_calls']) if message['tool_calls']
 
       # Update result with the content if present
       current_result = message['content']
       @result = current_result if current_result.present?
 
-      # Update finish reason and truncation status
+      # Update finish reason and truncation status based on the *last* choice's reason
       current_finish_reason = choice['finish_reason']
       if current_finish_reason.present?
         @finish_reason = current_finish_reason
-        @is_truncated = @finish_reason == 'length'
+        @is_truncated = (@finish_reason == 'length')
+      end
+    end
+
+    private
+
+    # Parses the accumulated raw tool calls into the structured @tool_calls array.
+    # This should only be called after confirming the response is not truncated.
+    def _parse_tool_calls
+      @tool_calls = [] # Ensure it's clean before parsing
+      @tool_calls_raw.each do |tool_call|
+        next unless tool_call['type'] == 'function' # Ensure it's a function call
+
+        function = tool_call['function']
+        next unless function && function['name'] && function['arguments']
+
+        begin
+          # Attempt to parse arguments, handle potential JSON errors
+          args = JSON.parse(function['arguments'], symbolize_names: true)
+        rescue JSON::ParserError => e
+          OxAiWorkers.logger.error("Failed to parse tool call arguments: #{e.message}", for: self.class)
+          OxAiWorkers.logger.debug("Raw arguments: #{function['arguments']}", for: self.class)
+          # Decide how to handle parsing errors, e.g., skip this call or add with empty args
+          # Skipping for now, as partial args are likely useless.
+          next
+        end
+
+        # Accumulate parsed tool calls
+        @tool_calls << {
+          class: function['name'].split('__').first,
+          name: function['name'].split('__').last,
+          args: args
+        }
       end
     end
   end
