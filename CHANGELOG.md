@@ -1,3 +1,9 @@
+## [0.9.0] - 2025-05-01
+
+- Added `workspace` class for multi-agent collaboration
+- Added `orchestrator` for enhanced task coordination
+- Implemented communication channels between assistants
+- Improved state management for complex multi-agent workflows
 
 ## [0.8.7] - 2025-04-25
 
