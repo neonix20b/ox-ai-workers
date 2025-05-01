@@ -2,70 +2,10 @@ en:
   oxaiworkers:
     assistant:
       sysop:
-        title: "System Operator"
-        description: "Executes system commands and file operations"
-        capabilities: "shell command execution, file reading and writing, system information analysis"
-        role: "You are an experienced system administrator who can execute shell commands and file system operations. Your task is to safely and efficiently manage the system."
+        role: "You are a software agent inside my computer"
       coder:
-        title: "Programmer"
-        description: "Writes and analyzes code"
-        capabilities: "code generation, refactoring, code analysis, optimization"
-        role: "You are an experienced programmer who writes clean, efficient code and can explain complex technical concepts in simple language."
-        role_with_language: "You are an experienced %{language} programmer who writes clean, efficient code and can explain complex technical concepts in simple language."
+        role: "You are a professional %s programmer inside my computer"
       localizer:
-        title: "Localizer"
-        description: "Performs translation and content adaptation"
-        capabilities: "text translation, content adaptation, format preservation"
-        role: "You are an experienced translator and content localizer from %{source_lang}. Your task is to translate content while preserving its meaning, style, and formatting."
-        role_with_target: "You are an experienced translator and content localizer from %{source_lang} to %{target_lang}. Your task is to translate content while preserving its meaning, style, and formatting."
-        source: "Source language: %{source_lang}"
-        locale: "Target language: %{target_lang}"
-      orchestrator:
-        role: "You are an orchestrator that coordinates work between different assistants. Your task is to distribute tasks among assistants and organize their interaction to achieve a common goal."
-        assistant_list_header: "Available assistants and their capabilities:"
-        assistant_info: "ID: %{id}, Type: %{type}, Title: %{title}\nDescription: %{description}\nCapabilities: %{capabilities}"
-        workflow_task: |
-          You need to organize a workflow according to the following description:
-
-          %{workflow_description}
-
-          Develop an action plan by distributing tasks among available assistants,
-          and coordinate their interaction to achieve the goal.
-
-          For each step, specify:
-          1. ID of the assistant who should perform the task
-          2. Description of the task for the assistant
-          3. Expected result
-
-          After completing each step, analyze the result and make a decision about further actions.
-        result_received: |
-          Result received from assistant %{assistant_id}:
-
-          %{result}
-
-          Analyze the result and determine the next step in the workflow.
-      workspace:
-        title: "Workspace"
-        description: "Collection of interacting assistants"
-        orchestrator_title: "Orchestrator"
-        orchestrator_description: "Manages interaction between assistants"
-        orchestrator_capabilities: "workflow planning, task distribution, execution monitoring"
-        status_pending: "pending"
-        status_completed: "completed"
-        status_error: "error"
-        status_waiting: "waiting"
-        parse_assistant_id: "Assistant ID:"
-        parse_task: "Task:"
-        parse_expected_result: "Expected result:"
-        cannot_delete_orchestrator: "Cannot delete the orchestrator from the workspace"
-        error_assistant_exists: "Assistant with id '%{id}' already exists"
-        error_assistant_module: "Assistant must include ModuleBase"
-        error_assistant_not_found: "Assistant with id '%{id}' not found"
-        error_assistant_id_not_found: "Assistant with ID '%{id}' not found"
-        waiting_orchestrator: "Waiting for orchestrator response"
-      message_from: "Message from %{from}: %{message}"
-    callbacks:
-      monologue: "monologue"
-      voice: "voice"
-      action: "action"
-      summary: "summary"
+        role: "You are a professional localizer (translator) to the %s language inside my computer. Your task is to correctly localize files (create new ones in the required language based on the original) provided by the user."
+        source: "Use the %s language as a basis"
+        locale: "For the %s language, the correct locale is :%s"

@@ -487,137 +487,14 @@ module OxAiWorkers
 end
 ```
 
-### Using the Workspace for Multi-Agent Collaboration
-
-OxAiWorkers provides a Workspace class to organize multiple assistants and facilitate their collaboration:
-
-```ruby
-# Create a workspace
-workspace = OxAiWorkers::Workspace.new(
-  title: "Software Development Team",
-  description: "A team of AI assistants working on software development tasks"
-)
-
-# Add different assistants to the workspace
-workspace.add_assistant("architect", OxAiWorkers::Assistant::Coder.new(
-  title: "Software Architect",
-  description: "Designs system architecture and makes key technical decisions",
-  capabilities: ["system design", "API design", "technology selection", "code review", "architecture optimization"],
-  role: "You are an experienced software architect responsible for designing robust, scalable systems. Your expertise lies in creating clean APIs and selecting appropriate technologies for projects."
-))
-
-workspace.add_assistant("developer", OxAiWorkers::Assistant::Coder.new(
-  title: "Developer",
-  description: "Implements code according to specifications",
-  capabilities: ["code development", "debugging", "refactoring", "API integration", "database work"], 
-  role: "You are a skilled Ruby developer with experience in web application development. Your job is to implement code according to specifications while maintaining clean, maintainable code."
-))
-
-workspace.add_assistant("tester", OxAiWorkers::Assistant::Coder.new(
-  title: "QA Engineer",
-  description: "Tests software and ensures quality",
-  capabilities: ["test writing", "test automation", "bug detection", "security testing", "load testing"],
-  role: "You are a quality assurance engineer focused on ensuring software reliability and security. You specialize in automated testing and finding edge cases that might cause problems."
-))
-
-# Define a workflow for the team
-workflow_description = <<~WORKFLOW
-  Create a REST API for a blog with posts and comments.
-  
-  The process should include:
-  1. Designing the system architecture (models, controllers, routes)
-  2. Implementing code according to the architecture
-  3. Writing tests to verify API functionality
-  4. Checking overall code quality and security
-  
-  The architect should design the system, using their API design capabilities.
-  The developer should implement the code, using their Ruby and database skills.
-  The tester should write tests and verify code quality, using their test automation and bug detection skills.
-WORKFLOW
-
-workspace.set_workflow(workflow_description)
-
-# Execute the workflow
-result = workspace.execute_next_step
-while result[:status] == 'pending'
-  puts "Assigned task to: #{result[:assistant_id]}"
-  puts "Task: #{result[:task]}"
-  
-  # Get the result from the assistant
-  assistant = workspace.get_assistant(result[:assistant_id])
-  
-  # Get information about the assistant's capabilities for this task
-  capabilities = assistant.capabilities
-  puts "Using capabilities: #{capabilities.join(', ')}"
-  
-  # ... interact with the assistant if needed
-  
-  # Get the result from the assistant
-  assistant.execute
-  
-  # Pass the assistant's response back to the workflow
-  assistant_response = {
-    assistant_id: result[:assistant_id],
-    message: assistant.iterator.result
-  }
-  
-  puts "Task completed by assistant: #{result[:assistant_id]}"
-  
-  # Move to the next step
-  result = workspace.execute_next_step(assistant_response)
-end
-
-puts "Workflow completed: #{result[:message]}"
-
-The Workspace provides the following key features:
-
-- **Multi-agent coordination**: Manages multiple assistants with different specializations
-- **Task orchestration**: Uses an orchestrator to plan and assign tasks based on assistant capabilities
-- **Message passing**: Enables assistants to exchange information
-- **Workflow execution**: Manages the state and progression of complex workflows
-- **Message history**: Keeps track of all communication between assistants
-
-### Task Distribution Based on Capabilities
-
-The orchestrator in the workspace makes decisions about task assignments based on assistant capabilities. For example:
-
-```ruby
-# Example of how the orchestrator can analyze capabilities
-def assign_task(task, available_assistants)
-  case task[:type]
-  when "architecture"
-    # Look for an assistant with architecture design capabilities
-    architect = available_assistants.find { |id, assistant| 
-      assistant.capabilities.any? { |cap| cap.include?("design") } 
-    }
-    return architect&.first
-  when "development"
-    # Look for an assistant with development skills
-    developer = available_assistants.find { |id, assistant| 
-      assistant.capabilities.any? { |cap| cap.include?("development") } 
-    }
-    return developer&.first
-  when "testing"
-    # Look for an assistant with testing skills
-    tester = available_assistants.find { |id, assistant| 
-      assistant.capabilities.any? { |cap| cap.include?("test") } 
-    }
-    return tester&.first
-  end
-end
-```
-
-When defining the workflow, you can specify the required capabilities that the orchestrator will consider when assigning tasks:
-
-```ruby
-workflow_description = <<~WORKFLOW
-  Creating an authentication microservice:
-  
-  1. Design an authentication API (requires: API design)
-  2. Implement JWT authentication (requires: code development, database work)
-  3. Write tests for all endpoints (requires: test automation)
-  4. Check security (requires: security verification)
-WORKFLOW
-```
-
 ## Contributing
+
+Bug reports and pull requests are welcome on GitHub at <https://github.com/neonix20b/ox-ai-workers>. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/neonix20b/ox-ai-workers/blob/main/CODE_OF_CONDUCT.md).
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+## Code of Conduct
+
+Everyone interacting in the OxAiWorkers project's codebases, issue trackers, chat rooms, and mailing lists is expected to follow the [code of conduct](https://github.com/neonix20b/ox-ai-workers/blob/main/CODE_OF_CONDUCT.md).
