@@ -364,6 +364,128 @@ or set a new task.
 - **Internal Monologue**: Uses inner monologue to plan responses and articulate main points.
 - **External Tools**: Integrates with external tools and services to complete tasks.
 - **Finite State Machine**: Implements a robust state machine to manage task states and transitions.
+- **Multilingual Support**: Complete I18n integration with ready-to-use English and Russian locales.
+- **Token Optimization**: Automatic management of context through summarization to optimize token usage.
+- **Streaming Responses**: Support for streaming responses with callback processing for real-time interaction.
+- **Error Recovery**: Automatic retries and error handling mechanisms for reliable operation.
+- **Custom Tool Development**: Flexible framework for creating domain-specific tools and assistants.
+
+## Advanced Usage Patterns
+
+### Creating Custom Tools
+
+You can create custom tools by extending the `ToolDefinition` module:
+
+```ruby
+class MyTool
+  include OxAiWorkers::ToolDefinition
+  
+  def initialize
+    define_function :hello_world, description: "Says hello to someone" do
+      property :name, type: "string", description: "Name to greet", required: true
+    end
+  end
+  
+  def hello_world(name:)
+    "Hello, #{name}!"
+  end
+end
+```
+
+### Handling State Transitions with Callbacks
+
+You can track and respond to state transitions with callbacks:
+
+```ruby
+iterator = OxAiWorkers::Iterator.new(
+  worker: worker,
+  tools: [my_tool],
+  on_inner_monologue: ->(text:) { save_to_database(text) },
+  on_outer_voice: ->(text:) { notify_user(text) },
+  on_action_request: ->(text:) { log_request(text) },
+  on_summarize: ->(text:) { optimize_dialog_history(text) },
+  on_finish: -> { mark_task_completed }
+)
+```
+
+### Optimizing Context with Milestones
+
+For long-running tasks, you can use the summarize function to compress dialog history:
+
+```ruby
+# In your tool's implementation
+def complete_complex_task(params:)
+  # ... processing logic ...
+  result = "Complex task completed: #{intermediate_result}"
+  
+  # Suggest to the LLM to summarize the conversation
+  # This will be picked up by the Iterator and processed
+  "Task phase completed. Consider using summarize to compress our dialog history before continuing with the next phase. #{result}"
+end
+```
+
+### Streaming API Responses
+
+Enable streaming for real-time feedback:
+
+```ruby
+worker = OxAiWorkers::Request.new(
+  on_stream: ->(chunk) { 
+    if chunk.dig('choices', 0, 'delta', 'content')
+      print chunk.dig('choices', 0, 'delta', 'content') 
+    end
+  }
+)
+```
+
+### Available Assistant Types
+
+OxAiWorkers provides several specialized assistant types:
+
+- **Sysop**: System administration and shell command execution
+
+  ```ruby
+  sysop = OxAiWorkers::Assistant::Sysop.new
+  sysop.task = "Configure nginx for my Rails application"
+  ```
+
+- **Coder**: Code generation and analysis with language-specific configuration
+
+  ```ruby
+  coder = OxAiWorkers::Assistant::Coder.new(language: 'ruby')
+  coder.task = "Create a Sinatra API with three endpoints"
+  ```
+
+- **Localizer**: Translation and localization support
+
+  ```ruby
+  localizer = OxAiWorkers::Assistant::Localizer.new(source_lang: 'en', target_lang: 'ru')
+  localizer.task = "Translate my application's interface"
+  ```
+
+### Implementing Your Own Assistant
+
+Create custom assistants by inheriting from existing ones or composing with the Iterator:
+
+```ruby
+module OxAiWorkers
+  module Assistant
+    class DataAnalyst
+      include OxAiWorkers::Assistant::ModuleBase
+      
+      def initialize(delayed: false, model: nil)
+        store_locale
+        @iterator = Iterator.new(
+          worker: init_worker(delayed: delayed, model: model),
+          role: "You are a data analysis assistant specialized in processing CSV and JSON data",
+          tools: [Tool::FileSystem.new, Tool::Eval.new(only: [:ruby])],
+          locale: @locale
+        )
+      end
+    end
+  end
+end
+```
 
 ## Contributing
 

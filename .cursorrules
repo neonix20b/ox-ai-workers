@@ -1,6 +1,7 @@
 OxAiWorkers is a Ruby gem that implements a finite state machine (using the `state_machine` gem) to solve tasks using generative intelligence (with the `ruby-openai` gem). This approach enhances the final result by utilizing internal monologue and external tools.
 
 ## Architecture Principles
+
 - The library is built on the finite state machine (FSM) pattern using the 'state_machine' gem
 - Integration with generative models is implemented using the 'ruby-openai' gem
 - DRY (Don't Repeat Yourself) principle is applied throughout all components
@@ -9,6 +10,7 @@ OxAiWorkers is a Ruby gem that implements a finite state machine (using the `sta
 - Implementation of the "Composition" pattern for flexible tool integration
 
 ## Core Components
+
 - `Request` and `DelayedRequest` - classes for executing API requests (immediate and delayed)
 - `Iterator` - main class for iterative task execution with tools
 - `Assistant` - high-level wrappers over Iterator (Sysop, Coder, Localizer, etc.)
@@ -18,6 +20,7 @@ OxAiWorkers is a Ruby gem that implements a finite state machine (using the `sta
 - `ContextualLogger` - logging system with contextual information support
 
 ## Code Conventions
+
 - Use `snake_case` for method and variable names
 - Functions for generative models should also be in `snake_case` (inner_monologue, outer_voice, etc.)
 - All public methods must have documentation with usage examples
@@ -28,6 +31,7 @@ OxAiWorkers is a Ruby gem that implements a finite state machine (using the `sta
 - Follow the "Fail fast" principle for early error detection
 
 ## Interaction Patterns
+
 - The system uses internal monologue (inner_monologue) for planning actions
 - External voice (outer_voice) is used for communication with the user
 - Actions (action_request) are executed through tools
@@ -37,6 +41,7 @@ OxAiWorkers is a Ruby gem that implements a finite state machine (using the `sta
 - Isolation of error handling functions at the tool level
 
 ## Integration
+
 - CLI interface through `oxaiworkers init` and `oxaiworkers run` commands
 - Rails support via ActiveRecord for storing delayed requests
 - Configuration through the `OxAiWorkers.configure` block
@@ -46,6 +51,7 @@ OxAiWorkers is a Ruby gem that implements a finite state machine (using the `sta
 - Support for various language models (OpenAI, Anthropic, Gemini)
 
 ## Best Practices
+
 - Use callbacks to handle various states (on_inner_monologue, on_outer_voice)
 - Handle errors at the tool level, preventing them from interrupting the main execution flow
 - When creating new assistants, inherit from the base Assistant class
@@ -55,6 +61,7 @@ OxAiWorkers is a Ruby gem that implements a finite state machine (using the `sta
 - Use localization mechanisms for multilingual support
 
 ## Tools Architecture
+
 - Each tool should be a self-contained module
 - Tools are registered through the `define_function` interface
 - All tools should handle their own errors and return readable messages
@@ -62,8 +69,55 @@ OxAiWorkers is a Ruby gem that implements a finite state machine (using the `sta
 - Maintain a unified format for return values
 
 ## Performance and Scaling
+
 - Cache API request results when possible
 - Use asynchronous processing for long operations
 - Apply backoff strategies for repeated requests
 - Break large tasks into atomic operations
 - Provide monitoring and profiling mechanisms
+
+## Finite State Machine Implementation
+
+- Core FSM based on `state_machine` gem with states: idle → prepared → requested → analyzed → finished → idle
+- State transitions managed by events: prepare, request, analyze, complete, iterate, end
+- `StateTools` - base class for FSM implementation with event hooks and transition callbacks
+- `StateBatch` - FSM extension for batch request processing with additional states
+- Automatic error recovery and retry mechanisms for failed API requests
+
+## Request Processing
+
+- `ModuleRequest` - base class for all API requests with parsing and response handling
+- Support for streaming responses with callback processing
+- Built-in token usage tracking and truncation detection
+- Error handling with automatic retries for server errors
+
+## Iterator Lifecycle
+
+- 5 core functions: inner_monologue, outer_voice, action_request, summarize, finish_it
+- Configurable message queue for stateful conversation history
+- Callback system for processing each state transition
+- Context and milestone management for optimizing token usage
+- Support for custom steps and instruction templating
+
+## Additional Tools
+
+- `Converter` - tools for data format conversion and transformation
+- Support for custom tool development through inheritance and composition
+- Automatic function name resolution and parameter validation
+
+## Assistants Details
+
+- `ModuleBase` - shared functionality for all assistant types
+- `Sysop` - system administration and shell command execution
+- `Coder` - specialized for code generation and analysis
+- `Localizer` - translation and localization support
+
+## Development Guidelines
+
+- Use dependency injection for testability
+- Follow the FSM pattern for all stateful operations
+- Implement proper error boundaries at the tool level
+- Use monologue for complex reasoning and planning
+- Apply callbacks for event-driven architecture
+- Utilize templates in the CLI for rapid prototyping
+- Extend the base classes rather than modifying them
