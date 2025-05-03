@@ -30,6 +30,8 @@ module OxAiWorkers
       end
 
       def generate_image(prompt:, file_name: nil, size: '1024x1792', quality: 'standard')
+        puts "generate_image: #{prompt}"
+
         response = @worker.client.images.generate(
           parameters: {
             prompt:,
