@@ -2,7 +2,9 @@
 
 module OxAiWorkers
   module Models
-    class OpenaiMax < ModuleBase
+    class DeepseekMax
+      include OxAiWorkers::Models::ModuleBase
+
       def initialize(uri_base: nil, api_key: nil, model: nil, max_tokens: nil, temperature: nil)
         @model = model || 'deepseek-chat'
         @uri_base = uri_base || 'https://api.deepseek.com/'
