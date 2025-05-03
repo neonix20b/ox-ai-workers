@@ -24,7 +24,7 @@ module OxAiWorkers
       end
 
       def send_message(message:, to_id:)
-        puts "send_message to #{to_id}: #{message} "
+        puts "send_message to #{to_id}: #{message}".colorize(:red)
         context = context_for(to_id)
         @assistants[to_id].replace_context(context)
         @assistants[to_id].add_task message
