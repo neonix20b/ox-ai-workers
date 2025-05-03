@@ -5,6 +5,8 @@
 - Added `Orchestrator` assistant
 - Added collaboration between assistants
 - Removed `action_request` and `summarize` from `Iterator`
+- Removed `auto_execute` from `Iterator`
+- Renamed `add_response` to `add_task` in `Assistant`
 
 ## [0.8.7] - 2025-04-25
 

@@ -218,8 +218,6 @@ module OxAiWorkers
 
     def add_task(task)
       @tasks << task
-      @messages << { role: :user, content: task }
-      execute if OxAiWorkers.configuration.auto_execute
     end
 
     def add_queue(text, role: :assistant)

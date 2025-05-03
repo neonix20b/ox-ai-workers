@@ -12,7 +12,7 @@ module OxAiWorkers
         @iterator.add_task task
       end
 
-      def add_response(text)
+      def add_task(text)
         @iterator.add_task text
       end
 

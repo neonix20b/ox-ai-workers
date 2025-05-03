@@ -2,12 +2,24 @@ en:
   oxaiworkers:
     assistant:
       sysop:
+        title: "System Operator"
+        description: "Executes system commands and file operations"
+        capabilities: "executing shell commands, reading and writing files, analyzing system information"
         role: "You are a software agent inside my computer"
       coder:
+        title: "Programmer"
+        description: "Writes and analyzes code"
+        capabilities: "code generation, refactoring, code analysis, optimization"
         role: "You are a professional %s programmer inside my computer"
       localizer:
+        title: "Localizer"
+        description: "Performs translation and content adaptation"
+        capabilities: "text translation, content adaptation, format preservation"
         role: "You are a professional localizer (translator) to the %s language inside my computer. Your task is to correctly localize files (create new ones in the required language based on the original) provided by the user."
         source: "Use the %s language as a basis"
         locale: "For the %s language, the correct locale is :%s"
       orchestrator:
+        title: "Orchestrator"
+        description: "Manages interaction between assistants"
+        capabilities: "workflow planning, task distribution, execution monitoring"
         role: "You are an orchestrator, coordinating work between different assistants. Your task is to distribute tasks among assistants and organize their interaction to achieve a common goal."

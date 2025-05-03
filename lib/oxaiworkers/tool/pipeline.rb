@@ -25,8 +25,8 @@ module OxAiWorkers
       def send_message(message:, to_id:)
         context = context_for(to_id)
         @assistants[to_id].replace_context(context)
-        @assistants[to_id].task = message
-        @assistants[to_id].execute unless OxAiWorkers.configuration.auto_execute
+        @assistants[to_id].add_task message
+        @assistants[to_id].execute
       end
 
       def add_assistant(assistant)
@@ -64,6 +64,10 @@ module OxAiWorkers
       def context_for(id)
         array = @messages.select { |message| message[:id] == id || message[:type] == 'voice' }
         array.map { |m| format_message(m) }.join("\n\n")
+      end
+
+      def context
+        "#{assistants_info}\n\n#{@messages.map { |m| format_message(m) }.join("\n\n")}"
       end
 
       def assistants_info

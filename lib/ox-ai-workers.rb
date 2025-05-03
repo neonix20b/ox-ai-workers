@@ -42,14 +42,13 @@ module OxAiWorkers
   class ConfigurationError < Error; end
 
   class Configuration
-    attr_accessor :model, :max_tokens, :temperature, :access_token, :auto_execute, :wait_for_complete, :uri_base
+    attr_accessor :model, :max_tokens, :temperature, :access_token, :wait_for_complete, :uri_base
 
     def initialize
       @access_token = nil
       @model = DEFAULT_MODEL
       @max_tokens = DEFAULT_MAX_TOKEN
       @temperature = DEFAULT_TEMPERATURE
-      @auto_execute = true
       @wait_for_complete = true
       @uri_base = nil
 

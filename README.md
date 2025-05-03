@@ -44,7 +44,7 @@ sysop = OxAiWorkers::Assistant::Sysop.new(delayed: false, model: "gpt-4o")
 sysop.task = "Add a cron job to synchronize files daily."
 
 # Provide a response to the assistant's question
-sysop.add_response("blah-blah-blah")
+sysop.add_task("blah-blah-blah")
 ```
 
 Alternatively, you can use a lower-level approach for more control:
@@ -72,10 +72,12 @@ iterator = OxAiWorkers::Iterator.new(
 iterator.role = "You are a software agent inside my computer"
 
 # Add a task to the iterator
-iterator.add_task("Show files in current dir")
+iterator.task = "Show files in current dir"
+iterator.execute
 
 # Provide a response to the gpt's question
-iterator.add_task("linux")
+iterator.task = "linux"
+iterator.execute
 ```
 
 ### With Config
@@ -88,7 +90,6 @@ OxAiWorkers.configure do |config|
     config.model = "gpt-4o"
     config.max_tokens = 4096   # Default
     config.temperature = 0.7   # Default
-    config.auto_execute = true # Default
     config.wait_for_complete = true # Default
 end
 ```
@@ -98,11 +99,11 @@ Then you can create an assistant like this:
 ```ruby
 assistant = OxAiWorkers::Assistant::Sysop.new()
 assistant.task = "Remove all cron jobs."
-# assistant.execute # if auto_execute is false
+assistant.execute
 
 # Provide a response to the assistant's question
-assistant.add_response("blah-blah-blah")
-# assistant.execute # if auto_execute is false
+assistant.add_task("blah-blah-blah")
+assistant.execute
 ```
 
 Besides, you can create assistants with different locales
@@ -129,15 +130,11 @@ iterator = OxAiWorkers::Iterator.new(
     on_finish: -> { puts "finish".colorize(:magenta) }
   )
 
-iterator.add_task("Show files in current directory.")
+iterator.task = "Show files in current directory."
+iterator.execute
 # ...
-iterator.add_task("linux")
-```
-
-If `auto_execute` is set to false in the configuration, don't forget to manually execute the iterator or assistant.
-
-```ruby
-iterator.execute # if auto_execute is false
+iterator.add_task "linux"
+iterator.execute
 ```
 
 This way, you have the flexibility to choose between a higher-level assistant for simplicity or a lower-level iterator for finer control over the tasks and tools used.
@@ -348,7 +345,7 @@ Then set a task:
 After these steps you can interact with it using the following method:
 
 ```ruby
-@sysop.add_response("Yes, I want it")
+@sysop.add_task("Yes, I want it All")
 ```
 
 or set a new task.
