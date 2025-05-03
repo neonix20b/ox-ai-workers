@@ -19,6 +19,7 @@ module OxAiWorkers
                            required: true
         end
 
+        @assistants = []
         @on_message = on_message
       end
 
