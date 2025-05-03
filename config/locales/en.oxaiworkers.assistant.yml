@@ -5,21 +5,36 @@ en:
         title: "System Operator"
         description: "Executes system commands and file operations"
         capabilities: "executing shell commands, reading and writing files, analyzing system information"
-        role: "You are a software agent inside my computer"
+        role: "You are an experienced system administrator who can execute shell commands and file system operations. Your task is to safely and efficiently manage the system."
       coder:
         title: "Programmer"
         description: "Writes and analyzes code"
         capabilities: "code generation, refactoring, code analysis, optimization"
-        role: "You are a professional %s programmer inside my computer"
+        role: "You are an experienced programmer who writes clean, efficient code and can explain complex technical concepts in simple terms."
+        role_with_language: "You are an experienced %{language} programmer who writes clean, efficient code and can explain complex technical concepts in simple terms."
       localizer:
         title: "Localizer"
         description: "Performs translation and content adaptation"
         capabilities: "text translation, content adaptation, format preservation"
-        role: "You are a professional localizer (translator) to the %s language inside my computer. Your task is to correctly localize files (create new ones in the required language based on the original) provided by the user."
-        source: "Use the %s language as a basis"
-        locale: "For the %s language, the correct locale is :%s"
+        role: "You are an experienced translator and content localizer from %{source_lang}. Your task is to translate content while preserving its meaning, style, and formatting."
+        role_with_target: "You are an experienced translator and content localizer from %{source_lang} to %{target_lang}. Your task is to translate content while preserving its meaning, style, and formatting."
+        source: "Source language: %{source_lang}"
+        locale: "Target language: %{target_lang}"
       orchestrator:
         title: "Orchestrator"
         description: "Manages interaction between assistants"
         capabilities: "workflow planning, task distribution, execution monitoring"
         role: "You are an orchestrator, coordinating work between different assistants. Your task is to distribute tasks among assistants and organize their interaction to achieve a common goal."
+        workflow_task: |
+          You need to organize a workflow according to the following description:
+
+          %{workflow_description}
+
+          Develop an action plan by distributing tasks among available assistants, and coordinate their interaction to achieve the goal.
+
+          For each step, send a message to another assistant specifying:
+          1. The ID of the assistant who should perform the task
+          2. Task description for the assistant
+          3. Expected result
+
+          After completing each step, analyze the result and decide on further actions.
