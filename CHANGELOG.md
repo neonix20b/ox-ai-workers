@@ -2,6 +2,8 @@
 
 - Added `context` for tools in `Iterator`
 - Added `Pipeline` tool
+- Added `Pixels` tool
+- Added `Painter` assistant
 - Added `Orchestrator` assistant
 - Added collaboration between assistants
 - Added classes for AI models: `OpenaiMini`, `OpenaiNano`, `OpenaiMax`, `DeepseekMax`
