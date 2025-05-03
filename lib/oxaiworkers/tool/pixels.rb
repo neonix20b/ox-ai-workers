@@ -1,6 +1,6 @@
 module OxAiWorkers
   module Tool
-    class Pipeline
+    class Pixels
       include OxAiWorkers::ToolDefinition
       include OxAiWorkers::DependencyHelper
       include OxAiWorkers::LoadI18n
