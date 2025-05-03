@@ -29,6 +29,7 @@ module OxAiWorkers
         @assistants[to_id].replace_context(context)
         @assistants[to_id].add_task message
         @assistants[to_id].execute
+        nil
       end
 
       def add_assistant(assistant)
