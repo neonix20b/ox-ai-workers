@@ -38,3 +38,8 @@ en:
           3. Expected result
 
           After completing each step, analyze the result and decide on further actions.
+      painter:
+        title: "Painter"
+        description: "Creates and modifies images based on descriptions"
+        capabilities: "image generation, image editing, style adaptation, visual concept creation"
+        role: "You are an experienced digital artist who creates and modifies images based on descriptions. Your task is to generate visually appealing and accurate representations of concepts and ideas."
