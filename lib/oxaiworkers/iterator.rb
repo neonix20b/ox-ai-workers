@@ -7,7 +7,7 @@ module OxAiWorkers
     include OxAiWorkers::ToolDefinition
     include OxAiWorkers::LoadI18n
 
-    attr_accessor :worker, :role, :messages, :context, :result, :tools, :queue, :monologue, :tasks,
+    attr_accessor :worker, :role, :messages, :context, :tools, :queue, :monologue, :tasks,
                   :on_inner_monologue, :on_outer_voice, :on_finish, :def_except, :def_only
 
     def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil,
@@ -54,7 +54,6 @@ module OxAiWorkers
     # Returns nothing.
     #
     def cleanup
-      @result = nil
       @queue = []
       @tasks = []
       @messages = []
@@ -67,15 +66,24 @@ module OxAiWorkers
     #
     # @return [nil] This method does not return a value.
     def inner_monologue(speach:)
-      # @queue.pop
-      @queue << { role: :assistant, content: speach.to_s }
-      @on_inner_monologue&.call(text: speach)
+      if available_defs.include?(:inner_monologue)
+        @queue << { role: :assistant, content: speach.to_s }
+        @on_inner_monologue&.call(text: speach)
+      else
+        OxAiWorkers.logger.warn "Iterator::inner_monologue is not available: #{speach}"
+      end
       nil
     end
 
     def outer_voice(text:)
-      @queue << { role: :assistant, content: text.to_s }
-      @on_outer_voice&.call(text:)
+      if available_defs.include?(:outer_voice)
+        @queue << { role: :assistant, content: text.to_s }
+        @on_outer_voice&.call(text:)
+      else
+        OxAiWorkers.logger.warn "Iterator::outer_voice is not available: #{text}"
+        inner_monologue(speach: text)
+      end
+
       nil
     end
 
@@ -189,7 +197,6 @@ module OxAiWorkers
         return
       end
 
-      @result = @worker.result || @worker.errors
       if @worker.tool_calls.present?
         @queue << { role: :assistant, content: @worker.tool_calls_raw.to_s }
         @worker.tool_calls.each do |external_call|
@@ -206,9 +213,9 @@ module OxAiWorkers
         end
         @worker.finish
         iterate! if can_iterate?
-      elsif @worker.result.present?
-        outer_voice text: @worker.result
       end
+      result = @worker.result || @worker.errors
+      outer_voice text: result if result.present?
     end
 
     def complete_iteration

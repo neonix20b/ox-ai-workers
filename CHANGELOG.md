@@ -11,21 +11,8 @@
 ## [0.8.7] - 2025-04-25
 
 - Fixed tool calls parsing
-
-## [0.8.5] - 2025-04-18
-
-- Fixed tool calls parsing
-
-## [0.8.4] - 2025-04-18
-
 - Refine Russian locale for Iterator with enhanced step descriptions and planning guidance
-
-## [0.8.2] - 2025-04-04
-
 - Update locale for Iterator
-
-## [0.8.0] - 2025-03-31
-
 - Added `on_stream` for `Iterator`
 
 ## [0.7.10] - 2025-03-31
