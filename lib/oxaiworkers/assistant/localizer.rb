@@ -10,7 +10,7 @@ module OxAiWorkers
 
         with_locale do
           @id = 'localizer'
-          @role = format(I18n.t('oxaiworkers.assistant.localizer.role'), language:)
+          @role = format(I18n.t('oxaiworkers.assistant.localizer.role'), source_lang: source)
           @description = I18n.t('oxaiworkers.assistant.localizer.description')
           @capabilities = I18n.t('oxaiworkers.assistant.localizer.capabilities').split(',').map(&:strip)
           @title = I18n.t('oxaiworkers.assistant.localizer.title')
@@ -24,10 +24,10 @@ module OxAiWorkers
           on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
           on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) }
         )
-        @iterator.add_context(format(I18n.t('oxaiworkers.assistant.localizer.source'), source:))
+        @iterator.add_context(format(I18n.t('oxaiworkers.assistant.localizer.source'), source_lang: source))
 
         @iterator.add_context(format(I18n.t('oxaiworkers.assistant.localizer.locale'),
-                                     language:, locale:))
+                                     target_lang: language, locale:))
       end
     end
   end
