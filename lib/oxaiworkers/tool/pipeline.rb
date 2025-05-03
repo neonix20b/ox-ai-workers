@@ -28,13 +28,13 @@ module OxAiWorkers
 
       def send_message(message:, result:, example:, to_id:)
         puts "send_message to #{to_id}: #{message}".colorize(:red)
-        puts "Result: #{result}".colorize(:blue)
-        puts "Example: #{example}".colorize(:blue)
+        puts " Result: #{result}"
+        puts " Example: #{example}"
         context = context_for(to_id)
         @assistants[to_id].replace_context(context)
         @assistants[to_id].add_task message
-        @assistants[to_id].add_task "Result: #{result}"
-        @assistants[to_id].add_task "Example: #{example}"
+        @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.result')}: #{result}"
+        @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.example')}: #{example}"
         @assistants[to_id].execute
         nil
       end
