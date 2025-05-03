@@ -31,10 +31,15 @@ require_relative 'oxaiworkers/assistant/sysop'
 require_relative 'oxaiworkers/assistant/coder'
 require_relative 'oxaiworkers/assistant/localizer'
 
+require_relative 'oxaiworkers/models/module_base'
+require_relative 'oxaiworkers/models/openai_max'
+require_relative 'oxaiworkers/models/openai_mini'
+require_relative 'oxaiworkers/models/openai_nano'
+require_relative 'oxaiworkers/models/deepseek_max'
+
 require_relative 'oxaiworkers/engine' if defined?(Rails)
 
 module OxAiWorkers
-  DEFAULT_MODEL = 'gpt-4o-mini'
   DEFAULT_MAX_TOKEN = 4096
   DEFAULT_TEMPERATURE = 0.7
 
@@ -42,15 +47,15 @@ module OxAiWorkers
   class ConfigurationError < Error; end
 
   class Configuration
-    attr_accessor :model, :max_tokens, :temperature, :access_token, :wait_for_complete, :uri_base
+    attr_accessor :max_tokens, :temperature, :wait_for_complete, :access_token_deepseek, :access_token_openai
 
     def initialize
-      @access_token = nil
-      @model = DEFAULT_MODEL
       @max_tokens = DEFAULT_MAX_TOKEN
       @temperature = DEFAULT_TEMPERATURE
       @wait_for_complete = true
-      @uri_base = nil
+
+      @access_token_deepseek = nil
+      @access_token_openai = nil
 
       [Array, NilClass, String, Symbol, Hash].each do |c|
         c.send(:include, OxAiWorkers::PresentCompat) unless c.method_defined?(:present?)
@@ -62,6 +67,7 @@ module OxAiWorkers
   class << self
     attr_writer :configuration
     attr_reader :logger
+    attr_accessor :default_model
 
     # @param logger [Logger]
     # @return [ContextualLogger]

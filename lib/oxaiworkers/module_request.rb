@@ -2,23 +2,19 @@
 
 module OxAiWorkers
   class ModuleRequest
-    attr_accessor :result, :client, :messages, :model, :max_tokens, :custom_id, :temperature, :tools, :errors,
-                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason, :uri_base, :on_stream_proc
+    attr_accessor :result, :client, :messages, :model, :custom_id, :tools, :errors,
+                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason, :on_stream_proc
 
-    def initialize_requests(model: nil, max_tokens: nil, temperature: nil, uri_base: nil, on_stream: nil)
-      @max_tokens = max_tokens || OxAiWorkers.configuration.max_tokens
+    def initialize_requests(model:, on_stream: nil)
       @custom_id = SecureRandom.uuid
-      @model = model || OxAiWorkers.configuration.model
-      @temperature = temperature || OxAiWorkers.configuration.temperature
-      @uri_base = uri_base
+      @model = model
       @client = nil
       @is_truncated = false
       @finish_reason = nil
       @on_stream_proc = on_stream
 
-      OxAiWorkers.configuration.access_token ||= ENV['OPENAI']
-      if OxAiWorkers.configuration.access_token.nil?
-        error_text = 'OpenAi access token missing!'
+      if @model.api_key.nil?
+        error_text = "#{@model.model} access token missing!"
         raise OxAiWorkers::ConfigurationError, error_text
       end
 
@@ -27,8 +23,8 @@ module OxAiWorkers
 
     def cleanup
       @client ||= OpenAI::Client.new(
-        access_token: OxAiWorkers.configuration.access_token,
-        uri_base: @uri_base || OxAiWorkers.configuration.uri_base,
+        access_token: @model.api_key,
+        uri_base: @model.uri_base,
         log_errors: true # Highly recommended in development, so you can see what errors OpenAI is returning. Not recommended in production because it could leak private data to your logs.
       )
       @result = nil
@@ -47,10 +43,10 @@ module OxAiWorkers
 
     def params
       parameters = {
-        model: @model,
+        model: @model.model,
         messages: @messages,
-        temperature: @temperature,
-        max_tokens: @max_tokens
+        temperature: @model.temperature,
+        max_tokens: @model.max_tokens
       }
       if @tools.present?
         parameters[:tools] = @tools

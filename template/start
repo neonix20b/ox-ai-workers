@@ -18,9 +18,10 @@ puts "OxAiWorkers #{OxAiWorkers::VERSION}"
 
 # Configure
 OxAiWorkers.configure do |config|
-  config.access_token = ENV.fetch('OPENAI')
-  config.model = 'gpt-4o-mini'
+  config.access_token_openai = ENV.fetch('OPENAI')
 end
+
+OxAiWorkers.default_model = OxAiWorkers::Models::OpenaiMini.new
 
 # OxAiWorkers.logger.level = :debug
 
