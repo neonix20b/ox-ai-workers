@@ -252,7 +252,7 @@ module OxAiWorkers
     end
 
     def valid?
-      @messages.present?
+      @messages.present? || @tasks.present?
     end
   end
 end

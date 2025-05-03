@@ -86,12 +86,15 @@ For a more robust setup, you can configure the gem with your API keys, for examp
 
 ```ruby
 OxAiWorkers.configure do |config|
-    config.access_token = ENV.fetch("OPENAI")
-    config.model = "gpt-4o"
+    config.access_token_openai = ENV.fetch("OPENAI")
+    config.access_token_deepseek = ENV.fetch("DEEPSEEK")
     config.max_tokens = 4096   # Default
     config.temperature = 0.7   # Default
     config.wait_for_complete = true # Default
 end
+
+# Set the default model
+OxAiWorkers.default_model = OxAiWorkers::Models::OpenaiMini.new
 ```
 
 Then you can create an assistant like this:
@@ -177,17 +180,16 @@ As a worker, you can use different classes depending on your needs:
 OxAiWorkers supports alternative compatible models like DeepSeek. To use these models, specify the appropriate base URI in the initializer:
 
 ```ruby
-worker = OxAiWorkers::Request.new(
-    model: "deepseek-chat",
-    uri_base: "https://api.deepseek.com/"
+# Use the closest available model and override its parameters
+model = OxAiWorkers::Models::OpenaiMini.new(
+    uri_base: "https://api.deepseek.com/",
+    api_key: ENV.fetch("DEEPSEEK"),
+    model: "deepseek-chat"
 )
 
-# Or with configuration
-OxAiWorkers.configure do |config|
-    config.uri_base = "https://api.deepseek.com/"
-    config.model = "deepseek-chat"
-    # Other configuration options...
-end
+worker = OxAiWorkers::Request.new(
+    model: model,
+)
 ```
 
 This allows you to use any API-compatible LLM provider by simply changing the base URI.
