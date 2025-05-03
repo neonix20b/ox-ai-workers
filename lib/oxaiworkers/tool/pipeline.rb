@@ -15,6 +15,9 @@ module OxAiWorkers
         define_function :send_message, description: I18n.t('oxaiworkers.tool.pipeline.send_message.description') do
           property :message, type: 'string', description: I18n.t('oxaiworkers.tool.pipeline.send_message.message'),
                              required: true
+          property :result, type: 'string', description: I18n.t('oxaiworkers.tool.pipeline.send_message.result'),
+                            required: true
+          property :example, type: 'string', description: I18n.t('oxaiworkers.tool.pipeline.send_message.example')
           property :to_id, type: 'string', description: I18n.t('oxaiworkers.tool.pipeline.send_message.to_id'),
                            required: true
         end
@@ -23,11 +26,15 @@ module OxAiWorkers
         @on_message = on_message
       end
 
-      def send_message(message:, to_id:)
+      def send_message(message:, result:, example:, to_id:)
         puts "send_message to #{to_id}: #{message}".colorize(:red)
+        puts "Result: #{result}".colorize(:blue)
+        puts "Example: #{example}".colorize(:blue)
         context = context_for(to_id)
         @assistants[to_id].replace_context(context)
         @assistants[to_id].add_task message
+        @assistants[to_id].add_task "Result: #{result}"
+        @assistants[to_id].add_task "Example: #{example}"
         @assistants[to_id].execute
         nil
       end
@@ -62,6 +69,9 @@ module OxAiWorkers
         m = { id:, type:, message: }
         @messages << m
         @on_message.call(text: format_message(m)) if !@on_message.nil? && @assistants.key?(id)
+        # @assistants.each_value do |assistant|
+        #   assistant.iterator.add_queue format_message(m), role: :system if assistant.id != id
+        # end
       end
 
       def context_for(id)
