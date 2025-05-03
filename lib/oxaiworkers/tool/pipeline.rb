@@ -59,7 +59,7 @@ module OxAiWorkers
         @messages ||= []
         m = { id:, type:, message: }
         @messages << m
-        @on_message.call(format_message(m)) if @on_message.present? && @assistants.key?(id)
+        @on_message.call(format_message(m)) if !@on_message.nil? && @assistants.key?(id)
       end
 
       def context_for(id)
