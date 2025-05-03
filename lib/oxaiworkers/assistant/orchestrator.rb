@@ -33,7 +33,7 @@ module OxAiWorkers
           on_outer_voice: ->(text:) { @pipeline.recive_voice(from_id: @id, message: text) }
         )
 
-        @iterator.task = @workflow
+        @iterator.add_task @workflow
       end
 
       def add_assistant(assistant)
