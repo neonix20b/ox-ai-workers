@@ -30,3 +30,9 @@ en:
         execute:
           description: 'Database Tool: Executes a SQL query and returns the results'
           input: 'SQL query to be executed'
+      pipeline:
+        send_message:
+          description: 'Send a message to another assistant'
+          message: 'Message or task to send'
+          to_id: 'Recipient assistant ID'
+        assistant_info: "ID: **%{id}**, Title: %{title}\nRole: %{role}\nDescription: %{description}\nCapabilities: %{capabilities}"

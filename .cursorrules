@@ -1,3 +1,5 @@
+# Overview
+
 OxAiWorkers is a Ruby gem that implements a finite state machine (using the `state_machine` gem) to solve tasks using generative intelligence (with the `ruby-openai` gem). This approach enhances the final result by utilizing internal monologue and external tools.
 
 ## Architecture Principles
@@ -34,8 +36,6 @@ OxAiWorkers is a Ruby gem that implements a finite state machine (using the `sta
 
 - The system uses internal monologue (inner_monologue) for planning actions
 - External voice (outer_voice) is used for communication with the user
-- Actions (action_request) are executed through tools
-- Summary (summarize) is used to compress dialog history
 - Execution flow management through finite state machine
 - Implementation of callback mechanisms for flexible event handling
 - Isolation of error handling functions at the tool level
@@ -93,7 +93,7 @@ OxAiWorkers is a Ruby gem that implements a finite state machine (using the `sta
 
 ## Iterator Lifecycle
 
-- 5 core functions: inner_monologue, outer_voice, action_request, summarize, finish_it
+- 3 core functions: inner_monologue, outer_voice, finish_it
 - Configurable message queue for stateful conversation history
 - Callback system for processing each state transition
 - Context and milestone management for optimizing token usage
@@ -121,3 +121,35 @@ OxAiWorkers is a Ruby gem that implements a finite state machine (using the `sta
 - Apply callbacks for event-driven architecture
 - Utilize templates in the CLI for rapid prototyping
 - Extend the base classes rather than modifying them
+
+## Internationalization and Localization
+
+- All code comments, variable names, and documentation MUST be written in English
+- All user-facing strings MUST be properly localized using I18n
+- Use I18n.t for all text that will be shown to users or appears in assistant prompts
+- Store translations in YAML files within the config/locales directory
+- Follow the naming convention of language.namespace.key (e.g., en.oxaiworkers.assistant.role)
+- Use named parameters (%{variable}) instead of positional parameters (%s) in translation strings
+- Use the with_locale method to ensure proper locale context when processing localized text
+- Implement locale-aware classes by including the OxAiWorkers::LoadI18n module
+- Store the current locale on initialization and preserve it across method calls
+- Support multiple languages simultaneously through careful locale management
+- Default to English for developer-facing messages and logs
+- Ensure that all assistant classes properly handle localization in their format_role methods
+
+## LoadI18n Module Usage
+
+- The `OxAiWorkers::LoadI18n` module provides two key methods for localization:
+  - `store_locale` - saves the current locale at initialization time
+  - `with_locale` - executes a block of code in the context of the saved locale
+- Always include the `OxAiWorkers::LoadI18n` module in classes that need localization capabilities
+- Call `store_locale` in the initialization methods of locale-aware classes
+- Wrap all locale-dependent code in `with_locale` blocks
+- NEVER redefine the `with_locale` method in classes that include LoadI18n
+- All methods that produce user-visible text must use the locale context via `with_locale` blocks
+- Regular method calls from classes including LoadI18n do not require additional locale handling
+
+## Multi-Language Support
+
+- Use the store_locale and with_locale methods for consistent localization context
+- All error messages should be localized and retrieved via I18n.t

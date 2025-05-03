@@ -30,3 +30,9 @@ ru:
         execute:
           description: 'Инструмент базы данных: Выполняет SQL-запрос и возвращает результаты'
           input: 'SQL-запрос для выполнения'
+      pipeline:
+        send_message:
+          description: 'Отправить сообщение другому ассистенту'
+          message: 'Сообщение или задача для отправки'
+          to_id: 'ID ассистента получателя'
+        assistant_info: "ID: **%{id}**, Название: %{title}\nРоль: %{role}\nОписание: %{description}\nВозможности: %{capabilities}"

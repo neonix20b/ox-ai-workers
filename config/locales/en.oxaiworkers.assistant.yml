@@ -9,3 +9,5 @@ en:
         role: "You are a professional localizer (translator) to the %s language inside my computer. Your task is to correctly localize files (create new ones in the required language based on the original) provided by the user."
         source: "Use the %s language as a basis"
         locale: "For the %s language, the correct locale is :%s"
+      orchestrator:
+        role: "You are an orchestrator, coordinating work between different assistants. Your task is to distribute tasks among assistants and organize their interaction to achieve a common goal."

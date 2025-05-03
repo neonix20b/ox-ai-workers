@@ -8,14 +8,12 @@ module OxAiWorkers
       def initialize(delayed: false, model: nil, language: 'ruby')
         store_locale
         @iterator = Iterator.new(
-          worker: init_worker(delayed: delayed, model: model),
+          worker: init_worker(delayed:, model:),
           role: format(I18n.t('oxaiworkers.assistant.coder.role'), language),
           tools: [Tool::Eval.new, Tool::FileSystem.new],
           locale: @locale,
           on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
-          on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) },
-          on_action_request: ->(text:) { puts "action: #{text}".colorize(:red) },
-          on_summarize: ->(text:) { puts "summary: #{text}".colorize(:blue) }
+          on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) }
         )
       end
 

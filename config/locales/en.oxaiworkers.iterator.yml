@@ -7,19 +7,11 @@ en:
       outer_voice:
         description: Inform the user of the information without expecting a response.
         text: Content of the message
-      action_request:
-        description: A function for interactive interaction with the user. Allows you to ask a clarifying question, request actions, or complete the current step. The function waits for the user's response and returns it.
-        action: Text of the request or action
-      summarize:
-        description: The function saves key facts, nuances, and actions from previous messages, including the provided response. After calling this function, all previous messages will be deleted. Use it only after all intermediate steps are completed and when the exact content of previous messages is no longer relevant.
-        text: Enumeration of important facts and nuances
-        result: Messages deleted
       finish_it:
         description: Function to complete steps
       monologue:
         - Step %d. Develop your own solution to the problem, taking initiative and making assumptions.
         - Step %d. Enclose all your developments from the previous step in the ox_ai_workers_iterator__inner_monologue function.
         - Step %d. Call the necessary functions one after another until the desired result is achieved.
-        - Step %d. When all intermediate steps are completed and the exact content of previous messages is no longer relevant, use the ox_ai_workers_iterator__summarize function.
         - Step %d. When the solution is ready, notify about it and wait for the user's response.
         - Step %d. In the end, call the ox_ai_workers_iterator__finish_it function.

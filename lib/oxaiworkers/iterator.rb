@@ -2,16 +2,16 @@
 
 module OxAiWorkers
   class Iterator < OxAiWorkers::StateTools
-    ITERATOR_FUNCTIONS = %i[inner_monologue outer_voice action_request summarize finish_it].freeze
+    ITERATOR_FUNCTIONS = %i[inner_monologue outer_voice finish_it].freeze
 
     include OxAiWorkers::ToolDefinition
     include OxAiWorkers::LoadI18n
 
-    attr_accessor :worker, :role, :messages, :context, :result, :tools, :queue, :monologue, :tasks, :milestones,
-                  :on_inner_monologue, :on_outer_voice, :on_action_request, :on_summarize, :on_finish, :def_except, :def_only
+    attr_accessor :worker, :role, :messages, :context, :result, :tools, :queue, :monologue, :tasks,
+                  :on_inner_monologue, :on_outer_voice, :on_finish, :def_except, :def_only
 
-    def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil, on_action_request: nil,
-                   on_summarize: nil, on_finish: nil, steps: nil, def_except: [], def_only: nil, locale: nil)
+    def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil,
+                   on_finish: nil, steps: nil, def_except: [], def_only: nil, locale: nil)
 
       @locale = locale || I18n.locale
 
@@ -23,15 +23,6 @@ module OxAiWorkers
 
         define_function :outer_voice, description: I18n.t('oxaiworkers.iterator.outer_voice.description') do
           property :text, type: 'string', description: I18n.t('oxaiworkers.iterator.outer_voice.text'), required: true
-        end
-
-        define_function :action_request, description: I18n.t('oxaiworkers.iterator.action_request.description') do
-          property :action, type: 'string', description: I18n.t('oxaiworkers.iterator.action_request.action'),
-                            required: true
-        end
-
-        define_function :summarize, description: I18n.t('oxaiworkers.iterator.summarize.description') do
-          property :text, type: 'string', description: I18n.t('oxaiworkers.iterator.summarize.text'), required: true
         end
 
         define_function :finish_it, description: I18n.t('oxaiworkers.iterator.finish_it.description')
@@ -48,8 +39,6 @@ module OxAiWorkers
 
       @on_inner_monologue = on_inner_monologue
       @on_outer_voice = on_outer_voice
-      @on_action_request = on_action_request
-      @on_summarize = on_summarize
       @on_finish = on_finish
 
       cleanup
@@ -68,7 +57,6 @@ module OxAiWorkers
       @result = nil
       @queue = []
       @tasks = []
-      @milestones = []
       @messages = []
       complete_iteration
     end
@@ -86,38 +74,14 @@ module OxAiWorkers
     end
 
     def outer_voice(text:)
-      # @queue.pop
       @queue << { role: :assistant, content: text.to_s }
-      complete! unless available_defs.include?(:action_request)
       @on_outer_voice&.call(text:)
-      nil
-    end
-
-    def action_request(action:)
-      @result = action
-      # @queue.pop
-      @messages << { role: :assistant, content: action.to_s }
-      complete! if can_complete?
-      @on_action_request&.call(text: action)
       nil
     end
 
     def finish_it
       complete! if can_complete?
       @on_finish&.call
-      nil
-    end
-
-    def summarize(text:)
-      @milestones << text.to_s
-      @messages = []
-      with_locale do
-        @queue << { role: :assistant, content: I18n.t('oxaiworkers.iterator.summarize.result') }
-      end
-      @worker.finish
-      rebuild_worker
-      complete! if can_complete?
-      @on_summarize&.call(text:)
       nil
     end
 
@@ -129,12 +93,15 @@ module OxAiWorkers
     def rebuild_worker
       @worker.messages = []
       @worker.append(role: :system, content: @role) if @role.present?
+
       @tasks.each { |task| @worker.append(role: :user, content: task) }
       @worker.append(role: :system, content: valid_monologue.join("\n"))
       @worker.append(messages: @context) if @context.present?
-      @milestones.each { |milestone| @worker.append(role: :assistant, content: milestone) }
-      @tasks.each { |task| @worker.append(role: :user, content: task) }
+      @tools.each do |tool|
+        @worker.append(role: :user, content: tool.context) if tool.respond_to?(:context) && tool.context.present?
+      end
       @worker.append(messages: @messages)
+      @tasks.each { |task| @worker.append(role: :user, content: task) }
       @worker.tools = function_schemas.to_openai_format(only: available_defs)
       return unless @tools.present?
 
@@ -240,7 +207,7 @@ module OxAiWorkers
         @worker.finish
         iterate! if can_iterate?
       elsif @worker.result.present?
-        action_request action: @worker.result
+        outer_voice text: @worker.result
       end
     end
 
@@ -255,12 +222,20 @@ module OxAiWorkers
       execute if OxAiWorkers.configuration.auto_execute
     end
 
+    def add_queue(text, role: :assistant)
+      @queue << { role:, content: text }
+    end
+
     def add_context(text, role: :system)
       add_raw_context({ role:, content: text })
     end
 
     def add_raw_context(c)
       @context << c
+    end
+
+    def clear_context
+      @context = []
     end
 
     def execute
@@ -272,7 +247,7 @@ module OxAiWorkers
     end
 
     def valid?
-      @messages.present? || @milestones.present?
+      @messages.present?
     end
   end
 end

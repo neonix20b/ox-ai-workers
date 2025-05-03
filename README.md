@@ -126,8 +126,6 @@ iterator = OxAiWorkers::Iterator.new(
     role: "You are a software agent inside my computer",
     on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
     on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) },
-    on_action_request: ->(text:) { puts "action: #{text}".colorize(:red) },
-    on_summarize: ->(text:) { puts "summary: #{text}".colorize(:blue) },
     on_finish: -> { puts "finish".colorize(:magenta) }
   )
 
@@ -151,8 +149,7 @@ steps = []
 steps << 'Step 1. Develop your own solution to the problem, taking initiative and making assumptions.'
 steps << "Step 2. Enclose all your developments from the previous step in the #{OxAiWorkers::Iterator.full_function_name(:inner_monologue)} function."
 steps << 'Step 3. Call the necessary functions one after another until the desired result is achieved.'
-steps << "Step 4. When all intermediate steps are completed and the exact content of previous messages is no longer relevant, use the #{OxAiWorkers::Iterator.full_function_name(:summarize)} function."
-steps << "Step 5. When the solution is ready, notify about it and wait for the user's response."
+steps << "Step 4. When the solution is ready, notify about it and wait for the user's response."
 
 # To retain the locale if you have assistants in different languages in your project.
 store_locale # Optional
@@ -163,12 +160,10 @@ store_locale # Optional
   tools: [MyTool.new],
   locale: @locale || I18n.locale,
   steps: steps,
-  # def_except: [:summarize], # It's except steps with that functions
+  # def_except: [:outer_voice], # It's except steps with that functions
   # def_only: [:inner_monologue, :outer_voice], # Use it only with your steps
   on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
-  on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) },
-  on_action_request: ->(text:) { puts "action: #{text}".colorize(:red) },
-  on_summarize: ->(text:) { puts "summary: #{text}".colorize(:blue) }
+  on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) }
 )
 ```
 
@@ -365,7 +360,6 @@ or set a new task.
 - **External Tools**: Integrates with external tools and services to complete tasks.
 - **Finite State Machine**: Implements a robust state machine to manage task states and transitions.
 - **Multilingual Support**: Complete I18n integration with ready-to-use English and Russian locales.
-- **Token Optimization**: Automatic management of context through summarization to optimize token usage.
 - **Streaming Responses**: Support for streaming responses with callback processing for real-time interaction.
 - **Error Recovery**: Automatic retries and error handling mechanisms for reliable operation.
 - **Custom Tool Development**: Flexible framework for creating domain-specific tools and assistants.
@@ -402,26 +396,8 @@ iterator = OxAiWorkers::Iterator.new(
   tools: [my_tool],
   on_inner_monologue: ->(text:) { save_to_database(text) },
   on_outer_voice: ->(text:) { notify_user(text) },
-  on_action_request: ->(text:) { log_request(text) },
-  on_summarize: ->(text:) { optimize_dialog_history(text) },
   on_finish: -> { mark_task_completed }
 )
-```
-
-### Optimizing Context with Milestones
-
-For long-running tasks, you can use the summarize function to compress dialog history:
-
-```ruby
-# In your tool's implementation
-def complete_complex_task(params:)
-  # ... processing logic ...
-  result = "Complex task completed: #{intermediate_result}"
-  
-  # Suggest to the LLM to summarize the conversation
-  # This will be picked up by the Iterator and processed
-  "Task phase completed. Consider using summarize to compress our dialog history before continuing with the next phase. #{result}"
-end
 ```
 
 ### Streaming API Responses

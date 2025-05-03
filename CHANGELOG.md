@@ -1,3 +1,10 @@
+## [0.9.0] - 2025-05-03
+
+- Added `context` for tools in `Iterator`
+- Added `Pipeline` tool
+- Added `Orchestrator` assistant
+- Added collaboration between assistants
+- Removed `action_request` and `summarize` from `Iterator`
 
 ## [0.8.7] - 2025-04-25
 
