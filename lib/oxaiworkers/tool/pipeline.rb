@@ -38,8 +38,8 @@ module OxAiWorkers
           raise 'Assistant is not valid: id, title, role, description and capabilities are required'
         end
 
-        assistant.on_inner_monologue = ->(text:) { recive_monologue(from_id: assistant.id, message: text) }
-        assistant.on_outer_voice = ->(text:) { recive_voice(from_id: assistant.id, message: text) }
+        assistant.iterator.on_inner_monologue = ->(text:) { recive_monologue(from_id: assistant.id, message: text) }
+        assistant.iterator.on_outer_voice = ->(text:) { recive_voice(from_id: assistant.id, message: text) }
 
         @assistants ||= {}
         @assistants[assistant.id] = assistant
