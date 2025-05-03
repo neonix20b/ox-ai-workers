@@ -34,5 +34,7 @@ en:
         send_message:
           description: 'Send a message to another assistant'
           message: 'Message or task to send'
+          result: 'Description of the expected result, what should be obtained as output'
+          example: 'Example of a good result'
           to_id: 'Recipient assistant ID'
         assistant_info: "ID: **%{id}**, Title: %{title}\nRole: %{role}\nDescription: %{description}\nCapabilities: %{capabilities}"
