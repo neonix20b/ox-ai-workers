@@ -20,6 +20,7 @@ module OxAiWorkers
                             required: true
           property :size, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.size'),
                           enum: %w[1024x1792 1792x1024 1024x1024]
+          property :file_name, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name')
           property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
                              enum: %w[standard hd]
         end
@@ -28,7 +29,7 @@ module OxAiWorkers
         @tmp_dir = tmp_dir
       end
 
-      def generate_image(prompt:, size: '1024x1792', quality: 'standard')
+      def generate_image(prompt:, file_name:, size: '1024x1792', quality: 'standard')
         response = @worker.client.images.generate(
           parameters: {
             prompt:,
@@ -38,9 +39,14 @@ module OxAiWorkers
           }
         )
 
-        url = response.dig('data', 0, 'url')
+        @url = response.dig('data', 0, 'url')
         revised_prompt = response.dig('data', 0, 'revised_prompt')
-        "url: #{url}\n\nrevised_prompt: #{revised_prompt}"
+        if file_name.present?
+          path = save_generated_image(file_name:)
+          "url: #{@url}\npath: #{path}\n\nrevised_prompt: #{revised_prompt}"
+        else
+          "url: #{@url}\n\nrevised_prompt: #{revised_prompt}"
+        end
       end
 
       def save_generated_image(file_name:)
