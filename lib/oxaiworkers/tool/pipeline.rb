@@ -24,6 +24,7 @@ module OxAiWorkers
       end
 
       def send_message(message:, to_id:)
+        puts "send_message to #{to_id}: #{message} "
         context = context_for(to_id)
         @assistants[to_id].replace_context(context)
         @assistants[to_id].add_task message
@@ -59,7 +60,7 @@ module OxAiWorkers
         @messages ||= []
         m = { id:, type:, message: }
         @messages << m
-        @on_message.call(format_message(m)) if !@on_message.nil? && @assistants.key?(id)
+        @on_message.call(text: format_message(m)) if !@on_message.nil? && @assistants.key?(id)
       end
 
       def context_for(id)
