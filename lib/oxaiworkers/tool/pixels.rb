@@ -35,7 +35,7 @@ module OxAiWorkers
         response = @worker.client.images.generate(
           parameters: {
             prompt:,
-            model: 'dall-e-3',
+            model: 'gpt-image-1',
             size:,
             quality:
           }
