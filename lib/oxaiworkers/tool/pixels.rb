@@ -1,3 +1,6 @@
+require 'fileutils'
+require 'open-uri'
+
 module OxAiWorkers
   module Tool
     class Pixels
@@ -5,9 +8,9 @@ module OxAiWorkers
       include OxAiWorkers::DependencyHelper
       include OxAiWorkers::LoadI18n
 
-      attr_accessor :worker
+      attr_accessor :worker, :url, :tmp_dir
 
-      def initialize(worker:, only: nil)
+      def initialize(worker:, tmp_dir:, only: nil)
         store_locale
 
         init_white_list_with only
@@ -22,6 +25,7 @@ module OxAiWorkers
         end
 
         @worker = worker
+        @tmp_dir = tmp_dir
       end
 
       def generate_image(prompt:, size: '1024x1792', quality: 'standard')
@@ -35,9 +39,23 @@ module OxAiWorkers
         )
 
         url = response.dig('data', 0, 'url')
-        puts url
-        puts response.inspect
-        response
+        revised_prompt = response.dig('data', 0, 'revised_prompt')
+        "url: #{url}\n\nrevised_prompt: #{revised_prompt}"
+      end
+
+      def save_generated_image(file_name:)
+        return 'Image not generated. Please generate image first.' unless @url
+
+        # Ensure tmp_dir exists
+        FileUtils.mkdir_p(@tmp_dir) unless Dir.exist?(@tmp_dir)
+
+        path = File.join(@tmp_dir, file_name)
+
+        File.open(path, 'wb') do |file|
+          file.write(URI.open(@url).read)
+        end
+
+        path
       end
     end
   end
