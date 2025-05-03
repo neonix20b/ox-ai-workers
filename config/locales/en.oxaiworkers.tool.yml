@@ -38,3 +38,9 @@ en:
           example: 'Example of a good result'
           to_id: 'Recipient assistant ID'
         assistant_info: "ID: **%{id}**, Title: %{title}\nRole: %{role}\nDescription: %{description}\nCapabilities: %{capabilities}"
+      pixels:
+        generate_image:
+          description: 'Image Generation Tool: Creates an image based on the provided text prompt'
+          prompt: 'Text description of the image to generate'
+          size: 'Size of the generated image (1024x1792, 1792x1024, 1024x1024)'
+          quality: 'Quality of the generated image (standard, hd)'

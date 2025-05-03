@@ -16,8 +16,13 @@ module OxAiWorkers
           @title = I18n.t('oxaiworkers.assistant.painter.title')
         end
 
-        @iterator = ImageIterator.new(
-          worker: init_worker(delayed:, model:)
+        @iterator = Iterator.new(
+          worker: init_worker(delayed:, model:),
+          role: @role,
+          tools: [Tool::Pixels.new(worker: init_worker(delayed: false, model:))],
+          locale: @locale,
+          on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
+          on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) }
         )
       end
     end

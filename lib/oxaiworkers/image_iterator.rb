@@ -21,7 +21,13 @@ module OxAiWorkers
         }
       )
 
-      puts response.dig('data', 0, 'url')
+      url = response.dig('data', 0, 'url')
+      puts url
+      puts response.inspect
+      @on_inner_monologue&.call(text: I18n.t('oxaiworkers.iterator.image_iterator.url', url:))
+      @on_outer_voice&.call(text: url)
+      @on_finish&.call(result: url)
+      response
     end
 
     def cleanup
