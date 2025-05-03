@@ -25,6 +25,7 @@ require_relative 'oxaiworkers/request'
 require_relative 'oxaiworkers/tool/eval'
 require_relative 'oxaiworkers/tool/database'
 require_relative 'oxaiworkers/tool/file_system'
+require_relative 'oxaiworkers/tool/pipeline'
 
 require_relative 'oxaiworkers/assistant/module_base'
 require_relative 'oxaiworkers/assistant/sysop'
