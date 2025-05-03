@@ -4,6 +4,8 @@
 - Added `Pipeline` tool
 - Added `Orchestrator` assistant
 - Added collaboration between assistants
+- Added classes for AI models: `OpenaiMini`, `OpenaiNano`, `OpenaiMax`, `DeepseekMax`
+- Added `default_model` for configuration
 - Removed `action_request` and `summarize` from `Iterator`
 - Removed `auto_execute` from `Iterator`
 - Renamed `add_response` to `add_task` in `Assistant`

@@ -30,6 +30,7 @@ require_relative 'oxaiworkers/assistant/module_base'
 require_relative 'oxaiworkers/assistant/sysop'
 require_relative 'oxaiworkers/assistant/coder'
 require_relative 'oxaiworkers/assistant/localizer'
+require_relative 'oxaiworkers/assistant/orchestrator'
 
 require_relative 'oxaiworkers/models/module_base'
 require_relative 'oxaiworkers/models/openai_max'
