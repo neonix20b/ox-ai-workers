@@ -29,7 +29,7 @@ module OxAiWorkers
         @tmp_dir = tmp_dir
       end
 
-      def generate_image(prompt:, file_name:, size: '1024x1792', quality: 'standard')
+      def generate_image(prompt:, file_name: nil, size: '1024x1792', quality: 'standard')
         response = @worker.client.images.generate(
           parameters: {
             prompt:,
@@ -42,8 +42,8 @@ module OxAiWorkers
         @url = response.dig('data', 0, 'url')
         revised_prompt = response.dig('data', 0, 'revised_prompt')
         if file_name.present?
-          path = save_generated_image(file_name:)
-          "url: #{@url}\npath: #{path}\n\nrevised_prompt: #{revised_prompt}"
+          save_generated_image(file_name:)
+          "url: #{@url}\nfile_name: #{file_name}\n\nrevised_prompt: #{revised_prompt}"
         else
           "url: #{@url}\n\nrevised_prompt: #{revised_prompt}"
         end
