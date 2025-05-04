@@ -8,9 +8,9 @@ module OxAiWorkers
       include OxAiWorkers::DependencyHelper
       include OxAiWorkers::LoadI18n
 
-      attr_accessor :worker, :url, :tmp_dir
+      attr_accessor :worker, :url, :current_dir
 
-      def initialize(worker:, tmp_dir:, only: nil)
+      def initialize(worker:, current_dir: nil, only: nil)
         store_locale
 
         init_white_list_with only
@@ -22,20 +22,20 @@ module OxAiWorkers
                           enum: %w[1024x1792 1792x1024 1024x1024]
           property :file_name, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name')
           property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
-                             enum: %w[low medium high auto]
+                             enum: %w[standard hd]
         end
 
         @worker = worker
-        @tmp_dir = tmp_dir
+        @current_dir = current_dir
       end
 
-      def generate_image(prompt:, file_name: nil, size: '1024x1792', quality: 'auto')
+      def generate_image(prompt:, file_name: nil, size: '1024x1792', quality: 'standard')
         puts "generate_image: #{prompt}"
 
         response = @worker.client.images.generate(
           parameters: {
             prompt:,
-            model: 'gpt-image-1',
+            model: 'dall-e-3',
             size:,
             quality:
           }
@@ -44,8 +44,8 @@ module OxAiWorkers
         @url = response.dig('data', 0, 'url')
         revised_prompt = response.dig('data', 0, 'revised_prompt')
         if file_name.present?
-          save_generated_image(file_name:)
-          "url: #{@url}\nfile_name: #{file_name}\n\nrevised_prompt: #{revised_prompt}"
+          path = save_generated_image(file_name:)
+          "url: #{@url}\nfile_name: #{path}\n\nrevised_prompt: #{revised_prompt}"
         else
           "url: #{@url}\n\nrevised_prompt: #{revised_prompt}"
         end
@@ -53,17 +53,20 @@ module OxAiWorkers
 
       def save_generated_image(file_name:)
         return 'Image not generated. Please generate image first.' unless @url
+        unless @current_dir.present?
+          return 'Current directory not set for OxAiWorkers::Tool::Pixels. Please set current directory first.'
+        end
 
-        # Ensure tmp_dir exists
-        FileUtils.mkdir_p(@tmp_dir) unless Dir.exist?(@tmp_dir)
+        # Ensure current_dir exists
+        FileUtils.mkdir_p(@current_dir) unless Dir.exist?(@current_dir)
 
-        path = File.join(@tmp_dir, file_name)
+        path = File.join(@current_dir, file_name)
 
         File.open(path, 'wb') do |file|
           file.write(URI.open(@url).read)
         end
 
-        path
+        file_name
       end
     end
   end
