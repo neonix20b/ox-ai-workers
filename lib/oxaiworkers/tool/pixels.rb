@@ -20,7 +20,10 @@ module OxAiWorkers
                             required: true
           property :size, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.size'),
                           enum: %w[1024x1792 1792x1024 1024x1024]
-          property :file_name, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name')
+          if current_dir.present?
+            property :file_name, type: 'string',
+                                 description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name')
+          end
           property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
                              enum: %w[standard hd]
         end
@@ -52,7 +55,6 @@ module OxAiWorkers
       end
 
       def save_generated_image(file_name:)
-        return 'Image not generated. Please generate image first.' unless @url
         unless @current_dir.present?
           return 'Current directory not set for OxAiWorkers::Tool::Pixels. Please set current directory first.'
         end
