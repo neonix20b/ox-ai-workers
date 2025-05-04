@@ -22,7 +22,8 @@ module OxAiWorkers
                           enum: %w[1024x1792 1792x1024 1024x1024]
           if current_dir.present?
             property :file_name, type: 'string',
-                                 description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name')
+                                 description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name'),
+                                 required: true
           end
           property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
                              enum: %w[standard hd]

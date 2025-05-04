@@ -5,7 +5,7 @@ module OxAiWorkers
     class Localizer
       include OxAiWorkers::Assistant::ModuleBase
 
-      def initialize(delayed: false, model: nil, language: 'русский', locale: :ru, source: 'english')
+      def initialize(delayed: false, model: nil, language: 'русский', locale: :ru, source: 'english', current_dir: nil)
         store_locale
 
         with_locale do
@@ -19,7 +19,7 @@ module OxAiWorkers
         @iterator = Iterator.new(
           worker: init_worker(delayed:, model:),
           role: @role,
-          tools: [Tool::Eval.new, Tool::FileSystem.new],
+          tools: [Tool::Eval.new(current_dir:), Tool::FileSystem.new(current_dir:)],
           locale: @locale,
           on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
           on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) }

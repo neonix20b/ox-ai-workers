@@ -15,7 +15,9 @@ module OxAiWorkers
       include OxAiWorkers::DependencyHelper
       include OxAiWorkers::LoadI18n
 
-      def initialize(only: nil)
+      attr_accessor :current_dir
+
+      def initialize(current_dir: nil, only: nil)
         depends_on 'ptools'
 
         store_locale
@@ -40,38 +42,51 @@ module OxAiWorkers
           property :content, type: 'string', description: I18n.t('oxaiworkers.tool.file_system.write_to_file.content'),
                              required: true
         end
+
+        @current_dir = current_dir
       end
 
       def list_directory(directory_path:)
-        OxAiWorkers.logger.info("Listing directory: #{directory_path}", for: self.class)
-        list = Dir.entries(directory_path)
+        path = full_path(directory_path)
+        OxAiWorkers.logger.info("Listing directory: #{path}", for: self.class)
+        list = Dir.entries(path)
         list.delete_if { |f| f.start_with?('.') }
         if list.present?
-          with_locale { "Contents of directory \"#{directory_path}\":\n #{list.join("\n")}" }
+          "Contents of directory \"#{path}\":\n #{list.join("\n")}"
         else
-          with_locale { "Directory is empty: #{directory_path}" }
+          "Directory is empty: #{path}"
         end
       rescue Errno::ENOENT
-        with_locale { "No such directory: #{directory_path}" }
+        "No such directory: #{path}"
       end
 
       def read_file(file_path:)
-        OxAiWorkers.logger.info("Reading file: #{file_path}", for: self.class)
-        if File.binary?(file_path)
-          with_locale { "File is binary: #{file_path}" }
+        path = full_path(file_path)
+        OxAiWorkers.logger.info("Reading file: #{path}", for: self.class)
+        if File.binary?(path)
+          "File is binary: #{path}"
         else
-          File.read(file_path).to_s
+          File.read(path).to_s
         end
       rescue Errno::ENOENT
-        with_locale { "No such file: #{file_path}" }
+        "No such file: #{path}"
       end
 
       def write_to_file(file_path:, content:)
-        OxAiWorkers.logger.info("Writing to file: #{file_path}", for: self.class)
-        File.write(file_path, content)
-        with_locale { "Content was successfully written to the file: #{file_path}" }
+        path = full_path(file_path)
+        OxAiWorkers.logger.info("Writing to file: #{path}", for: self.class)
+        # Ensure directory exists if using current_dir
+        FileUtils.mkdir_p(File.dirname(path)) if @current_dir.present? && !Dir.exist?(File.dirname(path))
+        File.write(path, content)
+        "Content was successfully written to the file: #{path}"
       rescue Errno::EACCES
-        with_locale { "Permission denied: #{file_path}" }
+        "Permission denied: #{path}"
+      end
+
+      private
+
+      def full_path(path)
+        @current_dir.present? ? File.join(@current_dir, path) : path
       end
     end
   end

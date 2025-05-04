@@ -5,7 +5,7 @@ module OxAiWorkers
     class Sysop
       include OxAiWorkers::Assistant::ModuleBase
 
-      def initialize(delayed: false, model: nil)
+      def initialize(current_dir: nil, delayed: false, model: nil)
         store_locale
 
         with_locale do
@@ -19,7 +19,8 @@ module OxAiWorkers
         @iterator = Iterator.new(
           worker: init_worker(delayed:, model:),
           role: @role,
-          tools: [Tool::Eval.new(only: :sh), Tool::FileSystem.new(only: %i[read_file write_to_file])],
+          tools: [Tool::Eval.new(only: :sh, current_dir:),
+                  Tool::FileSystem.new(only: %i[read_file write_to_file], current_dir:)],
           locale: @locale,
           on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
           on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) }
