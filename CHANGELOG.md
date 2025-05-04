@@ -1,3 +1,9 @@
+
+## [0.9.1] - 2025-05-04
+
+- Added `current_dir` for `Eval`, `FileSystem`, `Pixels` tools
+- Added `current_dir` for `Coder`, `Localizer`, `Painter`, `Sysop` assistants
+
 ## [0.9.0] - 2025-05-03
 
 - Added `context` for tools in `Iterator`
