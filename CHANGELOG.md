@@ -1,8 +1,12 @@
+## [0.9.2] - 2025-05-06
+
+- Changed `max_tokens` to `max_completion_tokens` in `params`
 
 ## [0.9.1] - 2025-05-04
 
 - Added `current_dir` for `Eval`, `FileSystem`, `Pixels` tools
 - Added `current_dir` for `Coder`, `Localizer`, `Painter`, `Sysop` assistants
+- Added `run_task` for Assistants
 
 ## [0.9.0] - 2025-05-03
 

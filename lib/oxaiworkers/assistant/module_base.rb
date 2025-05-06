@@ -20,6 +20,11 @@ module OxAiWorkers
         @iterator.execute
       end
 
+      def run_task(text)
+        self.task = text
+        execute
+      end
+
       def init_worker(delayed: false, model: nil, on_stream: nil)
         model ||= OxAiWorkers.default_model
         delayed ? DelayedRequest.new(model:) : Request.new(model:, on_stream:)

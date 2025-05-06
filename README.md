@@ -115,7 +115,7 @@ Besides, you can create assistants with different locales
 I18n.with_locale(:en) { @sysop_en = OxAiWorkers::Assistant::Sysop.new() }
 
 # Assign tasks and responses in different languages
-@sysop_en.task = "Remove all cron jobs."
+@sysop_en.run_task "Remove all cron jobs."
 ```
 
 Or you can create a lower-level iterator for more control:
@@ -312,7 +312,7 @@ OxAiWorkers.logger.level = :debug
 5. In the command prompt, type:
 
     ```sh
-    @assistant.task = "Write a snake game"
+    @assistant.run_task("Write a snake game")
     ```
 
 ### Running System Operator in Any Directory
@@ -341,13 +341,13 @@ Alternatively, you can use IRB (Interactive Ruby):
 Then set a task:
 
 ```ruby
-@sysop.task = "Show all cron jobs"
+@sysop.run_task "Show all cron jobs"
 ```
 
 After these steps you can interact with it using the following method:
 
 ```ruby
-@sysop.add_task("Yes, I want it All")
+@sysop.run_task "Yes, I want it All"
 ```
 
 or set a new task.

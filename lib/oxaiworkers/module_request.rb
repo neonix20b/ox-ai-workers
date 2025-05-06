@@ -46,7 +46,7 @@ module OxAiWorkers
         model: @model.model,
         messages: @messages,
         temperature: @model.temperature,
-        max_tokens: @model.max_tokens
+        max_completion_tokens: @model.max_tokens
       }
       if @tools.present?
         parameters[:tools] = @tools
