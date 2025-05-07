@@ -8,68 +8,68 @@ module OxAiWorkers
       include OxAiWorkers::DependencyHelper
       include OxAiWorkers::LoadI18n
 
-      attr_accessor :worker, :url, :current_dir, :model
+      attr_accessor :worker, :url, :current_dir, :image_model, :mask
 
       MODELS = {
         'dall-e-3' => {
+          'model' => 'dall-e-3',
           'size' => %w[1024x1024 1024x1792 1792x1024],
           'quality' => %w[standard hd]
         },
         'gpt-image-1' => {
+          'model' => 'gpt-image-1',
           'size' => %w[1024x1024 1024x1792 1792x1024],
           'quality' => %w[auto low medium high]
         }
       }
-      # Алексей Соловьев
-      def initialize(worker:, current_dir: nil, only: nil, model: 'dall-e-3')
+
+      def initialize(worker:, current_dir: nil, only: nil, image_model: 'dall-e-3', mask: nil)
         store_locale
 
         init_white_list_with only
-
-        @model = MODELS[model]
 
         define_function :generate_image, description: I18n.t('oxaiworkers.tool.pixels.generate_image.description') do
           property :prompt, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.prompt'),
                             required: true
           property :size, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.size'),
-                          enum: @model['size']
+                          enum: MODELS[image_model]['size']
           if current_dir.present?
             property :file_name, type: 'string',
                                  description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name'),
                                  required: true
           end
           property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
-                             enum: @model['quality']
+                             enum: MODELS[image_model]['quality']
         end
 
-        define_function :edit_image, description: I18n.t('oxaiworkers.tool.pixels.edit_image.description') do
-          property :input_image, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.edit_image.input_image'),
-                                required: true
-          property :prompt, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.edit_image.prompt'),
-                            required: true
-                    if current_dir.present?
-            property :output_file_name, type: 'string',
-                                 description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name'),
-                                 required: true
-          end
-          property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
-                             enum: @model['quality']
-        end
+        # define_function :edit_image, description: I18n.t('oxaiworkers.tool.pixels.edit_image.description') do
+        #   property :input_image, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.edit_image.input_image'),
+        #                          required: true
+        #   property :prompt, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.edit_image.prompt'),
+        #                     required: true
+        #   if current_dir.present?
+        #     property :output_file_name, type: 'string',
+        #                                 description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name'),
+        #                                 required: true
+        #   end
+        # end
 
         @worker = worker
         @current_dir = current_dir
+        @image_model = MODELS[image_model]
+        @mask = mask
       end
 
       def generate_image(prompt:, file_name: nil, size: nil, quality: nil)
         puts "generate_image: #{prompt}"
 
-        size ||= @model['size'].first
-        quality ||= @model['quality'].first
+        size ||= @image_model['size'].first
+        quality ||= @image_model['quality'].first
 
         response = @worker.client.images.generate(
           parameters: {
             prompt:,
-            model: @model['model'],
+            model: @image_model['model'],
             size:,
             quality:
           }
@@ -85,16 +85,17 @@ module OxAiWorkers
         end
       end
 
-      def edit_image(input_image:, prompt:, output_file_name: nil, size: nil, quality: nil)
-        size ||= @model['size'].first
-        quality ||= @model['quality'].first
+      def edit_image(input_image:, prompt:, output_file_name: nil, size: nil, mask: nil)
+        size ||= @image_model['size'].first
+        mask ||= @mask
 
         response = @worker.client.images.edit(
           parameters: {
             image: input_image,
+            model: @image_model['model'],
             prompt:,
             size:,
-            quality:
+            mask:
           }
         )
 
