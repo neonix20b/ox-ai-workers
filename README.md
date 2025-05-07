@@ -438,6 +438,86 @@ OxAiWorkers provides several specialized assistant types:
   localizer.task = "Translate my application's interface"
   ```
 
+- **Painter**: Image generation and manipulation
+
+  ```ruby
+  painter = OxAiWorkers::Assistant::Painter.new
+  # or Set working directory to save generated images as files
+  # painter = OxAiWorkers::Assistant::Painter.new(current_dir: Dir.pwd)
+  painter.task = "Create an image of a sunset over mountains"
+  ```
+
+- **Orchestrator**: Coordinates multiple assistants to work together on complex tasks
+
+  ```ruby
+  orchestrator = OxAiWorkers::Assistant::Orchestrator.new(
+    workflow: 'Development team creates an application and tests it.'
+  )
+  orchestrator.add_assistant(OxAiWorkers::Assistant::Coder.new)
+  orchestrator.add_assistant(OxAiWorkers::Assistant::Sysop.new)
+  orchestrator.add_assistant(OxAiWorkers::Assistant::Localizer.new)
+  orchestrator.task = "Create a hello world application in C, save it to hello_world.c, compile, run, and verify it works."
+  ```
+
+### Available Tools
+
+OxAiWorkers provides several specialized tools to extend functionality:
+
+- **Pixels**: Image generation and manipulation tool
+
+  ```ruby
+  # Initialize with worker and optional parameters
+  pixels = OxAiWorkers::Tool::Pixels.new(
+    worker: worker,                 # Required: Request or DelayedRequest instance
+    current_dir: Dir.pwd,           # Optional: Directory to save generated images
+    image_model: 'dall-e-3',        # Optional: 'dall-e-3' or 'gpt-image-1'
+    only: [:generate_image]         # Optional: Limit available functions
+  )
+  ```
+
+  Provides functions for generating images with customizable parameters like size and quality, with ability to save generated images to disk.
+
+- **Pipeline**: Assistant coordination and communication tool
+
+  ```ruby
+  # Initialize with optional parameters
+  pipeline = OxAiWorkers::Tool::Pipeline.new(
+    on_message: ->(text:) { puts text } # Optional: Message handler callback
+  )
+  
+  # Add assistants to the pipeline
+  pipeline.add_assistant(OxAiWorkers::Assistant::Coder.new)
+  pipeline.add_assistant(OxAiWorkers::Assistant::Sysop.new)
+  ```
+
+  Enables communication between multiple assistants, maintaining message context and facilitating collaborative problem-solving.
+
+- **Eval**: Code execution tool
+
+  ```ruby
+  # Initialize with optional parameters
+  eval_tool = OxAiWorkers::Tool::Eval.new(
+    only: [:ruby, :sh],             # Optional: Limit available functions
+    current_dir: Dir.pwd            # Optional: Directory to execute commands in
+  )
+  ```
+
+  Allows execution of Ruby code and shell commands, with directory context support.
+
+- **FileSystem**: File operations tool
+
+  ```ruby
+  # Initialize with optional parameters
+  file_system = OxAiWorkers::Tool::FileSystem.new(
+    current_dir: Dir.pwd,           # Optional: Base directory for operations
+    only: [:list_directory, :read_file, :write_to_file] # Optional: Limit available functions
+  )
+  ```
+
+  Provides functions for listing directory contents, reading from files, and writing to files with support for relative paths.
+
+Additional tools like Database and Converter are available for specialized tasks and can be integrated using the same pattern.
+
 ### Implementing Your Own Assistant
 
 Create custom assistants by inheriting from existing ones or composing with the Iterator:
