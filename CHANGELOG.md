@@ -2,6 +2,7 @@
 
 - Changed `max_tokens` to `max_completion_tokens` in `params`
 - Added `frequency_penalty` for configuration
+- Added `edit_image` for `Pixels` tool
 
 ## [0.9.1] - 2025-05-04
 

@@ -8,38 +8,68 @@ module OxAiWorkers
       include OxAiWorkers::DependencyHelper
       include OxAiWorkers::LoadI18n
 
-      attr_accessor :worker, :url, :current_dir
+      attr_accessor :worker, :url, :current_dir, :model
 
-      def initialize(worker:, current_dir: nil, only: nil)
+      MODELS = {
+        'dall-e-3' => {
+          'size' => %w[1024x1024 1024x1792 1792x1024],
+          'quality' => %w[standard hd]
+        },
+        'gpt-image-1' => {
+          'size' => %w[1024x1024 1024x1792 1792x1024],
+          'quality' => %w[auto low medium high]
+        }
+      }
+      # Алексей Соловьев
+      def initialize(worker:, current_dir: nil, only: nil, model: 'dall-e-3')
         store_locale
 
         init_white_list_with only
+
+        @model = MODELS[model]
 
         define_function :generate_image, description: I18n.t('oxaiworkers.tool.pixels.generate_image.description') do
           property :prompt, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.prompt'),
                             required: true
           property :size, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.size'),
-                          enum: %w[1024x1792 1792x1024 1024x1024]
+                          enum: @model['size']
           if current_dir.present?
             property :file_name, type: 'string',
                                  description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name'),
                                  required: true
           end
           property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
-                             enum: %w[standard hd]
+                             enum: @model['quality']
+        end
+
+        define_function :edit_image, description: I18n.t('oxaiworkers.tool.pixels.edit_image.description') do
+          property :input_image, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.edit_image.input_image'),
+                                required: true
+          property :prompt, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.edit_image.prompt'),
+                            required: true
+                    if current_dir.present?
+            property :output_file_name, type: 'string',
+                                 description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name'),
+                                 required: true
+          end
+          property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
+                             enum: @model['quality']
         end
 
         @worker = worker
         @current_dir = current_dir
       end
 
-      def generate_image(prompt:, file_name: nil, size: '1024x1792', quality: 'standard')
+      def generate_image(prompt:, file_name: nil, size: nil, quality: nil)
         puts "generate_image: #{prompt}"
+
+        size ||= @model['size'].first
+        quality ||= @model['quality'].first
 
         response = @worker.client.images.generate(
           parameters: {
             prompt:,
-            model: 'dall-e-3',
+            model: @model['model'],
             size:,
             quality:
           }
@@ -49,6 +79,29 @@ module OxAiWorkers
         revised_prompt = response.dig('data', 0, 'revised_prompt')
         if file_name.present?
           path = save_generated_image(file_name:)
+          "url: #{@url}\nfile_name: #{path}\n\nrevised_prompt: #{revised_prompt}"
+        else
+          "url: #{@url}\n\nrevised_prompt: #{revised_prompt}"
+        end
+      end
+
+      def edit_image(input_image:, prompt:, output_file_name: nil, size: nil, quality: nil)
+        size ||= @model['size'].first
+        quality ||= @model['quality'].first
+
+        response = @worker.client.images.edit(
+          parameters: {
+            image: input_image,
+            prompt:,
+            size:,
+            quality:
+          }
+        )
+
+        @url = response.dig('data', 0, 'url')
+        revised_prompt = response.dig('data', 0, 'revised_prompt')
+        if output_file_name.present?
+          path = save_generated_image(file_name: output_file_name)
           "url: #{@url}\nfile_name: #{path}\n\nrevised_prompt: #{revised_prompt}"
         else
           "url: #{@url}\n\nrevised_prompt: #{revised_prompt}"
