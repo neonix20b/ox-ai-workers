@@ -1,6 +1,7 @@
-## [0.9.2] - 2025-05-06
+## [0.9.3] - 2025-05-06
 
 - Changed `max_tokens` to `max_completion_tokens` in `params`
+- Added `frequency_penalty` for configuration
 
 ## [0.9.1] - 2025-05-04
 
