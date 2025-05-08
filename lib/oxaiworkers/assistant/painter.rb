@@ -5,7 +5,7 @@ module OxAiWorkers
     class Painter
       include OxAiWorkers::Assistant::ModuleBase
 
-      def initialize(current_dir: nil, delayed: false, model: nil)
+      def initialize(current_dir: nil, delayed: false, model: nil, image_model: nil)
         store_locale
         @current_dir = current_dir
 
@@ -17,10 +17,13 @@ module OxAiWorkers
           @title = I18n.t('oxaiworkers.assistant.painter.title')
         end
 
+        worker = init_worker(delayed:, model:)
+        image_model ||= OxAiWorkers::Models::OpenaiDalle3.new
+
         @iterator = Iterator.new(
-          worker: init_worker(delayed:, model:),
+          worker:,
           role: @role,
-          tools: [Tool::Pixels.new(worker: init_worker(delayed: false, model:), current_dir:)],
+          tools: [Tool::Pixels.new(worker: image_model, current_dir:)],
           locale: @locale,
           on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
           on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) }

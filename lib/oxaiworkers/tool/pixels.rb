@@ -8,22 +8,9 @@ module OxAiWorkers
       include OxAiWorkers::DependencyHelper
       include OxAiWorkers::LoadI18n
 
-      attr_accessor :worker, :url, :current_dir, :image_model, :mask
+      attr_accessor :worker, :current_dir
 
-      MODELS = {
-        'dall-e-3' => {
-          'model' => 'dall-e-3',
-          'size' => %w[1024x1024 1024x1792 1792x1024],
-          'quality' => %w[standard hd]
-        },
-        'gpt-image-1' => {
-          'model' => 'gpt-image-1',
-          'size' => %w[1024x1024 1024x1792 1792x1024],
-          'quality' => %w[auto low medium high]
-        }
-      }
-
-      def initialize(worker:, current_dir: nil, only: nil, image_model: 'dall-e-3', mask: nil)
+      def initialize(worker:, current_dir: nil, only: nil)
         store_locale
 
         init_white_list_with only
@@ -31,15 +18,19 @@ module OxAiWorkers
         define_function :generate_image, description: I18n.t('oxaiworkers.tool.pixels.generate_image.description') do
           property :prompt, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.prompt'),
                             required: true
-          property :size, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.size'),
-                          enum: MODELS[image_model]['size']
+          if worker.sizes.length > 1
+            property :size, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.size'),
+                            enum: worker.sizes
+          end
           if current_dir.present?
             property :file_name, type: 'string',
                                  description: I18n.t('oxaiworkers.tool.pixels.generate_image.file_name'),
                                  required: true
           end
-          property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
-                             enum: MODELS[image_model]['quality']
+          if worker.qualities.length > 1
+            property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
+                               enum: worker.qualities
+          end
         end
 
         # define_function :edit_image, description: I18n.t('oxaiworkers.tool.pixels.edit_image.description') do
@@ -56,32 +47,18 @@ module OxAiWorkers
 
         @worker = worker
         @current_dir = current_dir
-        @image_model = MODELS[image_model]
-        @mask = mask
       end
 
       def generate_image(prompt:, file_name: nil, size: nil, quality: nil)
-        puts "generate_image: #{prompt}"
+        binary = @worker.generate_image(prompt:, size:, quality:)
 
-        size ||= @image_model['size'].first
-        quality ||= @image_model['quality'].first
-
-        response = @worker.client.images.generate(
-          parameters: {
-            prompt:,
-            model: @image_model['model'],
-            size:,
-            quality:
-          }
-        )
-
-        @url = response.dig('data', 0, 'url')
-        revised_prompt = response.dig('data', 0, 'revised_prompt')
         if file_name.present?
-          path = save_generated_image(file_name:)
-          "url: #{@url}\nfile_name: #{path}\n\nrevised_prompt: #{revised_prompt}"
+          path = save_generated_image(file_name:, binary:)
+          "file_name: #{path}\n\n#{@worker.result}"
+        elsif @worker.result.present?
+          @worker.result
         else
-          "url: #{@url}\n\nrevised_prompt: #{revised_prompt}"
+          'file_name not set for OxAiWorkers::Tool::Pixels. Please set file name first.'
         end
       end
 
@@ -109,10 +86,12 @@ module OxAiWorkers
         end
       end
 
-      def save_generated_image(file_name:)
+      def save_generated_image(file_name:, binary:)
         unless @current_dir.present?
           return 'Current directory not set for OxAiWorkers::Tool::Pixels. Please set current directory first.'
         end
+
+        return 'File name not set for OxAiWorkers::Tool::Pixels. Please set file name first.' unless file_name.present?
 
         # Ensure current_dir exists
         FileUtils.mkdir_p(@current_dir) unless Dir.exist?(@current_dir)
@@ -120,7 +99,7 @@ module OxAiWorkers
         path = File.join(@current_dir, file_name)
 
         File.open(path, 'wb') do |file|
-          file.write(URI.open(@url).read)
+          file.write(binary)
         end
 
         file_name

@@ -1,3 +1,10 @@
+## [0.9.4] - 2025-05-08
+
+- Added `stability_images` model
+- Added `openai_gpt_image` model
+- Added `openai_dalle3` model
+- Added `access_token_stability` for configuration
+
 ## [0.9.3] - 2025-05-06
 
 - Changed `max_tokens` to `max_completion_tokens` in `params`

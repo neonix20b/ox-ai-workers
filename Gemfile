@@ -18,3 +18,5 @@ gem 'mini_magick'
 # gem "state_machines"
 
 # gem "ruby-openai"
+
+# gem "stability_sdk"

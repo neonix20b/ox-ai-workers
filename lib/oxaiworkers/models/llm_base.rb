@@ -2,7 +2,7 @@
 
 module OxAiWorkers
   module Models
-    module ModuleBase
+    class LLMBase
       attr_accessor :uri_base, :api_key, :model, :max_tokens, :temperature, :frequency_penalty
 
       def initialize(uri_base:, api_key:, model:, max_tokens: nil, temperature: nil, frequency_penalty: nil)

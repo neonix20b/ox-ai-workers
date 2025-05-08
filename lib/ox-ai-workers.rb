@@ -36,11 +36,15 @@ require_relative 'oxaiworkers/assistant/localizer'
 require_relative 'oxaiworkers/assistant/orchestrator'
 require_relative 'oxaiworkers/assistant/painter'
 
-require_relative 'oxaiworkers/models/module_base'
+require_relative 'oxaiworkers/models/llm_base'
 require_relative 'oxaiworkers/models/openai_max'
 require_relative 'oxaiworkers/models/openai_mini'
 require_relative 'oxaiworkers/models/openai_nano'
 require_relative 'oxaiworkers/models/deepseek_max'
+
+require_relative 'oxaiworkers/models/images_base'
+require_relative 'oxaiworkers/models/stability_images'
+require_relative 'oxaiworkers/models/openai_images'
 
 require_relative 'oxaiworkers/engine' if defined?(Rails)
 
@@ -52,7 +56,8 @@ module OxAiWorkers
   class ConfigurationError < Error; end
 
   class Configuration
-    attr_accessor :max_tokens, :temperature, :wait_for_complete, :access_token_deepseek, :access_token_openai
+    attr_accessor :max_tokens, :temperature, :wait_for_complete, :access_token_deepseek, :access_token_openai,
+                  :access_token_stability
 
     def initialize
       @max_tokens = DEFAULT_MAX_TOKEN
@@ -61,6 +66,7 @@ module OxAiWorkers
 
       @access_token_deepseek = nil
       @access_token_openai = nil
+      @access_token_stability = nil
 
       [Array, NilClass, String, Symbol, Hash].each do |c|
         c.send(:include, OxAiWorkers::PresentCompat) unless c.method_defined?(:present?)

@@ -40,8 +40,8 @@ en:
         assistant_info: "ID: **%{id}**, Title: %{title}\nRole: %{role}\nDescription: %{description}\nCapabilities: %{capabilities}"
       pixels:
         generate_image:
-          description: 'Image Generation Tool: Creates an image based on the provided text prompt. If a file name is provided, the image will be saved in png format. In any case, the url of the generated image will be returned.'
-          prompt: 'Text description of the image to generate'
-          size: 'Size of the generated image (1024x1792, 1792x1024, 1024x1024)'
-          quality: 'Quality of the generated image (standard, hd)'
+          description: 'Image Generation Tool: Creates an image based on the provided text prompt on **English language**. If a file name is provided, the image will be saved in png format. In any case, the url of the generated image will be returned.'
+          prompt: 'Text description of the image to generate on **English language**'
+          size: 'Size of the generated image'
+          quality: 'Quality of the generated image'
           file_name: 'File name for saving the generated image in png format. For example: image.png'
