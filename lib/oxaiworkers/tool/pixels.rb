@@ -102,6 +102,8 @@ module OxAiWorkers
           file.write(binary)
         end
 
+        puts "Successfully saved image. file_name: #{path}"
+
         file_name
       end
     end
