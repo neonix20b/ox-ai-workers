@@ -50,11 +50,11 @@ module OxAiWorkers
       end
 
       def generate_image(prompt:, file_name: nil, size: nil, quality: nil)
-        binary = @worker.generate_image(prompt:, size:, quality:)
+        binary = @worker.generate(prompt:, size:, quality:)
 
         if file_name.present?
           path = save_generated_image(file_name:, binary:)
-          "file_name: #{path}\n\n#{@worker.result}"
+          "Successfully generated image. file_name: #{path}\n\n#{@worker.result}"
         elsif @worker.result.present?
           @worker.result
         else

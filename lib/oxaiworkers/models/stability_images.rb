@@ -1,16 +1,17 @@
 module OxAiWorkers
   module Models
     class StabilityImages < ImagesBase
-      def initialize(api_key: nil, timeout: 60, options: {})
+      def initialize(api_key: nil, timeout: 300, options: {})
         @sizes = %w[auto]
         @qualities = %w[auto]
-        api_key ||= OxAiWorkers::Config.access_token_stability
+        api_key ||= OxAiWorkers.configuration.access_token_stability
 
         @client = StabilitySDK::Client.new(api_key:, timeout:)
         super(options:)
       end
 
-      def generate(prompt:, _size: nil, _quality: nil)
+      def generate(prompt:, size: nil, quality: nil)
+        puts "StabilityImages: #{prompt}"
         options = {
           engine_id: 'stable-diffusion-xl-1024-v1-0'
         }

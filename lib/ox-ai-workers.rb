@@ -44,7 +44,8 @@ require_relative 'oxaiworkers/models/deepseek_max'
 
 require_relative 'oxaiworkers/models/images_base'
 require_relative 'oxaiworkers/models/stability_images'
-require_relative 'oxaiworkers/models/openai_images'
+require_relative 'oxaiworkers/models/openai_gpt_image'
+require_relative 'oxaiworkers/models/openai_dalle3'
 
 require_relative 'oxaiworkers/engine' if defined?(Rails)
 

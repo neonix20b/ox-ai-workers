@@ -1,16 +1,18 @@
 module OxAiWorkers
   module Models
     class OpenaiGptImage < ImagesBase
-      def initialize(api_key: nil, _timeout: 60, options: {})
+      def initialize(api_key: nil, options: {})
         @sizes = %w[auto 1024x1024 1536x1024 1024x1536]
         @qualities = %w[auto low medium high]
-        api_key ||= OxAiWorkers::Config.access_token_openai
+        api_key ||= OxAiWorkers.configuration.access_token_openai
 
-        @client = OpenAI::Client.new(api_key:)
+        @client = OpenAI::Client.new(access_token: api_key)
         super(options:)
       end
 
-      def generate_image(prompt:, size: nil, quality: nil)
+      def generate(prompt:, size: nil, quality: nil)
+        puts "OpenaiGptImage: #{prompt}"
+
         size ||= @sizes.first
         quality ||= @qualities.first
 

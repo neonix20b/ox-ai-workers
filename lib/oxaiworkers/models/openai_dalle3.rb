@@ -1,16 +1,18 @@
 module OxAiWorkers
   module Models
     class OpenaiDalle3 < ImagesBase
-      def initialize(api_key: nil, _timeout: 60, options: {})
+      def initialize(api_key: nil, options: {})
         @sizes = %w[1024x1024 1024x1792 1792x1024]
         @qualities = %w[standard hd]
-        api_key ||= OxAiWorkers::Config.access_token_openai
+        api_key ||= OxAiWorkers.configuration.access_token_openai
 
-        @client = OpenAI::Client.new(api_key:)
+        @client = OpenAI::Client.new(access_token: api_key)
         super(options:)
       end
 
-      def generate_image(prompt:, size: nil, quality: nil)
+      def generate(prompt:, size: nil, quality: nil)
+        puts "OpenaiDalle3: #{prompt}"
+
         size ||= @sizes.first
         quality ||= @qualities.first
 
