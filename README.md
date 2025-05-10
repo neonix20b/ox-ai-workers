@@ -555,7 +555,7 @@ This feature is particularly useful when:
 - You want to guide the model through a predefined workflow
 - Complex operations require strict ordering of function calls
 
-The `call_stack` is processed sequentially, with each function being removed from the stack after it's called. When the stack is empty, the model returns to its normal function selection behavior.
+The `call_stack` is processed sequentially, with each function being removed from the stack after it's called.
 
 #### Stop Double Calls
 
