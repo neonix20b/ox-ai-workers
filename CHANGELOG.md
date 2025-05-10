@@ -2,6 +2,7 @@
 ## [0.9.5] - 2025-05-10
 
 - Added `call_stack` for `Iterator` and `ModuleRequest`
+- Added `stop_double_calls` for `Iterator` and `ModuleRequest`
 
 ## [0.9.4] - 2025-05-08
 

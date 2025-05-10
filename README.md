@@ -164,9 +164,13 @@ tool = MyTool.new
   steps: steps,
   # def_except: [:outer_voice], # It's except steps with that functions
   # def_only: [:inner_monologue, :outer_voice], # Use it only with your steps
-  # call_stack: [ 
   # Forced Function: Uses call_stack parameter to force the model to call functions in this exact order, one at a time
+  # call_stack: [ 
   #   OxAiWorkers::Iterator.full_function_name(:outer_voice),
+  #   tool.full_function_name(:func1)
+  # ],
+  # Stop Double Calls: Uses stop_double_calls parameter to prevent the model from calling the same function twice in a row
+  # stop_double_calls: [
   #   tool.full_function_name(:func1)
   # ],
   on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },

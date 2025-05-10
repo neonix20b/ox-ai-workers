@@ -8,10 +8,12 @@ module OxAiWorkers
     include OxAiWorkers::LoadI18n
 
     attr_accessor :worker, :role, :messages, :context, :tools, :queue, :monologue, :tasks,
-                  :on_inner_monologue, :on_outer_voice, :on_finish, :def_except, :def_only, :call_stack
+                  :on_inner_monologue, :on_outer_voice, :on_finish, :def_except, :def_only,
+                  :call_stack, :stop_double_calls
 
     def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil,
-                   on_finish: nil, steps: nil, def_except: [], def_only: nil, locale: nil)
+                   on_finish: nil, steps: nil, def_except: [], def_only: nil, locale: nil,
+                   call_stack: nil, stop_double_calls: [])
 
       @locale = locale || I18n.locale
 
@@ -41,14 +43,17 @@ module OxAiWorkers
       @on_outer_voice = on_outer_voice
       @on_finish = on_finish
 
-      if @worker.call_stack&.any?
-        if available_defs.include?(:inner_monologue) && !@worker.call_stack.include?(OxAiWorkers::Iterator.full_function_name(:inner_monologue))
+      if call_stack&.any?
+        if available_defs.include?(:inner_monologue) && !call_stack.include?(OxAiWorkers::Iterator.full_function_name(:inner_monologue))
           # Add inner_monologue first
-          @worker.call_stack = [OxAiWorkers::Iterator.full_function_name(:inner_monologue)] + @worker.call_stack
+          @call_stack = [OxAiWorkers::Iterator.full_function_name(:inner_monologue)] + call_stack
         end
         # Add finish_it last
-        @worker.call_stack.push OxAiWorkers::Iterator.full_function_name(:finish_it)
+        @call_stack = call_stack + [OxAiWorkers::Iterator.full_function_name(:finish_it)]
       end
+
+      @stop_double_calls = [OxAiWorkers::Iterator.full_function_name(:inner_monologue),
+                            OxAiWorkers::Iterator.full_function_name(:outer_voice)] + stop_double_calls
 
       cleanup
 
@@ -108,6 +113,9 @@ module OxAiWorkers
     end
 
     def rebuild_worker
+      @worker.last_call = nil
+      @worker.call_stack = @call_stack.dup
+      @worker.stop_double_calls = @stop_double_calls
       @worker.messages = []
       @worker.append(role: :system, content: @role) if @role.present?
 

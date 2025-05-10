@@ -3,7 +3,8 @@
 module OxAiWorkers
   class ModuleRequest
     attr_accessor :result, :client, :messages, :model, :custom_id, :tools, :errors,
-                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason, :on_stream_proc, :call_stack
+                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason, 
+                  :on_stream_proc, :call_stack, :last_call, :stop_double_calls
 
     def initialize_requests(model:, on_stream: nil, call_stack: nil)
       @custom_id = SecureRandom.uuid
@@ -12,6 +13,7 @@ module OxAiWorkers
       @is_truncated = false
       @finish_reason = nil
       @on_stream_proc = on_stream
+      @call_stack = call_stack
 
       if @model.api_key.nil?
         error_text = "#{@model.model} access token missing!"
@@ -34,6 +36,7 @@ module OxAiWorkers
       @tool_calls_raw = nil
       @is_truncated = false
       @finish_reason = nil
+      @last_call = nil
     end
 
     def append(role: nil, content: nil, messages: nil)
@@ -50,8 +53,11 @@ module OxAiWorkers
         frequency_penalty: @model.frequency_penalty
       }
       if @tools.present?
-        parameters[:tools] = @tools
-        if @call_stack && @call_stack.any?
+        parameters[:tools] = @tools.reject do |f|
+          tool_name = f[:function][:name]
+          tool_name == @last_call && @stop_double_calls.include?(tool_name)
+        end
+        if @call_stack&.any?
           func1 = @call_stack.first
           @call_stack = @call_stack.drop(1)
           parameters[:tool_choice] = { type: 'function', function: { name: func1 } }
@@ -140,6 +146,7 @@ module OxAiWorkers
           name: function['name'].split('__').last,
           args: args
         }
+        @last_call = function['name']
       end
     end
   end
