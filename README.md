@@ -580,6 +580,18 @@ This feature is valuable for:
 
 When a function is called, its name is stored as the `last_call`. If the next function call matches both the `last_call` and is included in the `stop_double_calls` list, it will be excluded from the available tools for that request.
 
+By default, `stop_double_calls` is applied to the `inner_monologue` and `outer_voice` functions to prevent reasoning loops and repetitive responses. This default behavior helps models avoid getting stuck in circular thinking patterns.
+
+If you need to override this default behavior (for example, when consecutive monologue or voice calls are required for your specific use case), you can reset the stop_double_calls list **after** the iterator is created:
+
+```ruby
+# Clear the default stop_double_calls constraints
+@iterator.stop_double_calls = []
+
+# Or set your own custom constraints
+@iterator.stop_double_calls = [my_tool.full_function_name(:specific_function)]
+```
+
 ### Implementing Your Own Assistant
 
 Create custom assistants by inheriting from existing ones or composing with the Iterator:
