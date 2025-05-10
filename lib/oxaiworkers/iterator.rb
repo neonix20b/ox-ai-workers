@@ -8,7 +8,7 @@ module OxAiWorkers
     include OxAiWorkers::LoadI18n
 
     attr_accessor :worker, :role, :messages, :context, :tools, :queue, :monologue, :tasks,
-                  :on_inner_monologue, :on_outer_voice, :on_finish, :def_except, :def_only
+                  :on_inner_monologue, :on_outer_voice, :on_finish, :def_except, :def_only, :call_stack
 
     def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil,
                    on_finish: nil, steps: nil, def_except: [], def_only: nil, locale: nil)
@@ -40,6 +40,15 @@ module OxAiWorkers
       @on_inner_monologue = on_inner_monologue
       @on_outer_voice = on_outer_voice
       @on_finish = on_finish
+
+      if @worker.call_stack&.any?
+        if available_defs.include?(:inner_monologue) && !@worker.call_stack.include?(OxAiWorkers::Iterator.full_function_name(:inner_monologue))
+          # Add inner_monologue first
+          @worker.call_stack = [OxAiWorkers::Iterator.full_function_name(:inner_monologue)] + @worker.call_stack
+        end
+        # Add finish_it last
+        @worker.call_stack.push OxAiWorkers::Iterator.full_function_name(:finish_it)
+      end
 
       cleanup
 

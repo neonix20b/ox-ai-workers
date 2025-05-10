@@ -3,9 +3,9 @@
 module OxAiWorkers
   class ModuleRequest
     attr_accessor :result, :client, :messages, :model, :custom_id, :tools, :errors,
-                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason, :on_stream_proc
+                  :tool_calls_raw, :tool_calls, :is_truncated, :finish_reason, :on_stream_proc, :call_stack
 
-    def initialize_requests(model:, on_stream: nil)
+    def initialize_requests(model:, on_stream: nil, call_stack: nil)
       @custom_id = SecureRandom.uuid
       @model = model
       @client = nil
@@ -51,7 +51,13 @@ module OxAiWorkers
       }
       if @tools.present?
         parameters[:tools] = @tools
-        parameters[:tool_choice] = 'required'
+        if @call_stack && @call_stack.any?
+          func1 = @call_stack.first
+          @call_stack = @call_stack.drop(1)
+          parameters[:tool_choice] = { type: 'function', function: { name: func1 } }
+        else
+          parameters[:tool_choice] = 'required'
+        end
       end
       if @on_stream_proc.present?
         parameters[:stream] = @on_stream_proc

@@ -154,14 +154,21 @@ steps << "Step 4. When the solution is ready, notify about it and wait for the u
 # To retain the locale if you have assistants in different languages in your project.
 store_locale # Optional
 
+tool = MyTool.new
+
 @iterator = OxAiWorkers::Iterator.new(
   worker: init_worker(delayed: delayed, model: model),
   role: 'You are a software agent inside my computer',
-  tools: [MyTool.new],
+  tools: [tool],
   locale: @locale || I18n.locale,
   steps: steps,
   # def_except: [:outer_voice], # It's except steps with that functions
   # def_only: [:inner_monologue, :outer_voice], # Use it only with your steps
+  # call_stack: [ 
+  # Forced Function: Uses call_stack parameter to force the model to call functions in this exact order, one at a time
+  #   OxAiWorkers::Iterator.full_function_name(:outer_voice),
+  #   tool.full_function_name(:func1)
+  # ],
   on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
   on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) }
 )
