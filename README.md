@@ -529,6 +529,57 @@ OxAiWorkers provides several specialized tools to extend functionality:
 
 Additional tools like Database and Converter are available for specialized tasks and can be integrated using the same pattern.
 
+### Function Control Mechanisms
+
+OxAiWorkers provides two powerful mechanisms to control function execution behavior in iterators:
+
+#### Call Stack
+
+The `call_stack` parameter allows you to force the model to call specific functions in a predetermined order:
+
+```ruby
+iterator = OxAiWorkers::Iterator.new(
+  worker: worker,
+  tools: [my_tool],
+  call_stack: [
+    my_tool.full_function_name(:process_data),
+    OxAiWorkers::Iterator.full_function_name(:outer_voice),
+  ]
+)
+```
+
+This feature is particularly useful when:
+
+- You need to ensure a specific sequence of operations
+- Certain functions must be called before others
+- You want to guide the model through a predefined workflow
+- Complex operations require strict ordering of function calls
+
+The `call_stack` is processed sequentially, with each function being removed from the stack after it's called. When the stack is empty, the model returns to its normal function selection behavior.
+
+#### Stop Double Calls
+
+The `stop_double_calls` parameter prevents the model from calling the same function twice in consecutive operations:
+
+```ruby
+iterator = OxAiWorkers::Iterator.new(
+  worker: worker,
+  tools: [my_tool],
+  stop_double_calls: [
+    my_tool.full_function_name(:expensive_operation)
+  ]
+)
+```
+
+This feature is valuable for:
+
+- Preventing redundant operations that could waste resources
+- Avoiding duplicate processing of the same data
+- Ensuring that certain operations are executed only once in sequence
+- Protecting against potential infinite loops in function calls
+
+When a function is called, its name is stored as the `last_call`. If the next function call matches both the `last_call` and is included in the `stop_double_calls` list, it will be excluded from the available tools for that request.
+
 ### Implementing Your Own Assistant
 
 Create custom assistants by inheriting from existing ones or composing with the Iterator:
