@@ -88,6 +88,7 @@ For a more robust setup, you can configure the gem with your API keys, for examp
 OxAiWorkers.configure do |config|
     config.access_token_openai = ENV.fetch("OPENAI")
     config.access_token_deepseek = ENV.fetch("DEEPSEEK")
+    config.access_token_stability = ENV.fetch("STABILITY")
     config.max_tokens = 4096   # Default
     config.temperature = 0.7   # Default
     config.wait_for_complete = true # Default
@@ -519,7 +520,7 @@ OxAiWorkers provides several specialized tools to extend functionality:
   pixels = OxAiWorkers::Tool::Pixels.new(
     worker: worker,                 # Required: Request or DelayedRequest instance
     current_dir: Dir.pwd,           # Optional: Directory to save generated images
-    image_model: 'dall-e-3',        # Optional: 'dall-e-3' or 'gpt-image-1'
+    image_model: OxAiWorkers::Models::StabilityImages.new,       # Optional, default is OpenaiDalle3
     only: [:generate_image]         # Optional: Limit available functions
   )
   ```
@@ -653,6 +654,92 @@ module OxAiWorkers
   end
 end
 ```
+
+## Image Generation
+
+OxAiWorkers supports image generation through the Painter assistant and Pixels tool, with multiple AI image generation models.
+
+### Supported Image Models
+
+- **OpenaiDalle3** - OpenAI's DALL-E 3 model
+- **OpenaiGptImage** - OpenAI's GPT-Image-1 model
+- **StabilityImages** - Stability AI's image generation models
+
+### Using the Painter Assistant
+
+```ruby
+# Using DALL-E 3 (default)
+painter = OxAiWorkers::Assistant::Painter.new(current_dir: Dir.pwd)
+painter.task = "Create an image of a sunset over mountains"
+
+# Using GPT-Image-1
+painter = OxAiWorkers::Assistant::Painter.new(
+  image_model: OxAiWorkers::Models::OpenaiGptImage.new,
+  current_dir: Dir.pwd
+)
+painter.task = "Generate a photorealistic red apple"
+
+# Using Stability AI
+painter = OxAiWorkers::Assistant::Painter.new(
+  image_model: OxAiWorkers::Models::StabilityImages.new,
+  current_dir: Dir.pwd
+)
+painter.task = "Create a fantasy landscape with dragons"
+```
+
+### Using the Pixels Tool Directly
+
+For more direct control over image generation:
+
+```ruby
+# Initialize with DALL-E 3
+pixels = OxAiWorkers::Tool::Pixels.new(
+  worker: OxAiWorkers::Models::OpenaiDalle3.new,
+  current_dir: Dir.pwd
+)
+pixels.generate_image(
+  prompt: "A photorealistic red apple on a wooden table",
+  file_name: "apple.png",
+  size: "1024x1024",
+  quality: "hd"
+)
+
+# Initialize with GPT-Image-1
+pixels = OxAiWorkers::Tool::Pixels.new(
+  worker: OxAiWorkers::Models::OpenaiGptImage.new,
+  current_dir: Dir.pwd
+)
+pixels.generate_image(
+  prompt: "Futuristic cityscape at night",
+  file_name: "city.png",
+  size: "1536x1024",
+  quality: "high"
+)
+
+# Initialize with Stability AI
+pixels = OxAiWorkers::Tool::Pixels.new(
+  worker: OxAiWorkers::Models::StabilityImages.new,
+  current_dir: Dir.pwd
+)
+pixels.generate_image(
+  prompt: "Photorealistic mountain landscape",
+  file_name: "mountains.png"
+)
+```
+
+### Model-Specific Features
+
+- **OpenaiDalle3**
+  - Sizes: '1024x1024', '1024x1792', '1792x1024'
+  - Qualities: 'standard', 'hd'
+
+- **OpenaiGptImage**
+  - Sizes: 'auto', '1024x1024', '1536x1024', '1024x1536'
+  - Qualities: 'auto', 'low', 'medium', 'high'
+
+- **StabilityImages**
+  - Uses Stability AI's API with different engine options
+  - Configuration via options parameter
 
 ## Contributing
 
