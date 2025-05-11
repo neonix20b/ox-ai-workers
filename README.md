@@ -421,9 +421,49 @@ image_data = File.read('local_image.jpg')
 iterator.add_image(
   text: 'Image from binary data',
   binary: image_data,
-  mime_type: 'image/jpeg' # Defaults to 'image/jpeg'
+  mime_type: 'image/jpeg' # Defaults to 'image/png'
 )
 ```
+
+#### Image Input Requirements
+
+When using images with the API, your input images must meet the following requirements:
+
+**Supported file types:**
+
+- PNG (.png)
+- JPEG (.jpeg and .jpg)
+- WEBP (.webp)
+- Non-animated GIF (.gif)
+
+**Size limits:**
+
+- Up to 20MB per image
+- Low-resolution: 512px x 512px
+- High-resolution: 768px (short side) x 2000px (long side)
+
+**Other requirements:**
+
+- No watermarks or logos
+- No text
+- No NSFW content
+- Clear enough for a human to understand
+
+**Image detail level:**
+
+The `detail` parameter controls what level of detail the model uses when processing the image:
+
+```ruby
+iterator.add_image(
+  text: 'Nature boardwalk image',
+  url: 'https://example.com/nature.jpg',
+  detail: 'high' # Options: 'auto', 'low', or 'high'
+)
+```
+
+- `detail: 'low'`: Uses less tokens (85) and processes a low-resolution 512px x 512px version of the image. Best for simple use cases like identifying dominant colors or shapes.
+- `detail: 'high'`: Provides better image understanding for complex tasks requiring higher resolution detail.
+- `detail: 'auto'`: Lets the model decide the appropriate detail level (default if not specified).
 
 ### Handling State Transitions with Callbacks
 

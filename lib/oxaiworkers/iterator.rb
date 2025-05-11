@@ -266,7 +266,7 @@ module OxAiWorkers
       add_raw_context({ role:, content: })
     end
 
-    def add_image(text:, url: nil, binary: nil, role: :user, detail: 'auto', mime_type: 'image/jpeg')
+    def add_image(text:, url: nil, binary: nil, role: :user, detail: 'auto', mime_type: 'image/png')
       content = []
       content << { type: 'text', text: } if text.present?
 
