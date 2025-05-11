@@ -29,12 +29,6 @@ module OxAiWorkers
           on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) }
         )
       end
-
-      def cleanup
-        Dir.glob(File.join(@current_dir, '*.png')).each do |file|
-          File.delete(file) if File.exist?(file)
-        end
-      end
     end
   end
 end

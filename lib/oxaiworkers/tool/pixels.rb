@@ -62,29 +62,9 @@ module OxAiWorkers
         end
       end
 
-      def edit_image(input_image:, prompt:, output_file_name: nil, size: nil, mask: nil)
-        size ||= @image_model['size'].first
-        mask ||= @mask
-
-        response = @worker.client.images.edit(
-          parameters: {
-            image: input_image,
-            model: @image_model['model'],
-            prompt:,
-            size:,
-            mask:
-          }
-        )
-
-        @url = response.dig('data', 0, 'url')
-        revised_prompt = response.dig('data', 0, 'revised_prompt')
-        if output_file_name.present?
-          path = save_generated_image(file_name: output_file_name)
-          "url: #{@url}\nfile_name: #{path}\n\nrevised_prompt: #{revised_prompt}"
-        else
-          "url: #{@url}\n\nrevised_prompt: #{revised_prompt}"
-        end
-      end
+      # def edit_image(input_image:, prompt:, output_file_name: nil, size: nil, mask: nil)
+      #   # TODO: Implement edit_image
+      # end
 
       def save_generated_image(file_name:, binary:)
         unless @current_dir.present?
