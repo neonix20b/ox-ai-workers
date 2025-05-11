@@ -117,16 +117,16 @@ module OxAiWorkers
       @worker.call_stack = @call_stack.dup
       @worker.stop_double_calls = @stop_double_calls
       @worker.messages = []
-      @worker.append(role: :system, content: @role) if @role.present?
+      @worker.append(role: :system, content: "<role>\n#{@role}\n</role>") if @role.present?
 
-      @tasks.each { |task| @worker.append(role: :user, content: task) }
-      @worker.append(role: :system, content: valid_monologue.join("\n"))
+      @worker.append(role: :system, content: "<instructions>\n#{valid_monologue.join("\n")}\n</instructions>")
+      @tasks.each { |task| @worker.append(role: :user, content: "<task>\n#{task}\n</task>") }
       @worker.append(messages: @context) if @context.present?
       @tools.each do |tool|
         @worker.append(role: :user, content: tool.context) if tool.respond_to?(:context) && tool.context.present?
       end
       @worker.append(messages: @messages)
-      @tasks.each { |task| @worker.append(role: :user, content: task) }
+      @tasks.each { |task| @worker.append(role: :user, content: "<task>\n#{task}\n</task>") }
       @worker.tools = function_schemas.to_openai_format(only: available_defs)
       return unless @tools.present?
 
