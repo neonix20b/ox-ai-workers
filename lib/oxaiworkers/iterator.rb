@@ -252,6 +252,35 @@ module OxAiWorkers
       add_raw_context({ role:, content: text })
     end
 
+    def add_file(pdf:, filename:, text:, role: :user)
+      content = []
+      content << { type: 'text', text: } if text.present?
+      content << {
+        type: 'file',
+        file: {
+          filename:,
+          file_data: Base64.strict_encode64(pdf)
+        }
+      }
+
+      add_raw_context({ role:, content: })
+    end
+
+    def add_image(text:, url: nil, binary: nil, role: :user, detail: 'auto', mime_type: 'image/jpeg')
+      content = []
+      content << { type: 'text', text: } if text.present?
+
+      image_url = if binary.present?
+                    "data:#{mime_type};base64,#{Base64.strict_encode64(binary)}"
+                  else
+                    url
+                  end
+
+      content << { type: 'image_url', image_url: { url: image_url, detail: } }
+
+      add_raw_context({ role:, content: })
+    end
+
     def add_raw_context(c)
       @context << c
     end

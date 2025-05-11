@@ -396,6 +396,34 @@ class MyTool
 end
 ```
 
+### Working with Files and Images
+
+You can easily add files and images to your assistants:
+
+```ruby
+# Add a PDF file
+iterator.add_file(
+  pdf: File.read('document.pdf'),
+  filename: 'document.pdf',
+  text: 'Here is the document you requested'
+)
+
+# Add image from URL
+iterator.add_image(
+  text: 'Here is the image',
+  url: 'https://example.com/image.jpg',
+  detail: 'auto' # 'auto', 'low', or 'high'
+)
+
+# Add image from binary data
+image_data = File.read('local_image.jpg')
+iterator.add_image(
+  text: 'Image from binary data',
+  binary: image_data,
+  mime_type: 'image/jpeg' # Defaults to 'image/jpeg'
+)
+```
+
 ### Handling State Transitions with Callbacks
 
 You can track and respond to state transitions with callbacks:
@@ -469,6 +497,16 @@ OxAiWorkers provides several specialized assistant types:
   orchestrator.add_assistant(OxAiWorkers::Assistant::Localizer.new)
   orchestrator.task = "Create a hello world application in C, save it to hello_world.c, compile, run, and verify it works."
   ```
+
+All assistants support working with files and images:
+
+```ruby
+# Add files and images to any assistant
+sysop.add_file(pdf: File.read('error_log.pdf'), filename: 'error_log.pdf', text: 'Error log file')
+sysop.add_image(text: 'Screenshot of the error', url: 'https://example.com/screenshot.png')
+```
+
+See the [Working with Files and Images](#working-with-files-and-images) section for full details.
 
 ### Available Tools
 

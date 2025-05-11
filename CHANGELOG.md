@@ -1,6 +1,9 @@
 
-## [0.9.5] - 2025-05-10
+## [0.9.6] - 2025-05-10
 
+- Added `add_file` for `Iterator` (only pdf for now)
+- Added `add_image` for `Iterator`
+- Added `add_file` and `add_image` for Assistants
 - Added `call_stack` for `Iterator` and `ModuleRequest`
 - Added `stop_double_calls` for `Iterator` and `ModuleRequest`
 

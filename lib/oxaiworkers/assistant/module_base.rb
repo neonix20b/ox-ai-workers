@@ -34,6 +34,14 @@ module OxAiWorkers
         @iterator.clear_context
         @iterator.add_context context
       end
+
+      def add_file(pdf:, filename:, text:, role: :user)
+        @iterator.add_file(pdf:, filename:, text:, role:)
+      end
+
+      def add_image(text:, url: nil, binary: nil, role: :user, detail: 'auto', mime_type: 'image/jpeg')
+        @iterator.add_image(text:, url:, binary:, role:, detail:, mime_type:)
+      end
     end
   end
 end
