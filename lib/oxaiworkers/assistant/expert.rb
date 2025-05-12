@@ -23,11 +23,11 @@ module OxAiWorkers
           worker:,
           role: @role,
           tools: [tool],
-          # call_stack: [
-          #   OxAiWorkers::Iterator.full_function_name(:inner_monologue),
-          #   tool.full_function_name(:ask),
-          #   OxAiWorkers::Iterator.full_function_name(:outer_voice)
-          # ],
+          call_stack: [
+            OxAiWorkers::Iterator.full_function_name(:inner_monologue),
+            tool.full_function_name(:ask),
+            OxAiWorkers::Iterator.full_function_name(:outer_voice)
+          ],
           locale: @locale,
           on_inner_monologue: ->(text:) { puts "monologue: #{text}".colorize(:yellow) },
           on_outer_voice: ->(text:) { puts "voice: #{text}".colorize(:green) }

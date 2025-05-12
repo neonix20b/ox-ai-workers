@@ -47,6 +47,6 @@ en:
           file_name: 'File name for saving the generated image in png format. For example: image.png'
       wolfram_alpha:
         ask:
-          description: 'Wolfram Alpha Tool: Query the Wolfram Alpha computational knowledge engine'
+          description: 'Wolfram Alpha Tool: Query the Wolfram Alpha computational knowledge engine. The function allows you to get up-to-date data from various fields of knowledge (economics, finance, weather, climate, astronomy, space, transport, law, sports).'
           prompt: 'The query to send to Wolfram Alpha on **English language**'
           location: 'Location information to provide context for the query on **English language**. For example: Berlin, Germany'
