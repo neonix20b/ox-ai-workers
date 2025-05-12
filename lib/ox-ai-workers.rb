@@ -28,6 +28,7 @@ require_relative 'oxaiworkers/tool/database'
 require_relative 'oxaiworkers/tool/file_system'
 require_relative 'oxaiworkers/tool/pipeline'
 require_relative 'oxaiworkers/tool/pixels'
+require_relative 'oxaiworkers/tool/wolfram'
 
 require_relative 'oxaiworkers/assistant/module_base'
 require_relative 'oxaiworkers/assistant/sysop'
@@ -58,7 +59,7 @@ module OxAiWorkers
 
   class Configuration
     attr_accessor :max_tokens, :temperature, :wait_for_complete, :access_token_deepseek, :access_token_openai,
-                  :access_token_stability
+                  :access_token_stability, :access_token_wolfram
 
     def initialize
       @max_tokens = DEFAULT_MAX_TOKEN
@@ -68,6 +69,7 @@ module OxAiWorkers
       @access_token_deepseek = nil
       @access_token_openai = nil
       @access_token_stability = nil
+      @access_token_wolfram = nil
 
       [Array, NilClass, String, Symbol, Hash].each do |c|
         c.send(:include, OxAiWorkers::PresentCompat) unless c.method_defined?(:present?)

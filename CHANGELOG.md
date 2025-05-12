@@ -1,7 +1,8 @@
 
-## [0.9.8] - 2025-05-12
+## [0.9.9] - 2025-05-12
 
 - Added `strict` parameter for `define_function`
+- Added `Wolfram` tool
 
 ## [0.9.6] - 2025-05-10
 

@@ -45,3 +45,8 @@ en:
           size: 'Size of the generated image'
           quality: 'Quality of the generated image'
           file_name: 'File name for saving the generated image in png format. For example: image.png'
+      wolfram_alpha:
+        ask:
+          description: 'Wolfram Alpha Tool: Query the Wolfram Alpha computational knowledge engine'
+          prompt: 'The query to send to Wolfram Alpha'
+          location: 'Location information to provide context for the query'

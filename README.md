@@ -569,6 +569,26 @@ OxAiWorkers provides several specialized tools to extend functionality:
 
   Provides functions for generating images with customizable parameters like size and quality, with ability to save generated images to disk.
 
+- **Wolfram**: Query the Wolfram Alpha computational knowledge engine
+
+  ```ruby
+  `gem "wolfram-alpha", github: "neonix20b/wolfram-alpha"`
+  ```
+
+  ```ruby
+  OxAiWorkers.configuration.access_token_wolfram = 'YOUR_WOLFRAM_API_KEY'
+  ```
+
+  ```ruby
+  # Initialize with optional parameters
+  wolfram = OxAiWorkers::Tool::Wolfram.new(
+    access_token: 'YOUR_WOLFRAM_API_KEY', # Optional: API key
+    location: 'Berlin' # Optional: Location to use for the query
+  )
+  ```
+
+  This tool enables access to Wolfram Alpha's vast computational intelligence for performing complex mathematical calculations, solving equations, accessing scientific data, and answering knowledge-based queries with precise, authoritative results.
+
 - **Pipeline**: Assistant coordination and communication tool
 
   ```ruby
