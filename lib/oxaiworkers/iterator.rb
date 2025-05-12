@@ -113,7 +113,7 @@ module OxAiWorkers
     end
 
     def rebuild_worker
-      @worker.last_call = nil
+      # @worker.last_call = nil
       @worker.call_stack = @call_stack.dup
       @worker.stop_double_calls = @stop_double_calls
       @worker.messages = []

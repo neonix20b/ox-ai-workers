@@ -119,7 +119,7 @@ module OxAiWorkers
 
         @schemas[method_name] = {
           type: 'function',
-          function: { name:, description:, parameters: }.compact
+          function: { name:, description:, parameters:, strict: !parameters.nil? }.compact
         }
       end
 
@@ -214,6 +214,7 @@ module OxAiWorkers
         if @parent_type == 'object'
           @schema[:properties][name] = prop
           @schema[:required] << name.to_s if required
+          @schema[:additionalProperties] = false
         else
           @schema = prop
         end

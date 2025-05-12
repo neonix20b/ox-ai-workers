@@ -14,6 +14,7 @@ module OxAiWorkers
       @finish_reason = nil
       @on_stream_proc = on_stream
       @call_stack = call_stack
+      @last_call = nil
 
       if @model.api_key.nil?
         error_text = "#{@model.model} access token missing!"
@@ -36,7 +37,7 @@ module OxAiWorkers
       @tool_calls_raw = nil
       @is_truncated = false
       @finish_reason = nil
-      @last_call = nil
+      # @last_call = nil
     end
 
     def append(role: nil, content: nil, messages: nil)
@@ -57,6 +58,7 @@ module OxAiWorkers
           tool_name = f[:function][:name]
           tool_name == @last_call && @stop_double_calls.include?(tool_name)
         end
+        OxAiWorkers.logger.info("tools: #{parameters[:tools]} last_call=#{@last_call} stop_double_calls=#{@stop_double_calls}", for: self.class)
         if @call_stack&.any?
           func1 = @call_stack.first
           @call_stack = @call_stack.drop(1)
@@ -139,14 +141,16 @@ module OxAiWorkers
           # Skipping for now, as partial args are likely useless.
           next
         end
-
+        OxAiWorkers.logger.info("function: #{function.inspect}", for: self.class)
         # Accumulate parsed tool calls
+        next if function['name'].empty?
+
         @tool_calls << {
           class: function['name'].split('__').first,
           name: function['name'].split('__').last,
           args: args
         }
-        @last_call = function['name']
+        @last_call = function['name'].to_s
       end
     end
   end
