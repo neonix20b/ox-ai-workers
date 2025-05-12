@@ -397,6 +397,8 @@ class MyTool
 end
 ```
 
+The `define_function` method accepts an optional `strict` parameter (defaults to `true`) that controls whether additional properties are allowed in the input. When `strict: true` (default), the schema will include `additionalProperties: false`, enforcing that only defined properties can be used.
+
 ### Working with Files and Images
 
 You can easily add files and images to your assistants:

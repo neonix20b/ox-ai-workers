@@ -33,8 +33,10 @@ module OxAiWorkers
         context = context_for(to_id)
         @assistants[to_id].replace_context(context)
         @assistants[to_id].add_task message
-        @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.result')}: #{result}"
-        @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.example')}: #{example}"
+        with_locale do
+          @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.result')}: #{result}"
+          @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.example')}: #{example}"
+        end
         @assistants[to_id].execute
         nil
       end

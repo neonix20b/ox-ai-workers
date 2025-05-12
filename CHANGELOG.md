@@ -1,4 +1,8 @@
 
+## [0.9.8] - 2025-05-12
+
+- Added `strict` parameter for `define_function`
+
 ## [0.9.6] - 2025-05-10
 
 - Added `add_file` for `Iterator` (only pdf for now)

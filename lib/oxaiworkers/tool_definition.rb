@@ -53,10 +53,10 @@ module OxAiWorkers
     # @param method_name [Symbol] Name of the method to define
     # @param description [String] Description of the function
     # @yield Block that defines the parameters for the function
-    def define_function(method_name, description:, &)
+    def define_function(method_name, description:, strict: true, &)
       return unless @white_list.nil? || @white_list == method_name || @white_list.include?(method_name)
 
-      function_schemas.add_function(method_name:, description:, &)
+      function_schemas.add_function(method_name:, description:, strict:, &)
     end
 
     # Returns the FunctionSchemas instance for this tool
@@ -105,11 +105,11 @@ module OxAiWorkers
       # @param description [String] Description of the function
       # @yield Block that defines the parameters for the function
       # @raise [ArgumentError] If a block is defined and no parameters are specified for the function
-      def add_function(method_name:, description:, &)
+      def add_function(method_name:, description:, strict:, &)
         name = function_name(method_name)
 
         if block_given?
-          parameters = ParameterBuilder.new(parent_type: 'object').build(&)
+          parameters = ParameterBuilder.new(parent_type: 'object', strict:).build(&)
 
           if parameters[:properties].empty?
             raise ArgumentError,
@@ -117,9 +117,12 @@ module OxAiWorkers
           end
         end
 
+        function_params = { name:, description:, parameters: }
+        function_params[:strict] = true if strict
+
         @schemas[method_name] = {
           type: 'function',
-          function: { name:, description:, parameters:, strict: !parameters.nil? }.compact
+          function: function_params.compact
         }
       end
 
@@ -163,9 +166,10 @@ module OxAiWorkers
     class ParameterBuilder
       VALID_TYPES = %w[object array string number integer boolean].freeze
 
-      def initialize(parent_type:)
+      def initialize(parent_type:, strict: true)
         @schema = parent_type == 'object' ? { type: 'object', properties: {}, required: [] } : {}
         @parent_type = parent_type
+        @strict = strict
       end
 
       # Builds the parameter schema
@@ -192,7 +196,7 @@ module OxAiWorkers
         prop = { type:, description:, enum: }.compact
 
         if block_given?
-          nested_schema = ParameterBuilder.new(parent_type: type).build(&)
+          nested_schema = ParameterBuilder.new(parent_type: type, strict: @strict).build(&)
 
           case type
           when 'object'
@@ -214,7 +218,7 @@ module OxAiWorkers
         if @parent_type == 'object'
           @schema[:properties][name] = prop
           @schema[:required] << name.to_s if required
-          @schema[:additionalProperties] = false
+          @schema[:additionalProperties] = false if @strict
         else
           @schema = prop
         end
