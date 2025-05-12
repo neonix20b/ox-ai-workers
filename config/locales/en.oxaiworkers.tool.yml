@@ -48,5 +48,5 @@ en:
       wolfram_alpha:
         ask:
           description: 'Wolfram Alpha Tool: Query the Wolfram Alpha computational knowledge engine'
-          prompt: 'The query to send to Wolfram Alpha'
-          location: 'Location information to provide context for the query'
+          prompt: 'The query to send to Wolfram Alpha on **English language**'
+          location: 'Location information to provide context for the query on **English language**. For example: Berlin, Germany'

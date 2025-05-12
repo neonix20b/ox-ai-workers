@@ -115,6 +115,10 @@ module OxAiWorkers
             raise ArgumentError,
                   'Function parameters must have at least one property defined within it, if a block is provided'
           end
+        else
+          # Create an empty parameters object with additionalProperties: false when strict is true
+          parameters = { type: 'object', properties: {} }
+          parameters[:additionalProperties] = false if strict
         end
 
         function_params = { name:, description:, parameters: }

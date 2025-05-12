@@ -1,8 +1,12 @@
+## [1.0.0] - 2025-05-12
+
+- Final version for 1.0.0 release
 
 ## [0.9.9] - 2025-05-12
 
 - Added `strict` parameter for `define_function`
 - Added `Wolfram` tool
+- Added `Expert` assistant
 
 ## [0.9.6] - 2025-05-10
 

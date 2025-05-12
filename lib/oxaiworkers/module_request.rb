@@ -58,7 +58,7 @@ module OxAiWorkers
           tool_name = f[:function][:name]
           tool_name == @last_call && @stop_double_calls.include?(tool_name)
         end
-        OxAiWorkers.logger.info("tools: #{parameters[:tools]} last_call=#{@last_call} stop_double_calls=#{@stop_double_calls}", for: self.class)
+
         if @call_stack&.any?
           func1 = @call_stack.first
           @call_stack = @call_stack.drop(1)
@@ -141,7 +141,7 @@ module OxAiWorkers
           # Skipping for now, as partial args are likely useless.
           next
         end
-        OxAiWorkers.logger.info("function: #{function.inspect}", for: self.class)
+        OxAiWorkers.logger.debug("function: #{function.inspect}", for: self.class)
         # Accumulate parsed tool calls
         next if function['name'].empty?
 

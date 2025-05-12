@@ -52,5 +52,5 @@ ru:
       wolfram_alpha:
         ask:
           description: 'Инструмент Wolfram Alpha: Запрос к вычислительной базе знаний Wolfram Alpha'
-          prompt: 'Запрос для отправки в Wolfram Alpha'
-          location: 'Информация о местоположении для контекста запроса'
+          prompt: 'Запрос для отправки в Wolfram Alpha на **английском** языке'
+          location: 'Информация о местоположении для контекста запроса на **английском** языке. Например: Moscow, Russia'

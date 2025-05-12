@@ -20,3 +20,5 @@ gem 'mini_magick'
 # gem "ruby-openai"
 
 # gem "stability_sdk"
+
+# gem "wolfram-alpha", github: "neonix20b/wolfram-alpha"

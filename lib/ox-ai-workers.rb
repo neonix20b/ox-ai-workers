@@ -36,6 +36,7 @@ require_relative 'oxaiworkers/assistant/coder'
 require_relative 'oxaiworkers/assistant/localizer'
 require_relative 'oxaiworkers/assistant/orchestrator'
 require_relative 'oxaiworkers/assistant/painter'
+require_relative 'oxaiworkers/assistant/expert'
 
 require_relative 'oxaiworkers/models/llm_base'
 require_relative 'oxaiworkers/models/openai_max'

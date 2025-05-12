@@ -529,6 +529,15 @@ OxAiWorkers provides several specialized assistant types:
   painter.task = "Create an image of a sunset over mountains"
   ```
 
+- **Expert**: Mathematical and scientific problem solving using Wolfram Alpha
+
+  ```ruby
+  expert = OxAiWorkers::Assistant::Expert.new
+  # or with optional location parameter for location-aware queries
+  # expert = OxAiWorkers::Assistant::Expert.new(location: 'Berlin')
+  expert.task = "Calculate the derivative of x^3 + 5x^2 + 2x + 1"
+  ```
+
 - **Orchestrator**: Coordinates multiple assistants to work together on complex tasks
 
   ```ruby
