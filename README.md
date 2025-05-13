@@ -385,20 +385,31 @@ You can create custom tools by extending the `ToolDefinition` module:
 class MyTool
   include OxAiWorkers::ToolDefinition
   
+  attr_accessor :messages
+  
   def initialize
+    @messages = []
+    
     define_function :hello_world, description: "Says hello to someone" do
       property :name, type: "string", description: "Name to greet" # Default required: true
-      property :age, type: ["integer", "null"], description: "Age of the person" # Default required: true
+      property :age, type: ["integer", "null"], description: "Age of the person" # Default required: true, can be null so it's optional
     end
   end
   
   def hello_world(name:)
+    @messages << "Greeted #{name}"
     "Hello, #{name}!"
+  end
+  
+  # The context method provides information to assistants using this tool before each request
+  def context
+    return nil if @messages.empty?
+    "Tool activity log:\n#{@messages.join("\n")}"
   end
 end
 ```
 
-The `define_function` method accepts an optional `strict` parameter (defaults to `true`) that controls whether additional properties are allowed in the input. When `strict: true` (default), the schema will include `additionalProperties: false`, enforcing that only defined properties can be used.
+The `define_function` method accepts an optional `strict` parameter (defaults to `true`) that controls whether additional properties are allowed in the input. When `strict: true` (default), the schema will include `additionalProperties: false`, enforcing that only defined properties can be used. Tools can also implement a `context` method that returns information to be included in assistant conversations before each request, which is particularly useful when multiple assistants share a common tool to maintain shared state or history.
 
 ### Working with Files and Images
 
@@ -627,6 +638,10 @@ OxAiWorkers provides several specialized tools to extend functionality:
   Allows execution of Ruby code and shell commands, with directory context support.
 
 - **FileSystem**: File operations tool
+
+  ```ruby
+  gem "ptools"
+  ```
 
   ```ruby
   # Initialize with optional parameters
