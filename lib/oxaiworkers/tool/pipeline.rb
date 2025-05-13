@@ -17,7 +17,8 @@ module OxAiWorkers
                              required: true
           property :result, type: 'string', description: I18n.t('oxaiworkers.tool.pipeline.send_message.result'),
                             required: true
-          property :example, type: 'string', description: I18n.t('oxaiworkers.tool.pipeline.send_message.example')
+          property :example, type: %w[string null], description: I18n.t('oxaiworkers.tool.pipeline.send_message.example'),
+                             required: true
           property :to_id, type: 'string', description: I18n.t('oxaiworkers.tool.pipeline.send_message.to_id'),
                            required: true
         end
@@ -26,7 +27,7 @@ module OxAiWorkers
         @on_message = on_message
       end
 
-      def send_message(message:, result:, example:, to_id:)
+      def send_message(message:, result:, to_id:, example: nil)
         puts "send_message to #{to_id}: #{message}".colorize(:red)
         puts " Result: #{result}"
         puts " Example: #{example}"
@@ -35,7 +36,9 @@ module OxAiWorkers
         @assistants[to_id].add_task message
         with_locale do
           @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.result')}: #{result}"
-          @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.example')}: #{example}"
+          unless example.nil?
+            @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.example')}: #{example}"
+          end
         end
         @assistants[to_id].execute
         nil

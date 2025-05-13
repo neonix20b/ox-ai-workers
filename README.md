@@ -387,7 +387,8 @@ class MyTool
   
   def initialize
     define_function :hello_world, description: "Says hello to someone" do
-      property :name, type: "string", description: "Name to greet", required: true
+      property :name, type: "string", description: "Name to greet" # Default required: true
+      property :age, type: ["integer", "null"], description: "Age of the person" # Default required: true
     end
   end
   

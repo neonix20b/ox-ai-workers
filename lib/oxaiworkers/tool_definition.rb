@@ -194,7 +194,7 @@ module OxAiWorkers
       # @param required [Boolean] Whether the property is required
       # @yield [Block] Block for nested properties (only for object and array types)
       # @raise [ArgumentError] If any parameter is invalid
-      def property(name = nil, type:, description: nil, enum: nil, required: false, &)
+      def property(name = nil, type:, description: nil, enum: nil, required: true, &)
         validate_parameters(name:, type:, enum:, required:)
 
         prop = { type:, description:, enum: }.compact

@@ -1,3 +1,7 @@
+## [1.0.1] - 2025-05-13
+
+- Property `required` parameter is now `true` by default in `define_function`
+
 ## [1.0.0] - 2025-05-12
 
 - Final version for 1.0.0 release
