@@ -19,7 +19,7 @@ module OxAiWorkers
           property :prompt, type: 'string', description: I18n.t('oxaiworkers.tool.wolfram_alpha.ask.prompt'),
                             required: true
           if location.nil?
-            property :location, type: 'string', description: I18n.t('oxaiworkers.tool.wolfram_alpha.ask.location'),
+            property :location, type: %w[string null], description: I18n.t('oxaiworkers.tool.wolfram_alpha.ask.location'),
                                 required: true
           end
         end

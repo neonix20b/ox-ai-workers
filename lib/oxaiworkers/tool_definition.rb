@@ -168,7 +168,7 @@ module OxAiWorkers
 
     # Builds parameter schemas for functions
     class ParameterBuilder
-      VALID_TYPES = %w[object array string number integer boolean].freeze
+      VALID_TYPES = %w[object array string number integer boolean null].freeze
 
       def initialize(parent_type:, strict: true)
         @schema = parent_type == 'object' ? { type: 'object', properties: {}, required: [] } : {}
@@ -246,7 +246,7 @@ module OxAiWorkers
           raise ArgumentError, "Invalid name '#{name}'. Name must be a symbol" unless name.is_a?(Symbol)
         end
 
-        unless VALID_TYPES.include?(type)
+        unless VALID_TYPES.include?(type) || type.is_a?(Array) && type.all? { |t| VALID_TYPES.include?(t) }
           raise ArgumentError, "Invalid type '#{type}'. Valid types are: #{VALID_TYPES.join(', ')}"
         end
 
