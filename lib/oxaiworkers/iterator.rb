@@ -9,13 +9,14 @@ module OxAiWorkers
 
     attr_accessor :worker, :role, :messages, :context, :tools, :queue, :monologue, :tasks,
                   :on_inner_monologue, :on_outer_voice, :on_finish, :def_except, :def_only,
-                  :call_stack, :stop_double_calls
+                  :call_stack, :stop_double_calls, :call_id
 
     def initialize(worker:, role: nil, tools: [], on_inner_monologue: nil, on_outer_voice: nil,
                    on_finish: nil, steps: nil, def_except: [], def_only: nil, locale: nil,
                    call_stack: nil, stop_double_calls: [])
 
       @locale = locale || I18n.locale
+      @call_id = 0
 
       with_locale do
         define_function :inner_monologue, description: I18n.t('oxaiworkers.iterator.inner_monologue.description') do
@@ -71,6 +72,7 @@ module OxAiWorkers
       @queue = []
       @tasks = []
       @messages = []
+      @call_id = 0
       complete_iteration
     end
 
@@ -223,10 +225,16 @@ module OxAiWorkers
           end.first
           next if tool.nil?
 
+          @call_id += 1
           out = tool.send(external_call[:name], **external_call[:args])
           @queue << { role: :assistant,
                       content: "Tool call #{external_call[:name]} completed." }
-          @queue << { role: :system, content: "Result: #{out}" } if out.present?
+          @queue << if out.present?
+                      { role: :tool, content: out, tool_call_id: "call_#{@call_id}" }
+                    else
+                      { role: :tool, content: "Tool call #{external_call[:name]} successful.",
+                        tool_call_id: "call_#{@call_id}" }
+                    end
         end
         @worker.finish
         iterate! if can_iterate?

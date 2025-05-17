@@ -1,3 +1,9 @@
+## [1.0.2] - 2025-05-17
+
+- Added `openai_whisper` model
+- Added `openai_transcribe` model
+- Added `tool_call_id` for `Iterator`
+
 ## [1.0.1] - 2025-05-13
 
 - Property `required` parameter is now `true` by default in `define_function`
