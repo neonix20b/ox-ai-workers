@@ -217,7 +217,7 @@ module OxAiWorkers
       end
 
       if @worker.tool_calls.present?
-        @queue << { role: :assistant, content: @worker.tool_calls_raw.to_s }
+        # @queue << { role: :assistant, content: @worker.tool_calls_raw.to_s }
         @worker.tool_calls.each do |external_call|
           tool = ([self] + @tools).select do |t|
             tool_name = t.respond_to?(:tool_name) ? t.tool_name : t.class.tool_name
@@ -226,13 +226,26 @@ module OxAiWorkers
           next if tool.nil?
 
           @call_id += 1
+          # Add tool call message in the correct format
           out = tool.send(external_call[:name], **external_call[:args])
-          @queue << { role: :assistant,
-                      content: "Tool call #{external_call[:name]} completed." }
+          @queue << {
+            role: :assistant,
+            tool_calls: [{
+              id: "call_#{@call_id}",
+              type: 'function',
+              function: {
+                name: external_call[:name],
+                arguments: external_call[:args].to_json
+              }
+            }]
+          }
           @queue << if out.present?
-                      { role: :tool, content: out, tool_call_id: "call_#{@call_id}" }
+                      { role: :tool,
+                        content: out,
+                        tool_call_id: "call_#{@call_id}" }
                     else
-                      { role: :tool, content: "Tool call #{external_call[:name]} successful.",
+                      { role: :tool,
+                        content: "Tool call #{external_call[:name]} successful.",
                         tool_call_id: "call_#{@call_id}" }
                     end
         end
