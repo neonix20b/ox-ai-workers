@@ -495,20 +495,6 @@ iterator = OxAiWorkers::Iterator.new(
 )
 ```
 
-### Streaming API Responses
-
-Enable streaming for real-time feedback:
-
-```ruby
-worker = OxAiWorkers::Request.new(
-  on_stream: ->(chunk) { 
-    if chunk.dig('choices', 0, 'delta', 'content')
-      print chunk.dig('choices', 0, 'delta', 'content') 
-    end
-  }
-)
-```
-
 ### Available Assistant Types
 
 OxAiWorkers provides several specialized assistant types:

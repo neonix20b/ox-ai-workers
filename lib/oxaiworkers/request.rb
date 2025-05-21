@@ -10,7 +10,7 @@ module OxAiWorkers
     end
 
     def request!
-      response = @client.chat(parameters: params)
+      response = @model.request(params)
       parse_choices(response)
     end
 

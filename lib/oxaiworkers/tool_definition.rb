@@ -109,7 +109,7 @@ module OxAiWorkers
         name = function_name(method_name)
 
         if block_given?
-          parameters = ParameterBuilder.new(parent_type: 'object', strict:).build(&)
+          parameters = ParameterBuilder.new(parent_type: 'object').build(&)
 
           if parameters[:properties].empty?
             raise ArgumentError,
@@ -118,11 +118,11 @@ module OxAiWorkers
         else
           # Create an empty parameters object with additionalProperties: false when strict is true
           parameters = { type: 'object', properties: {} }
-          parameters[:additionalProperties] = false if strict
+          # parameters[:additionalProperties] = false if strict
         end
 
         function_params = { name:, description:, parameters: }
-        function_params[:strict] = true if strict
+        function_params[:strict] = strict
 
         @schemas[method_name] = {
           type: 'function',
@@ -133,36 +133,47 @@ module OxAiWorkers
       # Converts schemas to OpenAI-compatible format
       #
       # @return [String] JSON string of schemas in OpenAI format
-      def to_openai_format(only: nil)
-        valid_schemas(only:).values
+      def to_openai_format
+        @schemas_openai ||= Marshal.load(Marshal.dump(valid_schemas.values))
+        @schemas_openai.map do |schema|
+          if schema[:function][:strict] == true
+            parameters = schema[:function][:parameters]
+            parameters[:additionalProperties] = false
+            parameters[:properties].each do |key, param|
+              param[:type] = parameters[:required].include?(key.to_s) ? param[:type] : [param[:type], 'null']
+            end
+            parameters[:required] = parameters[:properties].keys.map(&:to_s)
+          else
+            schema[:function].delete(:strict)
+          end
+          schema
+        end
       end
 
       # Returns a subset of schemas based on the provided filter.
       #
       # @param only [Array<Symbol>] An optional array of schema names to filter by.
       # @return [Hash<Symbol, Hash>] A hash of schemas with their corresponding names as keys.
-      def valid_schemas(only: nil)
-        if only.nil?
-          @schemas
-        else
-          @schemas.select { |name, _schema| only.include?(name) }
-        end
+      def valid_schemas
+        @schemas
       end
 
       # Converts schemas to Anthropic-compatible format
       #
       # @return [String] JSON string of schemas in Anthropic format
-      def to_anthropic_format(only: nil)
-        valid_schemas(only:).values.map do |schema|
-          schema[:function].transform_keys('parameters' => 'input_schema')
+      def to_anthropic_format
+        @schemas_anthropic ||= Marshal.load(Marshal.dump(valid_schemas.values))
+        @schemas_anthropic.map do |schema|
+          schema[:function].delete(:strict)
+          schema[:function].transform_keys(parameters: :input_schema)
         end
       end
 
       # Converts schemas to Google Gemini-compatible format
       #
       # @return [String] JSON string of schemas in Google Gemini format
-      def to_google_gemini_format(only: nil)
-        valid_schemas(only:).values.map { |schema| schema[:function] }
+      def to_google_gemini_format
+        valid_schemas.values.map { |schema| schema[:function] }
       end
     end
 
@@ -170,10 +181,9 @@ module OxAiWorkers
     class ParameterBuilder
       VALID_TYPES = %w[object array string number integer boolean null].freeze
 
-      def initialize(parent_type:, strict: true)
+      def initialize(parent_type:)
         @schema = parent_type == 'object' ? { type: 'object', properties: {}, required: [] } : {}
         @parent_type = parent_type
-        @strict = strict
       end
 
       # Builds the parameter schema
@@ -200,7 +210,7 @@ module OxAiWorkers
         prop = { type:, description:, enum: }.compact
 
         if block_given?
-          nested_schema = ParameterBuilder.new(parent_type: type, strict: @strict).build(&)
+          nested_schema = ParameterBuilder.new(parent_type: type).build(&)
 
           case type
           when 'object'
@@ -222,7 +232,7 @@ module OxAiWorkers
         if @parent_type == 'object'
           @schema[:properties][name] = prop
           @schema[:required] << name.to_s if required
-          @schema[:additionalProperties] = false if @strict
+          # @schema[:additionalProperties] = false if @strict
         else
           @schema = prop
         end
@@ -246,7 +256,7 @@ module OxAiWorkers
           raise ArgumentError, "Invalid name '#{name}'. Name must be a symbol" unless name.is_a?(Symbol)
         end
 
-        unless VALID_TYPES.include?(type) || type.is_a?(Array) && type.all? { |t| VALID_TYPES.include?(t) }
+        unless VALID_TYPES.include?(type)
           raise ArgumentError, "Invalid type '#{type}'. Valid types are: #{VALID_TYPES.join(', ')}"
         end
 

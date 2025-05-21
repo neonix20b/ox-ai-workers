@@ -18,6 +18,11 @@ module OxAiWorkers
       @locale = locale || I18n.locale
       @call_id = 0
 
+      @def_only = def_only || ITERATOR_FUNCTIONS
+      @def_except = def_except
+
+      init_white_list_with available_defs
+
       with_locale do
         define_function :inner_monologue, description: I18n.t('oxaiworkers.iterator.inner_monologue.description') do
           property :speach, type: 'string', description: I18n.t('oxaiworkers.iterator.inner_monologue.speach'),
@@ -37,8 +42,6 @@ module OxAiWorkers
       @tools = tools
       @role = role
       @context = []
-      @def_only = def_only || ITERATOR_FUNCTIONS
-      @def_except = def_except
 
       @on_inner_monologue = on_inner_monologue
       @on_outer_voice = on_outer_voice
@@ -129,14 +132,14 @@ module OxAiWorkers
       end
       @worker.append(messages: @messages)
       @tasks.each { |task| @worker.append(role: :user, content: "<task>\n#{task}\n</task>") }
-      @worker.tools = function_schemas.to_openai_format(only: available_defs)
+      @worker.tools = [function_schemas]
       return unless @tools.present?
 
       @worker.tools += @tools.map do |tool|
         if tool.respond_to?(:function_schemas)
-          tool.function_schemas.to_openai_format
+          tool.function_schemas
         else
-          tool.class.function_schemas.to_openai_format
+          tool.class.function_schemas
         end
       end.flatten
     end
@@ -180,6 +183,8 @@ module OxAiWorkers
       OxAiWorkers.logger.warn "Iterator::ServerError #{e.message}. Waiting 10 seconds..."
       sleep(10)
       external_request
+    rescue Faraday::BadRequestError => e
+      OxAiWorkers.logger.warn "Iterator::BadRequestError #{e.message}. #{@worker.messages.to_json}"
     end
 
     def tick_or_wait
@@ -228,26 +233,12 @@ module OxAiWorkers
           @call_id += 1
           # Add tool call message in the correct format
           out = tool.send(external_call[:name], **external_call[:args])
-          @queue << {
-            role: :assistant,
-            tool_calls: [{
-              id: "call_#{@call_id}",
-              type: 'function',
-              function: {
-                name: external_call[:name],
-                arguments: external_call[:args].to_json
-              }
-            }]
-          }
-          @queue << if out.present?
-                      { role: :tool,
-                        content: out,
-                        tool_call_id: "call_#{@call_id}" }
-                    else
-                      { role: :tool,
-                        content: "Tool call #{external_call[:name]} successful.",
-                        tool_call_id: "call_#{@call_id}" }
-                    end
+          @queue += @worker.model.tool_call(
+            name: external_call[:name],
+            args: external_call[:args],
+            call_id: @call_id,
+            out:
+          )
         end
         @worker.finish
         iterate! if can_iterate?
@@ -269,35 +260,22 @@ module OxAiWorkers
       @queue << { role:, content: text }
     end
 
-    def add_context(text, role: :system)
+    def add_context(text, role: :user)
       add_raw_context({ role:, content: text })
     end
 
     def add_file(pdf:, filename:, text:, role: :user)
-      content = []
-      content << { type: 'text', text: } if text.present?
-      content << {
-        type: 'file',
-        file: {
-          filename:,
-          file_data: Base64.strict_encode64(pdf)
-        }
-      }
-
+      content = @worker.model.add_base64(binary: pdf, filename:, text:, mime_type: 'application/pdf')
       add_raw_context({ role:, content: })
     end
 
     def add_image(text:, url: nil, binary: nil, role: :user, detail: 'auto', mime_type: 'image/png')
       content = []
-      content << { type: 'text', text: } if text.present?
-
-      image_url = if binary.present?
-                    "data:#{mime_type};base64,#{Base64.strict_encode64(binary)}"
-                  else
-                    url
-                  end
-
-      content << { type: 'image_url', image_url: { url: image_url, detail: } }
+      if binary.present?
+        content = @worker.model.add_base64(binary:, filename:, text:, mime_type:, detail:)
+      elsif url.present?
+        content = @worker.model.add_url(url:, text:, detail:, mime_type:)
+      end
 
       add_raw_context({ role:, content: })
     end

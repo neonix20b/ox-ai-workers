@@ -1,8 +1,7 @@
-## [1.0.2] - 2025-05-17
+## [1.1.0] - 2025-05-21
 
-- Added `openai_whisper` model
-- Added `openai_transcribe` model
-- Added `tool_call_id` for `Iterator`
+- Added `add_base64` and `add_url` for Models
+- Added Anthropic support
 
 ## [1.0.1] - 2025-05-13
 
@@ -65,7 +64,6 @@
 - Fixed tool calls parsing
 - Refine Russian locale for Iterator with enhanced step descriptions and planning guidance
 - Update locale for Iterator
-- Added `on_stream` for `Iterator`
 
 ## [0.7.10] - 2025-03-31
 

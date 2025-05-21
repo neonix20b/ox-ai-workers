@@ -19,8 +19,8 @@ module OxAiWorkers
           property :prompt, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.prompt'),
                             required: true
           if worker.sizes.length > 1
-            property :size, type: %w[string null], description: I18n.t('oxaiworkers.tool.pixels.generate_image.size'),
-                            enum: worker.sizes
+            property :size, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.size'),
+                            enum: worker.sizes, required: false
           end
           if current_dir.present?
             property :file_name, type: 'string',
@@ -28,8 +28,8 @@ module OxAiWorkers
                                  required: true
           end
           if worker.qualities.length > 1
-            property :quality, type: %w[string null], description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
-                               enum: worker.qualities
+            property :quality, type: 'string', description: I18n.t('oxaiworkers.tool.pixels.generate_image.quality'),
+                               enum: worker.qualities, required: false
           end
         end
 

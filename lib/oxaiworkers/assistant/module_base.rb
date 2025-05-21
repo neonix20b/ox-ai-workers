@@ -25,9 +25,9 @@ module OxAiWorkers
         execute
       end
 
-      def init_worker(delayed: false, model: nil, on_stream: nil)
+      def init_worker(delayed: false, model: nil)
         model ||= OxAiWorkers.default_model
-        delayed ? DelayedRequest.new(model:) : Request.new(model:, on_stream:)
+        delayed ? DelayedRequest.new(model:) : Request.new(model:)
       end
 
       def replace_context(context)

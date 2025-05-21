@@ -17,8 +17,8 @@ module OxAiWorkers
                              required: true
           property :result, type: 'string', description: I18n.t('oxaiworkers.tool.pipeline.send_message.result'),
                             required: true
-          property :example, type: %w[string null], description: I18n.t('oxaiworkers.tool.pipeline.send_message.example'),
-                             required: true
+          property :example, type: 'string', description: I18n.t('oxaiworkers.tool.pipeline.send_message.example'),
+                             required: false
           property :to_id, type: 'string', description: I18n.t('oxaiworkers.tool.pipeline.send_message.to_id'),
                            required: true
         end

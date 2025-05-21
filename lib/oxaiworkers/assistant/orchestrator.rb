@@ -11,7 +11,7 @@ module OxAiWorkers
         store_locale
 
         @pipeline = Tool::Pipeline.new(
-          on_message: ->(text:) { @iterator.add_queue text, role: :system }
+          on_message: ->(text:) { @iterator.add_queue text }
         )
 
         with_locale do

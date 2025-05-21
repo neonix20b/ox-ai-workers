@@ -44,6 +44,7 @@ require_relative 'oxaiworkers/models/openai_mini'
 require_relative 'oxaiworkers/models/openai_nano'
 require_relative 'oxaiworkers/models/deepseek_max'
 require_relative 'oxaiworkers/models/openai_whisper'
+require_relative 'oxaiworkers/models/anthropic_max'
 
 require_relative 'oxaiworkers/models/images_base'
 require_relative 'oxaiworkers/models/stability_images'
