@@ -392,7 +392,7 @@ class MyTool
     
     define_function :hello_world, description: "Says hello to someone" do
       property :name, type: "string", description: "Name to greet" # Default required: true
-      property :age, type: ["integer", "null"], description: "Age of the person" # Default required: true, can be null so it's optional
+      property :age, type: "integer", description: "Age of the person", required: false
     end
   end
   
@@ -408,8 +408,6 @@ class MyTool
   end
 end
 ```
-
-The `define_function` method accepts an optional `strict` parameter (defaults to `true`) that controls whether additional properties are allowed in the input. When `strict: true` (default), the schema will include `additionalProperties: false`, enforcing that only defined properties can be used.
 
 Tools can also implement a `context` method that returns information to be included in assistant conversations before each request, which is particularly useful when multiple assistants share a common tool to maintain shared state or history.
 
