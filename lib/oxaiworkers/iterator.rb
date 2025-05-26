@@ -131,7 +131,7 @@ module OxAiWorkers
         @worker.append(role: :user, content: tool.context) if tool.respond_to?(:context) && tool.context.present?
       end
       @worker.append(messages: @messages)
-      @tasks.each { |task| @worker.append(role: :user, content: "<task>\n#{task}\n</task>") }
+      # @tasks.each { |task| @worker.append(role: :user, content: "<task>\n#{task}\n</task>") }
       @worker.tools = [function_schemas]
       return unless @tools.present?
 

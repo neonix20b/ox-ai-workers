@@ -2,19 +2,21 @@
 
 module OxAiWorkers
   module Models
-    class AnthropicMax < LLMBase
+    class GeminiPro < LLMBase
       def initialize(uri_base: nil, api_key: nil, model: nil, max_tokens: nil, temperature: nil, frequency_penalty: nil)
-        @model = model || 'claude-3-7-sonnet-latest'
+        @model = model || 'gemini-pro'
         @uri_base = uri_base # || 'https://api.anthropic.com/v1/'
-        @api_key = api_key || OxAiWorkers.configuration.access_token_anthropic
+        @api_key = api_key || OxAiWorkers.configuration.access_token_gemini
         super(uri_base: @uri_base, api_key: @api_key, model: @model, max_tokens:, temperature:, frequency_penalty:)
       end
 
       def client
-        @client ||= Anthropic::Client.new(
-          access_token: @api_key,
-          uri_base: @uri_base,
-          log_errors: true
+        Gemini.new(
+          credentials: {
+            service: 'generative-language-api',
+            api_key: ENV['GOOGLE_API_KEY']
+          },
+          options: { model: 'gemini-pro', server_sent_events: true }
         )
       end
 
@@ -23,7 +25,6 @@ module OxAiWorkers
       end
 
       def build_parameters(messages:, tools: [], filtered_functions: [], tool_choice: nil)
-        puts "messages: #{messages.inspect}"
         parameters = {
           model: @model,
           system: messages.select { |m| m[:role] == :system }.map { |m| m[:content] }.join("\n\n"),
