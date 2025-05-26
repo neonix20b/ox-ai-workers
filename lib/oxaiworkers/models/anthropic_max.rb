@@ -23,7 +23,6 @@ module OxAiWorkers
       end
 
       def build_parameters(messages:, tools: [], filtered_functions: [], tool_choice: nil)
-        puts "messages: #{messages.inspect}"
         parameters = {
           model: @model,
           system: messages.select { |m| m[:role] == :system }.map { |m| m[:content] }.join("\n\n"),
@@ -70,7 +69,7 @@ module OxAiWorkers
         ]
       end
 
-      def add_base64(binary:, filename:, text:, mime_type:)
+      def add_base64(binary:, text:, mime_type:)
         content = []
         content << { type: 'text', text: } if text.present?
         content << {

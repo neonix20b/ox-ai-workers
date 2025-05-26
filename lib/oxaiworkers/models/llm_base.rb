@@ -66,7 +66,7 @@ module OxAiWorkers
         ]
       end
 
-      def add_base64(binary:, filename:, text:, mime_type:, detail: 'auto')
+      def add_base64(binary:, text:, mime_type:, detail: 'high')
         content = []
         content << { type: 'text', text: } if text.present?
         content << if mime_type.include?('image')
@@ -80,7 +80,7 @@ module OxAiWorkers
                      {
                        type: 'file',
                        file: {
-                         filename:,
+                         filename: "file.#{mime_type.split('/').last}",
                          file_data: "data:#{mime_type};base64,#{Base64.strict_encode64(binary)}"
                        }
                      }
@@ -88,7 +88,7 @@ module OxAiWorkers
         content
       end
 
-      def add_url(url:, text:, detail: 'auto')
+      def add_url(url:, text:, detail: 'high')
         content = []
         content << { type: 'text', text: } if text.present?
         content << { type: 'image_url', image_url: { url:, detail: } }

@@ -1,4 +1,4 @@
-## [1.1.1] - 2025-05-26
+## [1.1.2] - 2025-05-26
 
 - Removed task appending in `Iterator`
 

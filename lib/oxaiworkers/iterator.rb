@@ -184,7 +184,7 @@ module OxAiWorkers
       sleep(10)
       external_request
     rescue Faraday::BadRequestError => e
-      OxAiWorkers.logger.warn "Iterator::BadRequestError #{e.message}. #{@worker.messages.to_json}"
+      OxAiWorkers.logger.warn "Iterator::BadRequestError #{e.message}."
     end
 
     def tick_or_wait
@@ -264,17 +264,17 @@ module OxAiWorkers
       add_raw_context({ role:, content: text })
     end
 
-    def add_file(pdf:, filename:, text:, role: :user)
-      content = @worker.model.add_base64(binary: pdf, filename:, text:, mime_type: 'application/pdf')
+    def add_file(pdf:, text:, role: :user)
+      content = @worker.model.add_base64(binary: pdf, text:, mime_type: 'application/pdf')
       add_raw_context({ role:, content: })
     end
 
-    def add_image(text:, url: nil, binary: nil, role: :user, detail: 'auto', mime_type: 'image/png')
+    def add_image(text:, url: nil, binary: nil, role: :user, mime_type: 'image/png')
       content = []
       if binary.present?
-        content = @worker.model.add_base64(binary:, filename:, text:, mime_type:, detail:)
+        content = @worker.model.add_base64(binary:, text:, mime_type:)
       elsif url.present?
-        content = @worker.model.add_url(url:, text:, detail:, mime_type:)
+        content = @worker.model.add_url(url:, text:, mime_type:)
       end
 
       add_raw_context({ role:, content: })
