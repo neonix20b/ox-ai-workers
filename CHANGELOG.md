@@ -1,3 +1,7 @@
+## [1.1.1] - 2025-05-26
+
+- Removed task appending in `Iterator`
+
 ## [1.1.0] - 2025-05-21
 
 - Added `add_base64` and `add_url` for Models
