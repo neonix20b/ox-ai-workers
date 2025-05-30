@@ -38,6 +38,18 @@ module OxAiWorkers
     end
 
     def params
+      @messages.each do |message|
+        content = message[:content]
+        if content.is_a?(String)
+          OxAiWorkers.logger.info "Request (String): #{content.truncate(50)}"
+        elsif content.is_a?(Array)
+          types = content.map { |item| "#{item[:type]}: #{item[:content]&.truncate(50)}" }.compact.join(', ')
+          OxAiWorkers.logger.info "Request (Array): [#{types}]"
+        else
+          OxAiWorkers.logger.info "Request (Other): #{content.inspect.truncate(50)}"
+        end
+      end
+
       filtered_functions = []
       filtered_functions << @last_call if @stop_double_calls.include?(@last_call)
 
@@ -45,8 +57,6 @@ module OxAiWorkers
                       func1 = @call_stack.first
                       @call_stack = @call_stack.drop(1)
                       func1
-                    else
-                      nil
                     end
 
       @model.build_parameters(

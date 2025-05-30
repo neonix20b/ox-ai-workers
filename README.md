@@ -90,7 +90,6 @@ OxAiWorkers.configure do |config|
     config.access_token_deepseek = ENV.fetch("DEEPSEEK")
     config.access_token_stability = ENV.fetch("STABILITY")
     config.max_tokens = 4096   # Default
-    config.temperature = 0.7   # Default
     config.wait_for_complete = true # Default
 end
 

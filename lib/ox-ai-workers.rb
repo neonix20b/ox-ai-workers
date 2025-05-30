@@ -55,18 +55,16 @@ require_relative 'oxaiworkers/engine' if defined?(Rails)
 
 module OxAiWorkers
   DEFAULT_MAX_TOKEN = 4096
-  DEFAULT_TEMPERATURE = 0.7
 
   class Error < StandardError; end
   class ConfigurationError < Error; end
 
   class Configuration
-    attr_accessor :max_tokens, :temperature, :wait_for_complete, :access_token_deepseek, :access_token_openai,
+    attr_accessor :max_tokens, :wait_for_complete, :access_token_deepseek, :access_token_openai,
                   :access_token_stability, :access_token_wolfram, :access_token_anthropic, :access_token_gemini
 
     def initialize
       @max_tokens = DEFAULT_MAX_TOKEN
-      @temperature = DEFAULT_TEMPERATURE
       @wait_for_complete = true
 
       @access_token_deepseek = nil
