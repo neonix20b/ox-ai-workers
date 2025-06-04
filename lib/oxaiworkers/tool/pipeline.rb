@@ -31,17 +31,22 @@ module OxAiWorkers
         puts "send_message to #{to_id}: #{message}".colorize(:red)
         puts " Result: #{result}"
         puts " Example: #{example}"
-        context = context_for(to_id)
-        @assistants[to_id].replace_context(context)
-        @assistants[to_id].add_task message
-        with_locale do
-          @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.result')}: #{result}"
-          unless example.nil?
-            @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.example')}: #{example}"
+        if @assistants.key?(to_id)
+          context = context_for(to_id)
+          @assistants[to_id].replace_context(context)
+          @assistants[to_id].add_task message
+          with_locale do
+            @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.result')}: #{result}"
+            unless example.nil?
+              @assistants[to_id].add_task "#{I18n.t('oxaiworkers.tool.pipeline.send_message.example')}: #{example}"
+            end
           end
+          @assistants[to_id].execute
+          nil
+        else
+          OxAiWorkers.logger.error "Assistant #{to_id} not found"
+          "Assistant #{to_id} not found"
         end
-        @assistants[to_id].execute
-        nil
       end
 
       def add_assistant(assistant)

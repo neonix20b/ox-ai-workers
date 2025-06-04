@@ -76,6 +76,8 @@ module OxAiWorkers
       @tasks = []
       @messages = []
       @call_id = 0
+      # Очищаем сообщения в worker, если он существует
+      @worker.messages = [] if @worker&.respond_to?(:messages=)
       complete_iteration
     end
 
@@ -91,7 +93,7 @@ module OxAiWorkers
       else
         OxAiWorkers.logger.warn "Iterator::inner_monologue is not available: #{speach}"
       end
-      nil
+      speach
     end
 
     def outer_voice(text:)
@@ -103,7 +105,7 @@ module OxAiWorkers
         inner_monologue(speach: text)
       end
 
-      nil
+      text
     end
 
     def finish_it
@@ -121,6 +123,8 @@ module OxAiWorkers
       # @worker.last_call = nil
       @worker.call_stack = @call_stack.dup
       @worker.stop_double_calls = @stop_double_calls
+      # Не очищаем сообщения, а сохраняем их в переменной
+      current_messages = @worker.messages || []
       @worker.messages = []
       @worker.append(role: :system, content: "<role>\n#{@role}\n</role>") if @role.present?
 
@@ -130,6 +134,8 @@ module OxAiWorkers
       @tools.each do |tool|
         @worker.append(role: :user, content: tool.context) if tool.respond_to?(:context) && tool.context.present?
       end
+      # Добавляем сохраненные сообщения обратно, если они не пустые
+      @worker.append(messages: current_messages) if current_messages.present?
       @worker.append(messages: @messages)
       # @tasks.each { |task| @worker.append(role: :user, content: "<task>\n#{task}\n</task>") }
       @worker.tools = [function_schemas]
@@ -170,8 +176,12 @@ module OxAiWorkers
     end
 
     def next_iteration
+      # Сначала добавляем сообщения из очереди к worker
       @worker.append(messages: @queue)
+      # Затем добавляем их к локальным сообщениям
       @messages += @queue
+      OxAiWorkers.logger.warn "Iterator::Next iteration: #{@messages.count}/#{@queue.count}"
+      # И только потом очищаем очередь
       @queue = []
       request!
     end
@@ -232,6 +242,7 @@ module OxAiWorkers
 
           @call_id += 1
           # Add tool call message in the correct format
+          OxAiWorkers.logger.info "Iterator::Tool call: #{@call_id}"
           out = tool.send(external_call[:name], **external_call[:args])
           @queue += @worker.model.tool_call(
             name: external_call[:name],
@@ -240,16 +251,20 @@ module OxAiWorkers
             out:
           )
         end
-        @worker.finish
+        @worker.finish_without_cleanup if @worker.respond_to?(:finish_without_cleanup)
         iterate! if can_iterate?
       end
       result = @worker.result || @worker.errors
-      outer_voice text: result if result.present?
+      if result.present?
+        OxAiWorkers.logger.warn "Iterator::No tool calls: #{result}"
+        outer_voice text: result 
+      end
     end
 
     def complete_iteration
       @queue = []
-      @worker.finish
+      # Используем finish_without_cleanup вместо finish
+      @worker.finish_without_cleanup if @worker.respond_to?(:finish_without_cleanup)
     end
 
     def add_task(task)

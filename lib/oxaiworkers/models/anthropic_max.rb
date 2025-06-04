@@ -63,7 +63,7 @@ module OxAiWorkers
               {
                 type: 'tool_result',
                 tool_use_id: "call_#{call_id}",
-                content: out.present? ? out : "Tool call #{name} successful."
+                content: out.present? ? out : "Successful"
               }
             ]
           }

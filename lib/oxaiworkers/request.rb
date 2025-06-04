@@ -9,6 +9,16 @@ module OxAiWorkers
       cleanup
     end
 
+    # Метод для завершения без очистки сообщений
+    def finish_without_cleanup
+      @custom_id = SecureRandom.uuid
+      # Очищаем только результат и ошибки, но не сообщения
+      @result = nil
+      @errors = nil
+      @tool_calls = nil
+      @is_truncated = false
+    end
+
     def request!
       response = @model.request(params)
       parse_choices(response)
