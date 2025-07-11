@@ -194,6 +194,7 @@ module OxAiWorkers
     end
 
     def should_finish_iteration?
+      return false if @worker.call_stack.nil?
       return false unless @worker.respond_to?(:call_stack) && @worker.call_stack.present?
       
       finish_it_function = OxAiWorkers::Iterator.full_function_name(:finish_it)
