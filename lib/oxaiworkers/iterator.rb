@@ -76,7 +76,7 @@ module OxAiWorkers
       @tasks = []
       @messages = []
       @call_id = 0
-      # Очищаем сообщения в worker, если он существует
+      # Clear messages in worker if it exists
       @worker.messages = [] if @worker&.respond_to?(:messages=)
       complete_iteration
     end
@@ -123,7 +123,7 @@ module OxAiWorkers
       # @worker.last_call = nil
       @worker.call_stack = @call_stack.dup
       @worker.stop_double_calls = @stop_double_calls
-      # Не очищаем сообщения, а сохраняем их в переменной
+      # Don't clear messages, save them in a variable
       current_messages = @worker.messages || []
       @worker.messages = []
       @worker.append(role: :system, content: "<role>\n#{@role}\n</role>") if @role.present?
@@ -134,7 +134,7 @@ module OxAiWorkers
       @tools.each do |tool|
         @worker.append(role: :user, content: tool.context) if tool.respond_to?(:context) && tool.context.present?
       end
-      # Добавляем сохраненные сообщения обратно, если они не пустые
+      # Add saved messages back if they are not empty
       @worker.append(messages: current_messages) if current_messages.present?
       @worker.append(messages: @messages)
       # @tasks.each { |task| @worker.append(role: :user, content: "<task>\n#{task}\n</task>") }
@@ -176,19 +176,19 @@ module OxAiWorkers
     end
 
     def next_iteration
-      # Проверяем call_stack перед продолжением итерации
+      # Check call_stack before continuing iteration
       if should_finish_iteration?
         OxAiWorkers.logger.info "Iterator::Call stack is empty or contains only finish_it. Finishing iteration."
         finish_it
         return
       end
 
-      # Сначала добавляем сообщения из очереди к worker
+      # First add messages from queue to worker
       @worker.append(messages: @queue)
-      # Затем добавляем их к локальным сообщениям
+      # Then add them to local messages
       @messages += @queue
       OxAiWorkers.logger.warn "Iterator::Next iteration: #{@messages.count}/#{@queue.count}"
-      # И только потом очищаем очередь
+      # And only then clear the queue
       @queue = []
       request!
     end
@@ -199,10 +199,8 @@ module OxAiWorkers
       
       finish_it_function = OxAiWorkers::Iterator.full_function_name(:finish_it)
       
-      # Проверяем, пуста ли очередь вызовов или содержит только finish_it
-      @worker.call_stack.empty? || 
-        (@worker.call_stack.size == 1 && @worker.call_stack.first == finish_it_function) ||
-        @worker.call_stack.all? { |call| call == finish_it_function }
+      # Check if the call queue is empty or contains only finish_it
+      @worker.call_stack.empty? || @worker.call_stack.all? { |call| call == finish_it_function }
     end
 
     def external_request
@@ -282,7 +280,7 @@ module OxAiWorkers
 
     def complete_iteration
       @queue = []
-      # Используем finish_without_cleanup вместо finish
+      # Use finish_without_cleanup instead of finish
       @worker.finish_without_cleanup if @worker.respond_to?(:finish_without_cleanup)
     end
 

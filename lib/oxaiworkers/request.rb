@@ -9,10 +9,10 @@ module OxAiWorkers
       cleanup
     end
 
-    # Метод для завершения без очистки сообщений
+    # Method to finish without clearing messages
     def finish_without_cleanup
       @custom_id = SecureRandom.uuid
-      # Очищаем только результат и ошибки, но не сообщения
+      # Clear only result and errors, but not messages
       @result = nil
       @errors = nil
       @tool_calls = nil
