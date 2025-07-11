@@ -1,3 +1,7 @@
+## [1.1.4] - 2025-07-11
+
+- Fixed `finish_it` for `Iterator`
+
 ## [1.1.2] - 2025-05-26
 
 - Removed task appending in `Iterator`

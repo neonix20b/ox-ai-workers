@@ -176,6 +176,13 @@ module OxAiWorkers
     end
 
     def next_iteration
+      # Проверяем call_stack перед продолжением итерации
+      if should_finish_iteration?
+        OxAiWorkers.logger.info "Iterator::Call stack is empty or contains only finish_it. Finishing iteration."
+        finish_it
+        return
+      end
+
       # Сначала добавляем сообщения из очереди к worker
       @worker.append(messages: @queue)
       # Затем добавляем их к локальным сообщениям
@@ -184,6 +191,17 @@ module OxAiWorkers
       # И только потом очищаем очередь
       @queue = []
       request!
+    end
+
+    def should_finish_iteration?
+      return false unless @worker.respond_to?(:call_stack) && @worker.call_stack.present?
+      
+      finish_it_function = OxAiWorkers::Iterator.full_function_name(:finish_it)
+      
+      # Проверяем, пуста ли очередь вызовов или содержит только finish_it
+      @worker.call_stack.empty? || 
+        (@worker.call_stack.size == 1 && @worker.call_stack.first == finish_it_function) ||
+        @worker.call_stack.all? { |call| call == finish_it_function }
     end
 
     def external_request
