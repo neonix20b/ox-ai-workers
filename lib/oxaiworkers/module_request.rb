@@ -55,11 +55,7 @@ module OxAiWorkers
       filtered_functions = []
       filtered_functions << @last_call if @stop_double_calls.include?(@last_call)
 
-      tool_choice = if @call_stack&.any?
-                      func1 = @call_stack.first
-                      @call_stack = @call_stack.drop(1)
-                      func1
-                    end
+      tool_choice = (@call_stack.first if @call_stack&.any?)
 
       @model.build_parameters(
         messages: @messages,
@@ -87,6 +83,11 @@ module OxAiWorkers
         @tool_calls += tool_calls
       end
       @last_call = @tool_calls.last[:name] if @tool_calls.any?
+      
+      # Remove the first element from call_stack only after successful tool call
+      if @tool_calls.any? && @call_stack&.any?
+        @call_stack = @call_stack.drop(1)
+      end
     end
   end
 end

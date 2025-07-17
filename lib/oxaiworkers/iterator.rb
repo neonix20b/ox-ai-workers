@@ -178,7 +178,7 @@ module OxAiWorkers
     def next_iteration
       # Check call_stack before continuing iteration
       if should_finish_iteration?
-        OxAiWorkers.logger.info "Iterator::Call stack is empty or contains only finish_it. Finishing iteration."
+        OxAiWorkers.logger.info 'Iterator::Call stack is empty or contains only finish_it. Finishing iteration.'
         finish_it
         return
       end
@@ -196,9 +196,9 @@ module OxAiWorkers
     def should_finish_iteration?
       return false if @worker.call_stack.nil?
       return false unless @worker.respond_to?(:call_stack) && @worker.call_stack.present?
-      
+
       finish_it_function = OxAiWorkers::Iterator.full_function_name(:finish_it)
-      
+
       # Check if the call queue is empty or contains only finish_it
       @worker.call_stack.empty? || @worker.call_stack.all? { |call| call == finish_it_function }
     end
