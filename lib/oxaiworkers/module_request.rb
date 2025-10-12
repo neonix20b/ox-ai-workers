@@ -41,10 +41,13 @@ module OxAiWorkers
       @messages.each do |message|
         content = message[:content]
         if content.is_a?(String)
-          OxAiWorkers.logger.warn "Request (String)[#{message[:role]}]: #{content.truncate(500)}"
+          truncated = content.length > 500 ? "#{content[0...500]}..." : content
+          OxAiWorkers.logger.warn "Request (String)[#{message[:role]}]: #{truncated}"
         elsif content.is_a?(Array)
           types = content.map do |item|
-            "#{item[:type]}: #{item[:content]&.truncate(500)}"
+            text = item[:content]
+            truncated = text && text.length > 500 ? "#{text[0...500]}..." : text
+            "#{item[:type]}: #{truncated}"
           end.compact.join(', ')
           OxAiWorkers.logger.warn "Request (Array): [#{types}]"
         else
